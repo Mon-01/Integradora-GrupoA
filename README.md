@@ -1,7 +1,7 @@
 # Integradora-GrupoA
 
 ### ***comandos ramas***
-\n
+
 git checkout -b security-backup
 git push origin security-backup
 git checkout -b FASE-1
