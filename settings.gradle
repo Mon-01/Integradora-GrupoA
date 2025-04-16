@@ -1,1 +1,2 @@
 rootProject.name = 'Integradora-GrupoA'
+include 'AplicacionAdministracion','AplicacionCorporativa'
