@@ -19,7 +19,7 @@ public class Usuario extends Persona {
     private UUID id_usuario;
 
     @Column(unique = true, nullable = false)
-    private String nombre_usuario;
+    private String email;
 
     @Column(nullable = false)
     private String clave;

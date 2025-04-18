@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class controladorMVCCorporativo {
     @GetMapping("/paso2")
     public String p2(){
-        return "vista2";
+        return "corporativo/inicio.html";
     }
 }
