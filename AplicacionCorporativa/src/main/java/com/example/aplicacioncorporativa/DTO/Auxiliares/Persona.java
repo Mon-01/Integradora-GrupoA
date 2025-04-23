@@ -1,4 +1,4 @@
-package com.example.integradoragrupoa.Entidades.Auxiliares;
+package com.example.aplicacioncorporativa.DTO.Auxiliares;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,15 +16,8 @@ public class Persona {
     private String nombre;
     private String apellido;
     private String genero;
-    private int edad;
-    private LocalDate fecha_nacimiento;
-    private int prefijoTel;
     private String telefono;
-    private String email;
-    private Direccion direccion;
+    private String direccion;
     private int cod_postal;
-    private String paisNacimiento;
-    private String tipoDocumento;
-    private String documento;
-
+    private LocalDate fecha_nacimiento;
 }
