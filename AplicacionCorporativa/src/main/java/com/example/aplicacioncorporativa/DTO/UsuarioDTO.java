@@ -1,13 +1,12 @@
 package com.example.aplicacioncorporativa.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsuarioDTO {
@@ -16,4 +15,6 @@ public class UsuarioDTO {
     private String clave;
     private String confirmarClave;
     private EmpleadoDTO empleado;
+
 }
+

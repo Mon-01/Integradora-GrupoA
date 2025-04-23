@@ -1,6 +1,6 @@
 <!-- templates/login.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html >
 <head>
     <meta charset="UTF-8">
     <title>Inicio de sesión - MonArNa SL</title>
@@ -75,17 +75,16 @@
 <body>
 
 <!-- Incluir barra de navegación -->
-<div th:replace="fragments/nav :: navbar"></div>
+<div th:replace="~{fragments/nav :: navbar}"></div>
 
 <div class="login-container">
     <div class="login-box">
         <h2>Iniciar sesión</h2>
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/email}" method="post">
             <input type="text" name="username" placeholder="Usuario" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
             <button type="submit">Entrar</button>
         </form>
-        <a href="/recuperar">¿No tienes Usuario?</a>
+        <a href="/reg">¿No tienes Usuario?</a>
     </div>
 </div>
 
