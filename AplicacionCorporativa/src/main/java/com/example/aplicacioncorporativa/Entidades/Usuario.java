@@ -4,22 +4,24 @@ import com.example.aplicacioncorporativa.Entidades.Auxiliares.Persona;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Entity
 @Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Usuario extends Persona {
+public class Usuario  {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "PK_usuario")
     private UUID id_usuario;
 
     @Column(unique = true, nullable = false)
-    private String nombre_usuario;
+    private String email;
 
     @Column(nullable = false)
     private String clave;

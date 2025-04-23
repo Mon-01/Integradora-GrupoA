@@ -1,4 +1,4 @@
-package com.example.aplicacioncorporativa.Entidades.Auxiliares;
+package com.example.aplicacioncorporativa.DTO.Auxiliares;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
