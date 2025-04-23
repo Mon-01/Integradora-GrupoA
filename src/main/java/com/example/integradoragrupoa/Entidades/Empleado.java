@@ -1,12 +1,14 @@
-package com.example.aplicacioncorporativa.Entidades;
+package com.example.integradoragrupoa.Entidades;
 
-import com.example.aplicacioncorporativa.Entidades.Auxiliares.Periodo;
-import com.example.aplicacioncorporativa.Entidades.Auxiliares.Persona;
+import com.example.integradoragrupoa.Entidades.Auxiliares.Persona;
+import com.example.integradoragrupoa.Entidades.Auxiliares.TarjetaCredito;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -20,12 +22,21 @@ public class Empleado extends Persona {
     private UUID id_empleado;
 
     private boolean administrador;
+    private String comentarios;
+    private String entidadBancaria;
+    private String numCuenta;
+    private Long salarioAnual;
+    private Long comisionAnual;
 
     @Embedded
-    private Periodo periodo;
+    private TarjetaCredito tarjeta;
 
-    private String motivo_cese;
+    //crea una tabla adicional con las especializaciones (strings)
+    @ElementCollection
+    private List<String> especializaciones = new ArrayList<>();
 
+
+    //Relaciones
     @OneToOne
     @JoinColumn(name = "id_usuario",foreignKey = @ForeignKey(name = "FK_empleado_usuario_id_usuario"))
     private Usuario usuario;
@@ -33,4 +44,5 @@ public class Empleado extends Persona {
     @ManyToOne
     @JoinColumn(name = "FK_empleado_departamento_id_dept",nullable = true)
     private Departamento departamento;
+
 }

@@ -9,4 +9,6 @@ public class controladorMVCCorporativo {
     public String p2(){
         return "vista2";
     }
+
+
 }

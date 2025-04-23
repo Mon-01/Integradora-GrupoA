@@ -1,6 +1,6 @@
-package com.example.aplicacioncorporativa.Entidades;
+package com.example.integradoragrupoa.Entidades;
 
-import com.example.aplicacioncorporativa.Entidades.Auxiliares.Persona;
+import com.example.integradoragrupoa.Entidades.Auxiliares.Persona;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Usuario extends Persona {
+public class Usuario{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "PK_usuario")
