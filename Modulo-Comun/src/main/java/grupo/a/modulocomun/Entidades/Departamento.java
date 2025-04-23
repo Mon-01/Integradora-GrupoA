@@ -1,4 +1,4 @@
-package com.example.integradoragrupoa.Entidades;
+package grupo.a.modulocomun.Entidades;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

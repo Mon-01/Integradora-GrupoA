@@ -1,7 +1,7 @@
-package com.example.integradoragrupoa.Entidades;
+package grupo.a.modulocomun.Entidades;
 
-import com.example.integradoragrupoa.Entidades.Auxiliares.Persona;
-import com.example.integradoragrupoa.Entidades.Auxiliares.TarjetaCredito;
+import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
+import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

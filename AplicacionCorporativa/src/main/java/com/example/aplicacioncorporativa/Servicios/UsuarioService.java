@@ -1,9 +1,8 @@
 package com.example.aplicacioncorporativa.Servicios;
 
 import com.example.aplicacioncorporativa.DTO.UsuarioDTO;
-import com.example.aplicacioncorporativa.Entidades.Usuario;
+import grupo.a.modulocomun.Entidades.Usuario;
 import com.example.aplicacioncorporativa.Repositorios.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

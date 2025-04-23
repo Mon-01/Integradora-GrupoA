@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 
 @SpringBootApplication(scanBasePackages = {
         "com.example.aplicacioncorporativa",
-        "com.example.aplicacionadministracion"
+        "com.example.aplicacionadministracion",
+        "grupo.a.modulocomun"
 })
 
 public class IntegradoraGrupoAApplication {

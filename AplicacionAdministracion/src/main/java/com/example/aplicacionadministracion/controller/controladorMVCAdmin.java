@@ -11,7 +11,6 @@ public class controladorMVCAdmin {
     private static final Logger logger = LoggerFactory.getLogger(controladorMVCAdmin.class);
     @GetMapping("/Paso1")
     public String p1(){
-
         return "vista1";
     }
 

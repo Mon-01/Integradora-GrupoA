@@ -1,4 +1,4 @@
-package com.example.integradoragrupoa.Entidades.Auxiliares;
+package grupo.a.modulocomun.Entidades.Auxiliares;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

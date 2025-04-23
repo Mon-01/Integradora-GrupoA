@@ -1,1 +1,2 @@
 rootProject.name = 'AplicacionAdministracion'
+include 'AplicacionCorporativa','Modulo-Comun'

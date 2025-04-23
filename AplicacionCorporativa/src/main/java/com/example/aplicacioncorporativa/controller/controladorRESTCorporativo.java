@@ -1,8 +1,9 @@
 package com.example.aplicacioncorporativa.controller;
 
 import com.example.aplicacioncorporativa.DTO.UsuarioDTO;
-import com.example.aplicacioncorporativa.Entidades.Usuario;
+
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
+import grupo.a.modulocomun.Entidades.Usuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package com.example.aplicacioncorporativa.Repositorios;
 
-import com.example.aplicacioncorporativa.Entidades.Usuario;
+import grupo.a.modulocomun.Entidades.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
