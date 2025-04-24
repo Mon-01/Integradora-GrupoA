@@ -80,8 +80,8 @@
 <div class="login-container">
     <div class="login-box">
         <h2>Iniciar sesión</h2>
-        <form th:action="@{/email}" method="post">
-            <input type="text" name="username" placeholder="Usuario" required>
+        <form th:action="@{/email}" th:object="${usuarioDTO}" method="post">
+            <input type="text" th:field="*{email}" placeholder="Correo electrónico" >
             <button type="submit">Entrar</button>
         </form>
         <a href="/reg">¿No tienes Usuario?</a>

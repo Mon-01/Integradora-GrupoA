@@ -40,6 +40,9 @@ public class UsuarioService {
                 })
                 .map(usuarioRepository::save); // guarda y devuelve el Optional
     }
+    public boolean comprobarPassword(Usuario usuario, String claveSinEncriptar) {
+        return passwordEncoder.matches(claveSinEncriptar, usuario.getClave());
+    }
 
 
 }
