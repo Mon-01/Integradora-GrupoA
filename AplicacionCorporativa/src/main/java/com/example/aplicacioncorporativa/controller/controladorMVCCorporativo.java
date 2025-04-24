@@ -22,7 +22,6 @@ public class controladorMVCCorporativo {
         this.usuarioService = usuarioService;
         this.session = session;
     }
-
     @GetMapping("/reg")
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("usuarioDTO", new UsuarioDTO());
@@ -31,7 +30,7 @@ public class controladorMVCCorporativo {
     @GetMapping("/login")
     public String mostrarFormularioEmail(Model model) {
         model.addAttribute("usuarioDTO", new UsuarioDTO());
-        return "corporativo/inicio.html";
+        return "corporativo/inicio";
     }
 
     @PostMapping("/email")
