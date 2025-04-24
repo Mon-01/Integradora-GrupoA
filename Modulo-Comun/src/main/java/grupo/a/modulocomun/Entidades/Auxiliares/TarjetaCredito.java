@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class TarjetaCredito {
     private String tipo;
     private String numero;
-    private Caducidad caducidad;
+//    private Caducidad caducidad;
     private int cvc;
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Datos Personales</title>
+</head>
+<body>
+<form id="formulario" method="post" th:action="@{/paso1}" th:object="${datos}">
+    <fieldset>
+        <legend>Datos Personales</legend>
+        <label for="name">Nombre</label>
+        <input type="text" id="name" th:field="*{nombre}">
+        <label for="apellido">Apellidos</label>
+        <input type="text" id="apellido" th:field="*{apellido}">
+        <br><br>
+
+        <label for="nacimiento">Fecha de Nacimiento</label>
+        <input type="text" id="nacimiento" th:field="*{fecha_nacimiento}">
+        <div th:if="${enviado}">
+            <div th:each="error: ${#fields.errors('fecha_nacimiento')}" th:text="${error} " class="error"></div>
+        </div>
+        <br>
+
+    </fieldset>
+    <button type="submit">Grabar Informarción - Pasar al paso 2: Datos Profesionales</button>
+</form>
+</body>
+</html>

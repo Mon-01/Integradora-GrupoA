@@ -1,19 +1,22 @@
 package com.example.aplicacioncorporativa.DTO;
-import com.example.aplicacioncorporativa.DTO.Auxiliares.Periodo;
+import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
+import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmpleadoDTO {
-    private UUID id_empleado;
-    private boolean administrador;
-    private Periodo periodo;
-    private String motivo_cese;
-    private UUID usuarioId;        // Referencia al Usuario
-    private UUID departamentoId;   // Referencia al Departamento
+public class EmpleadoDTO extends Persona {
+    private String comentarios;
+    private String entidadBancaria;
+    private String numCuenta;
+    private Long salarioAnual;
+    private Long comisionAnual;
+    private TarjetaCredito tarjeta;
+    private List<String> especializaciones = new ArrayList<>();
 }
