@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Datos Económicos</title>
+</head>
+<body>
+
+<form id="formulario" method="post" th:action="@{/paso4}" th:object="${datos}">
+    <fieldset>
+        <legend>Datos de contacto</legend>
+        <div>
+            <span>Cuenta corriente</span>
+            <label for="entidad">Entidad bancaria</label>
+           <!--select simple-->
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('tipoDoc')}" th:text="${error} " class="error"></div>
+            </div>
+            <label for="numCuenta">Número de cuenta</label>
+            <input type="text" id="numCuenta" th:field="*{numCuenta}">
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('tipoDoc')}" th:text="${error} " class="error"></div>
+            </div>
+        </div>
+
+
+        <label for="sal">Salario</label>
+        <input type="text" id="sal" th:field="*{salarioAnual}">
+        <div th:if="${enviado}">
+            <div th:each="error: ${#fields.errors('sal')}" th:text="${error} " class="error"></div>
+        </div>
+        <br><br>
+        <label for="comision">Comisión</label>
+        <input type="text" id="comision" th:field="*{comisionAnual}">
+        <div th:if="${enviado}">
+            <div th:each="error: ${#fields.errors('comision')}" th:text="${error} " class="error"></div>
+        </div>
+        <br><br>
+        <div>
+            <span>Tarjeta de Crédito</span>
+            <br><br>
+            <label for="tipo">Tipo de tarjeta</label>
+            <!-- select simple -->
+            <label for="numeroTarjeta">Número</label>
+            <input type="text" id="numeroTarjeta" th:field="*{tarjeta.numero}">
+            <br>
+            <label for="caducidad">Caducidad</label>
+<!--            <input type="text" id="caducidad" th:field="*{tarjeta.caducidad}">-->
+            <label for="cvc">CVC</label>
+            <input type="text" id="cvc" th:field="*{tarjeta.cvc}">
+        </div>
+    </fieldset>
+    <a href="/paso3"><button type="button">Volver</button></a>
+    <button type="submit">Grabar Informarción - Resumen </button>
+</form>
+
+</body>
+</html>

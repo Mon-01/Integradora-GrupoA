@@ -18,5 +18,6 @@ public class EmpleadoDTO extends Persona {
     private Long salarioAnual;
     private Long comisionAnual;
     private TarjetaCredito tarjeta;
+    private String departamento;
     private List<String> especializaciones = new ArrayList<>();
 }

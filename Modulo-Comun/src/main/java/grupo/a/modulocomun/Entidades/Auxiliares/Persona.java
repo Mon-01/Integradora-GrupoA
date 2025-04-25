@@ -15,11 +15,12 @@ import java.time.LocalDate;
 public class Persona {
     private String nombre;
     private String apellido;
-    private String genero;
+    private Genero genero;
     private int edad;
     private LocalDate fecha_nacimiento;
     private int prefijoTel;
     private String telefono;
+    private String otroTelefono;
     private String email;
     private Direccion direccion;
     private int cod_postal;

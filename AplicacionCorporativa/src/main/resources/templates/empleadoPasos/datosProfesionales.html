@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Datos Profesionales</title>
+</head>
+<body>
+<form id="formulario" method="post" th:action="@{/paso3}" th:object="${datos}">
+  <fieldset>
+    <legend>Datos Profesionales</legend>
+    <label for="depart">Departamento</label>
+    <!--select simple-->
+    <div th:if="${enviado}">
+      <div th:each="error: ${#fields.errors('depart')}" th:text="${error} " class="error"></div>
+    </div>
+    <label for="especialidades">Especialidades</label>
+    <!--revisar-->
+<!--    <div th:each="espec: ${especialidades}">-->
+<!--      <input id="tipoDoc" type="radio" th:field="*{espe}" th:value="${espec}" th:text="${tipo}">-->
+<!--    </div>-->
+    <div th:if="${enviado}">
+      <div th:each="error: ${#fields.errors('especialidades')}" th:text="${error} " class="error"></div>
+    </div>
+    <br><br>
+
+  </fieldset>
+  <a href="/paso2"><button type="button">Volver</button></a>
+  <button type="submit">Grabar Informarción - Pasar al paso 4: Datos Económicos</button>
+</form>
+</body>
+</html>

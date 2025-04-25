@@ -12,7 +12,7 @@ public class Direccion {
     private int numero;
     private int portal;
     private int planta;
-    private int puerta;
+    private String puerta;
     private String localidad;
     private String region;
     private String cod_postal;
