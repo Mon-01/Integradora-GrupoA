@@ -25,7 +25,7 @@
         -->
         <label for="genero">Género</label>
         <div th:each="genero: ${generos}">
-            <input id="genero" type="radio" th:field="*{genero}" th:value="${genero}" th:text="${genero}">
+            <input id="genero" type="radio" th:field="*{genero}" th:value="${genero.getId()}" th:text="${genero.getNombre()}">
         </div>
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('genero')}" th:text="${error}" class="error"></div>
@@ -43,9 +43,9 @@
         </div>
         <br>
         <label for="pais">País nacimiento</label>
-<!--        <select id="pais" th:field="*{paisNacimiento}" >-->
-<!--            <option th:each="pais: ${lista_paises}" th:value="${pais.key}" th:text="${pais.value.getPais()}"></option>-->
-<!--        </select>-->
+        <select id="pais" th:field="*{paisNacimiento}" >
+            <option th:each="pais: ${paises}" th:value="${pais.getId()}" th:text="${pais.getNombre()}"></option>
+        </select>
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('pais')}" th:text="${error} " class="error"></div>
         </div>

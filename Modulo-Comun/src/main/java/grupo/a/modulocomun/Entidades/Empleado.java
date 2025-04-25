@@ -15,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name="empleados")
 public class Empleado extends Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

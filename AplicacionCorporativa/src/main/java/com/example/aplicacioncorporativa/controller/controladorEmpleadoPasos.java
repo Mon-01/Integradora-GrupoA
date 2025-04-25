@@ -1,10 +1,13 @@
 package com.example.aplicacioncorporativa.controller;
 
 import com.example.aplicacioncorporativa.DTO.EmpleadoDTO;
-import grupo.a.modulocomun.Entidades.Auxiliares.Genero;
+import grupo.a.modulocomun.Entidades.Auxiliares.Especialidades;
 import grupo.a.modulocomun.Entidades.Auxiliares.TipoDocumento;
+import grupo.a.modulocomun.Servicios.GeneroService;
+import grupo.a.modulocomun.Servicios.PaisService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class controladorEmpleadoPasos {
 
+    @Autowired
+    private GeneroService generoService;
+    @Autowired
+    private PaisService paisService;
+
     @RequestMapping(value = "/paso1", method = {RequestMethod.GET, RequestMethod.POST})
     public String paso1(@ModelAttribute("datos") EmpleadoDTO datosEmpleado,HttpServletRequest request, HttpSession sesion, Model model,
                         BindingResult bindingResult
@@ -26,7 +34,8 @@ public class controladorEmpleadoPasos {
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
             model.addAttribute("datos", datosEmpleado);
-            model.addAttribute("generos", Genero.values());
+            model.addAttribute("generos", generoService.obtenerTodos());
+            model.addAttribute("paises", paisService.obtenerTodosPaises());
             return "empleadoPasos/datosPersonales";
         } else {
             //si hay errores de validación los muestra en el formulario

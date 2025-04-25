@@ -1,5 +1,5 @@
 package grupo.a.modulocomun.Entidades.Auxiliares;
 
 public enum TipoDocumento {
-    DNI, NIF, NIE
+    DNI, NIE, NIF
 }
