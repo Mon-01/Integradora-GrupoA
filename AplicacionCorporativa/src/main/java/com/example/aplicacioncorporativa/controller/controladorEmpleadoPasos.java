@@ -1,7 +1,6 @@
 package com.example.aplicacioncorporativa.controller;
 
 import com.example.aplicacioncorporativa.DTO.EmpleadoDTO;
-import grupo.a.modulocomun.Entidades.Auxiliares.Especialidades;
 import grupo.a.modulocomun.Entidades.Auxiliares.Genero;
 import grupo.a.modulocomun.Entidades.Auxiliares.TipoDocumento;
 import jakarta.servlet.http.HttpServletRequest;
