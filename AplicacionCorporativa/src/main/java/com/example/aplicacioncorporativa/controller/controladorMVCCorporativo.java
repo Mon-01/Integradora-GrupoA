@@ -22,7 +22,6 @@ public class controladorMVCCorporativo {
         this.usuarioService = usuarioService;
         this.session = session;
     }
-
     @GetMapping("/reg")
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("usuarioDTO", new UsuarioDTO());
@@ -31,17 +30,18 @@ public class controladorMVCCorporativo {
     @GetMapping("/login")
     public String mostrarFormularioEmail(Model model) {
         model.addAttribute("usuarioDTO", new UsuarioDTO());
-        return "corporativo/inicio.html";
+        return "corporativo/inicio";
     }
 
     @PostMapping("/email")
     public String procesarEmail(@ModelAttribute("usuarioDTO") UsuarioDTO usuarioDTO, Model model) {
-        if (usuarioService.buscarPorEmail(Optional.of(usuarioDTO)).isEmpty()) {
-            model.addAttribute("error", "No existe ninguna cuenta con ese correo.");
+        Optional<Usuario> usuario = usuarioService.buscarPorEmail(Optional.of(usuarioDTO));
+        if (usuario.isEmpty()) {
+            model.addAttribute("error", "El usuario introducido no existe.");
             return "corporativo/inicio.html";
         }
 
-        session.setAttribute("emailTemporal",Optional.of(usuarioDTO.getEmail())); // ✅ esto ahora sí funciona bien
+        session.setAttribute("emailTemporal", usuarioDTO.getEmail());
         model.addAttribute("usuarioDTO", new UsuarioDTO());
         return "corporativo/contrasenia.html";
     }
@@ -51,9 +51,8 @@ public class controladorMVCCorporativo {
         String email = (String) session.getAttribute("emailTemporal");
         usuarioDTO.setEmail(email);
 
-        Optional <Usuario> usuario = usuarioService.buscarPorEmail(Optional.of(usuarioDTO));
-
-        if (usuario.isEmpty() || !usuario.get().getClave().equals(usuarioDTO.getClave())) {
+        Optional<Usuario> usuario = usuarioService.buscarPorEmail(Optional.of(usuarioDTO));
+        if (usuario.isEmpty() || !usuarioService.comprobarPassword(usuario.get(), usuarioDTO.getClave())) {
             model.addAttribute("error", "Contraseña incorrecta.");
             model.addAttribute("usuarioDTO", new UsuarioDTO());
             return "corporativo/contrasenia.html";
@@ -62,6 +61,5 @@ public class controladorMVCCorporativo {
         session.setAttribute("usuarioLogueado", usuario.get());
         return "redirect:/inicio";
     }
-
 }
 

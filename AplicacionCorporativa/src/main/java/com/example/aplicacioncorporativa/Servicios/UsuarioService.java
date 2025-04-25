@@ -4,6 +4,7 @@ import com.example.aplicacioncorporativa.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
 import com.example.aplicacioncorporativa.Repositorios.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,9 +13,12 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -29,11 +33,15 @@ public class UsuarioService {
                 .map(dto -> {
                     Usuario usuario = new Usuario();
                     usuario.setEmail(dto.getEmail());
-                    usuario.setClave(dto.getClave());
+                    String claveEncriptada = passwordEncoder.encode(dto.getClave());
+                    usuario.setClave(claveEncriptada);
                     usuario.setConfirmarClave(dto.getConfirmarClave());
                     return usuario;
                 })
                 .map(usuarioRepository::save); // guarda y devuelve el Optional
+    }
+    public boolean comprobarPassword(Usuario usuario, String claveSinEncriptar) {
+        return passwordEncoder.matches(claveSinEncriptar, usuario.getClave());
     }
 
 

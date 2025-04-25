@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html >
 <head>
     <meta charset="UTF-8">
     <title>Contraseña - MonArNa SL</title>
@@ -30,7 +30,7 @@
         <div th:if="${error}" class="error" th:text="${error}"></div>
 
         <form th:action="@{/password}" th:object="${usuarioDTO}" method="post">
-            <input type="password" th:field="*{usuarioDTO.getClave()}" placeholder="Contraseña" required>
+            <input type="password" th:field="*{clave}" placeholder="Contraseña" required>
             <button type="submit">Entrar</button>
         </form>
     </div>

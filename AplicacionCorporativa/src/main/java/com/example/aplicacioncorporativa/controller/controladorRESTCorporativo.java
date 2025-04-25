@@ -19,7 +19,7 @@ public class controladorRESTCorporativo {
 
     private final UsuarioService usuarioService;
 
-        @PostMapping("/registro") // cambiamos la ruta para diferenciarlo
+     /*   @PostMapping("/registro") // cambiamos la ruta para diferenciarlo
         public ResponseEntity<?> registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
             if (usuarioService.buscarPorEmail(Optional.of(usuarioDTO)).isPresent()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -33,6 +33,22 @@ public class controladorRESTCorporativo {
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body("No se pudo guardar el usuario."));
         }
+
+      */
+     @PostMapping("/registro")
+     public String registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+         if (usuarioService.buscarPorEmail(Optional.of(usuarioDTO)).isPresent()) {
+             return "Ya existe una cuenta con ese email.";
+         }
+
+         Optional<Usuario> guardado = usuarioService.registrarUsuarioDesdeDTO(Optional.of(usuarioDTO));
+
+         if (guardado.isPresent()) {
+             return "Usuario registrado exitosamente.";
+         } else {
+             return "Error al registrar el usuario.";
+         }
+     }
     }
 
 
