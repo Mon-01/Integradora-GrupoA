@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -61,5 +63,46 @@ public class controladorMVCCorporativo {
         session.setAttribute("usuarioLogueado", usuario.get());
         return "redirect:/inicio";
     }
+    @GetMapping("/inicio")
+    public String areaPersonal(Model model) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+
+        if (usuarioLogueado == null) {
+            return "redirect:/login"; // Si no hay usuario en sesión, lo mandamos al login
+        }
+
+        // Contador de accesos de este navegador
+        Integer contadorSesion = (Integer) session.getAttribute("contadorSesion");
+        if (contadorSesion == null) {
+            contadorSesion = 1;
+        } else {
+            contadorSesion++;
+        }
+        session.setAttribute("contadorSesion", contadorSesion);
+
+        // Contador total de accesos (guardado en toda la aplicación)
+        Map<String, Integer> contadorGlobal = (Map<String, Integer>) session.getServletContext().getAttribute("contadorGlobal");
+        if (contadorGlobal == null) {
+            contadorGlobal = new HashMap<>();
+        }
+        int contadorTotal = contadorGlobal.getOrDefault(usuarioLogueado.getEmail(), 0) + 1;
+        contadorGlobal.put(usuarioLogueado.getEmail(), contadorTotal);
+
+        session.getServletContext().setAttribute("contadorGlobal", contadorGlobal);
+
+        // Enviamos datos a la vista
+        model.addAttribute("usuarioEmail", usuarioLogueado.getEmail());
+        model.addAttribute("contadorSesion", contadorSesion);
+        model.addAttribute("contadorTotal", contadorTotal);
+
+        return "corporativo/areaPersonal";
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        session.invalidate();
+        return "redirect:/login";
+    }
+
 }
 
