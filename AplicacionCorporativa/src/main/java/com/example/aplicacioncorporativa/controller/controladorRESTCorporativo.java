@@ -4,13 +4,16 @@ import com.example.aplicacioncorporativa.DTO.UsuarioDTO;
 
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
 import grupo.a.modulocomun.Entidades.Usuario;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -18,6 +21,9 @@ import java.util.Optional;
 public class controladorRESTCorporativo {
 
     private final UsuarioService usuarioService;
+    private final HttpSession session;
+
+
 
      /*   @PostMapping("/registro") // cambiamos la ruta para diferenciarlo
         public ResponseEntity<?> registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
@@ -49,6 +55,21 @@ public class controladorRESTCorporativo {
              return "Error al registrar el usuario.";
          }
      }
+    @GetMapping("/contador-total")
+    public Integer obtenerContadorTotal() {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+
+        if (usuarioLogueado == null) {
+            return 0;
+        }
+
+        Map<String, Integer> contadorGlobal = (Map<String, Integer>) session.getServletContext().getAttribute("contadorGlobal");
+        if (contadorGlobal == null) {
+            return 0;
+        }
+
+        return contadorGlobal.getOrDefault(usuarioLogueado.getEmail(), 0);
+    }
     }
 
 

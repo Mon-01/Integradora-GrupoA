@@ -47,7 +47,8 @@
     <div class="bienvenida">
         <p>Bienvenido <strong th:text="${usuarioEmail}"></strong></p>
         <p>Número de accesos desde tu navegador: <strong th:text="${contadorSesion}"></strong></p>
-        <p>Número total de accesos: <strong th:text="${contadorTotal}"></strong></p>
+        <p>Número total de accesos: <strong id="contadorTotal" th:text="${contadorTotal}"></strong></p>
+
     </div>
 
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
