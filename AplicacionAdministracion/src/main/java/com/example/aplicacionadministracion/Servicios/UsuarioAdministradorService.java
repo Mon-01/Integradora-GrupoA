@@ -27,11 +27,12 @@ public class UsuarioAdministradorService {
         return repository.findByEmail(email);
     }
 
-    public Optional<UsuarioAdministrador> autenticarAdministrador(UsuarioAdministradorDTO dto) {
-        return repository.findByEmail(dto.getEmail())
-                .filter(admin -> passwordEncoder.matches(dto.getClave(), admin.getClave()));
-    }
 
+
+    public boolean validarCredenciales(UsuarioAdministradorDTO dto) {
+        Optional<UsuarioAdministrador> adminOpt = repository.findByEmail(dto.getEmail());
+        return adminOpt.isPresent() && passwordEncoder.matches(dto.getClave(), adminOpt.get().getClave());
+    }
     public UsuarioAdministrador guardarDesdeDTO(UsuarioAdministradorDTO dto) {
         UsuarioAdministrador admin = new UsuarioAdministrador();
         admin.setEmail(dto.getEmail());
