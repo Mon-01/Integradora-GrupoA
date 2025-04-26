@@ -5,6 +5,11 @@
     <title>Datos Personales</title>
 </head>
 <body>
+<a href="/paso1"><button>Paso 1</button></a>
+<a href="/paso2"><button>Paso 2</button></a>
+<a href="/paso3"><button>Paso 3</button></a>
+<a href="/paso4"><button>Paso 4</button></a>
+<a href="/resumen"><button>Resumen</button></a>
 <form id="formulario" method="post" th:action="@{/paso1}" th:object="${datos}">
     <fieldset>
         <legend>Datos Personales</legend>
@@ -30,18 +35,19 @@
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('genero')}" th:text="${error}" class="error"></div>
         </div>
+        <br>
         <label for="nacimiento">Fecha de Nacimiento</label>
         <input type="text" id="nacimiento" th:field="*{fecha_nacimiento}">
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('fecha_nacimiento')}" th:text="${error} " class="error"></div>
         </div>
-        <br>
+        <br><br>
         <label for="edad">Edad</label>
         <input type="text" id="edad" th:field="*{edad}">
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('edad')}" th:text="${error} " class="error"></div>
         </div>
-        <br>
+        <br><br>
         <label for="pais">País nacimiento</label>
         <select id="pais" th:field="*{paisNacimiento}" >
             <option th:each="pais: ${paises}" th:value="${pais.getId()}" th:text="${pais.getNombre()}"></option>
@@ -49,7 +55,7 @@
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('pais')}" th:text="${error} " class="error"></div>
         </div>
-        <br>
+        <br><br>
         <label for="comentarios">Comentarios</label>
         <textarea id="comentarios" th:field="*{comentarios}" rows="4" cols="50" ></textarea>
     </fieldset>

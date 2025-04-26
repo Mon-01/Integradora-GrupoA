@@ -1,10 +1,7 @@
 package com.example.aplicacioncorporativa.controller;
 
 import com.example.aplicacioncorporativa.DTO.EmpleadoDTO;
-import grupo.a.modulocomun.Entidades.Auxiliares.Especialidades;
-import grupo.a.modulocomun.Entidades.Auxiliares.TipoDocumento;
-import grupo.a.modulocomun.Servicios.GeneroService;
-import grupo.a.modulocomun.Servicios.PaisService;
+import grupo.a.modulocomun.Servicios.DatosAuxiliaresService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class controladorEmpleadoPasos {
 
     @Autowired
-    private GeneroService generoService;
-    @Autowired
-    private PaisService paisService;
+    private DatosAuxiliaresService datosAuxiliaresService;
 
     @RequestMapping(value = "/paso1", method = {RequestMethod.GET, RequestMethod.POST})
     public String paso1(@ModelAttribute("datos") EmpleadoDTO datosEmpleado,HttpServletRequest request, HttpSession sesion, Model model,
@@ -34,8 +29,8 @@ public class controladorEmpleadoPasos {
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
             model.addAttribute("datos", datosEmpleado);
-            model.addAttribute("generos", generoService.obtenerTodos());
-            model.addAttribute("paises", paisService.obtenerTodosPaises());
+            model.addAttribute("generos", datosAuxiliaresService.getGeneroService().obtenerTodos());
+            model.addAttribute("paises", datosAuxiliaresService.getPaisService().obtenerTodosPaises());
             return "empleadoPasos/datosPersonales";
         } else {
             //si hay errores de validación los muestra en el formulario
@@ -60,8 +55,9 @@ public class controladorEmpleadoPasos {
         //si es GET cargará los datos de la sesión o creará una nueva sesión
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
+            model.addAttribute("tipoDoc", datosAuxiliaresService.getTipoDocumentoService().obtenerTiposDocumento());
+            model.addAttribute("vias", datosAuxiliaresService.getTipoViaService().obtenerTipoVia());
             model.addAttribute("datos", datosEmpleado);
-            model.addAttribute("tipoDoc", TipoDocumento.values());
             return "empleadoPasos/datosContacto";
         } else {
             //si hay errores de validación los muestra en el formulario
@@ -87,7 +83,8 @@ public class controladorEmpleadoPasos {
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
             model.addAttribute("datos", datosEmpleado);
-            model.addAttribute("especialidades", Especialidades.values());
+            model.addAttribute("departamentos", datosAuxiliaresService.getDepartamentoService().obtenerTodos());
+            model.addAttribute("especialidades", datosAuxiliaresService.getEspecialidadesService().obtenerEspecialidades());
             return "empleadoPasos/datosProfesionales";
         } else {
             //si hay errores de validación los muestra en el formulario
@@ -113,6 +110,8 @@ public class controladorEmpleadoPasos {
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
             model.addAttribute("datos", datosEmpleado);
+            model.addAttribute("entidades",datosAuxiliaresService.getEntidadBancariaService().obtenerEntidadesBancarias());
+            model.addAttribute("tarjetaTipo",datosAuxiliaresService.getTipoTarjetaService().obtenerTodos());
             return "empleadoPasos/datosEconomicos";
         } else {
             //si hay errores de validación los muestra en el formulario

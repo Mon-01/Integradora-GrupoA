@@ -5,16 +5,22 @@
     <title>Datos Contacto</title>
 </head>
 <body>
+<a href="/paso1"><button>Paso 1</button></a>
+<a href="/paso2"><button>Paso 2</button></a>
+<a href="/paso3"><button>Paso 3</button></a>
+<a href="/paso4"><button>Paso 4</button></a>
+<a href="/resumen"><button>Resumen</button></a>
 <form id="formulario" method="post" th:action="@{/paso2}" th:object="${datos}">
     <fieldset>
         <legend>Datos de contacto</legend>
         <label for="tipoDoc">Tipo de documento</label>
         <div th:each="tipo: ${tipoDoc}">
-            <input id="tipoDoc" type="radio" th:field="*{tipoDocumento}" th:value="${tipo}" th:text="${tipo}">
+            <input id="tipoDoc" type="radio" th:field="*{tipoDocumento}" th:value="${tipo.getId()}" th:text="${tipo.getNombre()}">
         </div>
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('tipoDoc')}" th:text="${error} " class="error"></div>
         </div>
+        <br>
         <label for="doc">Documento</label>
         <input type="text" id="doc" th:field="*{documento}">
         <div th:if="${enviado}">
@@ -22,7 +28,7 @@
         </div>
         <br><br>
         <label for="prefijo">Prefijo de Teléfono</label>
-        <!-- select simple -->
+        <input type="text" id="prefijo" th:field="*{prefijoTel}">
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('prefijo')}" th:text="${error} " class="error"></div>
         </div>
@@ -39,31 +45,38 @@
             <div th:each="error: ${#fields.errors('otrosTel')}" th:text="${error} " class="error"></div>
         </div>
         <br><br>
-        <div>
-            <span>Dirección</span>
-            <br><br>
+        <fieldset>
+            <legend>Dirección</legend>
+            <br>
             <label for="tipoVia">Tipo de vía</label>
-            <!-- select simple -->
-
+            <select id="tipoVia" th:field="*{direccion.tipoVia}" >
+                <option th:each="via: ${vias}" th:value="${via.getId()}" th:text="${via.getNombre()}"></option>
+            </select>
+            <br>
             <label for="nombreVia">Nombre vía</label>
             <input type="text" id="nombreVia" th:field="*{direccion.nombreVia}">
             <br>
             <label for="num">Número</label>
             <input type="text" id="num" th:field="*{direccion.numero}">
+            <br>
             <label for="portal">Portal</label>
             <input type="text" id="portal" th:field="*{direccion.portal}">
+            <br>
             <label for="planta">Planta</label>
             <input type="text" id="planta" th:field="*{direccion.planta}">
+            <br>
             <label for="puerta">Puerta</label>
             <input type="text" id="puerta" th:field="*{direccion.puerta}">
             <br>
             <label for="localidad">Localidad</label>
             <input type="text" id="localidad" th:field="*{direccion.localidad}">
+            <br>
             <label for="reg">Región</label>
             <input type="text" id="reg" th:field="*{direccion.region}">
+            <br>
             <label for="cod_postal">Código Postal</label>
             <input type="text" id="cod_postal" th:field="*{direccion.cod_postal}">
-        </div>
+        </fieldset>
     </fieldset>
     <a href="/paso1"><button type="button">Volver</button></a>
     <button type="submit">Grabar Informarción - Pasar al paso 3: Datos Profesionales</button>
