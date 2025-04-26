@@ -1,9 +1,9 @@
 package grupo.a.modulocomun.Servicios;
 
-import grupo.a.modulocomun.DTO.GeneroDTO;
 import grupo.a.modulocomun.DTO.PaisDTO;
 import grupo.a.modulocomun.Entidades.Pais;
 import grupo.a.modulocomun.Repositorios.PaisRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,12 @@ public class PaisService {
 
     @Autowired
     private PaisRepository paisRepository;
+
+    public String obtenerNombrePorId(Long id){
+        return paisRepository.findById(id)
+                .map(Pais::getNombre)
+                .orElseThrow(() -> new EntityNotFoundException("País no encontrado con id: " + id));
+    }
 
     public void cargarPaises(){
         if(paisRepository.count() == 0){

@@ -2,8 +2,10 @@ package grupo.a.modulocomun.Servicios;
 
 import grupo.a.modulocomun.DTO.EntidadBancariaDTO;
 import grupo.a.modulocomun.DTO.EspecialidadesDTO;
+import grupo.a.modulocomun.Entidades.Departamento;
 import grupo.a.modulocomun.Entidades.EntidadBancaria;
 import grupo.a.modulocomun.Repositorios.EntidadBancariaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,12 @@ import java.util.stream.Collectors;
 public class EntidadBancariaService {
     @Autowired
     private EntidadBancariaRepository entidadBancariaRepository;
+
+    public String obtenerNombrePorId(Long id){
+        return entidadBancariaRepository.findById(id)
+                .map(EntidadBancaria::getNombre)
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado la entidad bancaria con id: " +id));
+    }
 
     public void cargarEntidadesBancarias() {
         if (entidadBancariaRepository.count() == 0) {

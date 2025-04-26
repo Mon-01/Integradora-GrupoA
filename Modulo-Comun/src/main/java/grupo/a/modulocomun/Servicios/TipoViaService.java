@@ -3,6 +3,7 @@ package grupo.a.modulocomun.Servicios;
 import grupo.a.modulocomun.DTO.TipoViaDTO;
 import grupo.a.modulocomun.Entidades.TipoVia;
 import grupo.a.modulocomun.Repositorios.TipoViaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,12 @@ public class TipoViaService {
 
     @Autowired
     TipoViaRepository tipoViaRepository;
+
+    public String obtenerNombrePorId(Long id){
+        return tipoViaRepository.findById(id)
+                .map(TipoVia::getNombre)
+                .orElseThrow(() -> new EntityNotFoundException("Tipo Via no encontrado con id: " + id));
+    }
 
     public void cargarTipoVia() {
         if(tipoViaRepository.count() == 0){

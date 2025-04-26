@@ -1,8 +1,10 @@
 package grupo.a.modulocomun.Servicios;
 
 import grupo.a.modulocomun.DTO.EspecialidadesDTO;
+import grupo.a.modulocomun.Entidades.Departamento;
 import grupo.a.modulocomun.Entidades.Especialidades;
 import grupo.a.modulocomun.Repositorios.EspecialidadesRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,12 @@ import java.util.stream.Collectors;
 public class EspecialidadesService {
     @Autowired
     private EspecialidadesRepository especialidadesRepository;
+
+    public String obtenerNombrePorId(Long id){
+        return especialidadesRepository.findById(id)
+                .map(Especialidades::getNombre)
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado la especialidad con id: " +id));
+    }
 
     public void cargarEspecialidades() {
         if (especialidadesRepository.count() == 0) {

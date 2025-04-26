@@ -3,6 +3,7 @@ package grupo.a.modulocomun.Servicios;
 import grupo.a.modulocomun.DTO.DepartamentoDTO;
 import grupo.a.modulocomun.Entidades.Departamento;
 import grupo.a.modulocomun.Repositorios.DepartamentoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,12 @@ import java.util.stream.Collectors;
 public class DepartamentoService {
     @Autowired
     private DepartamentoRepository departamentoRepository;
+
+    public String obtenerNombrePorId(Long id){
+        return departamentoRepository.findById(id)
+                .map(Departamento::getNombre_dept)
+                .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado el departamento con id: " +id));
+    }
 
     public void cargarDepartamentos() {
         if (departamentoRepository.count() == 0) {

@@ -3,6 +3,7 @@ package grupo.a.modulocomun.Servicios;
 import grupo.a.modulocomun.DTO.GeneroDTO;
 import grupo.a.modulocomun.Entidades.Genero;
 import grupo.a.modulocomun.Repositorios.GeneroRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,12 @@ public class GeneroService {
 
     @Autowired
     private GeneroRepository generoRepository;
+
+    public String obtenerNombrePorId(Long id) {
+        return generoRepository.findById(id)
+                .map(Genero::getNombre)
+                .orElseThrow(() -> new EntityNotFoundException("Género no encontrado con id: " + id));
+    }
 
     public void cargarGeneros() {
         //comrpueba si la tabla genero tiene datos

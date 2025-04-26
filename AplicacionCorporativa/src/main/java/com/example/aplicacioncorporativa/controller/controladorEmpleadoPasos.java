@@ -131,6 +131,13 @@ public class controladorEmpleadoPasos {
     public String resumen(Model model, HttpSession session) {
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
         model.addAttribute("empleadoForm", empleado);
+        model.addAttribute("generoService",datosAuxiliaresService.getGeneroService());
+        model.addAttribute("paisService",datosAuxiliaresService.getPaisService());
+        model.addAttribute("tipoDocService",datosAuxiliaresService.getTipoDocumentoService());
+        model.addAttribute("tipoViaService",datosAuxiliaresService.getTipoViaService());
+        model.addAttribute("departamentoService",datosAuxiliaresService.getDepartamentoService());
+        model.addAttribute("entidadBancariaService",datosAuxiliaresService.getEntidadBancariaService());
+        model.addAttribute("tipoTarjetaService",datosAuxiliaresService.getTipoTarjetaService());
         return "empleadoPasos/resumen";
     }
 
