@@ -1,5 +1,6 @@
 package com.example.aplicacioncorporativa.DTO;
 
+import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import lombok.*;
 
 import java.util.UUID;
