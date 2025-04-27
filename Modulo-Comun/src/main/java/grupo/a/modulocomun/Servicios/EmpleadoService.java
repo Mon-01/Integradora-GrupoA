@@ -21,6 +21,7 @@ public class EmpleadoService {
     @Autowired
     private EmpleadoRepository empleadoRepository;
 
+    @Autowired
     private RepositoryManager repositoryManager;
 
     public void guardarEmpleado(EmpleadoDTO empleadoDTO){

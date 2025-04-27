@@ -143,8 +143,9 @@ public class controladorEmpleadoPasos {
     public String guardarDatosEmpleado(HttpSession session) {
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
 
-            datosAuxiliaresService.getEmpleadoService().guardarEmpleado(empleado);
-            return "registroExitoso";
+        datosAuxiliaresService.getEmpleadoService().guardarEmpleado(empleado);
+        session.invalidate();
+        return "registroExitoso";
     }
 
     @GetMapping("/resetearSesion")
