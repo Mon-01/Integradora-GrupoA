@@ -1,4 +1,5 @@
 package grupo.a.modulocomun.DTO;
+import grupo.a.modulocomun.DTO.Auxiliares.PersonaDTO;
 import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
 import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmpleadoDTO extends Persona {
+public class EmpleadoDTO extends PersonaDTO {
     private String comentarios;
     private String entidadBancaria;
     private String numCuenta;

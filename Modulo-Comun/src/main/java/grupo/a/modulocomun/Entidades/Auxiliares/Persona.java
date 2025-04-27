@@ -27,7 +27,7 @@ public class Persona {
     private Genero genero;
 
     private int edad;
-    private LocalDate fecha_nacimiento;
+    private String fecha_nacimiento;
     private int prefijoTel;
     private String telefono;
     private String otroTelefono;
