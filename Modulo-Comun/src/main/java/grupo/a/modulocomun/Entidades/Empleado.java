@@ -1,12 +1,13 @@
 package grupo.a.modulocomun.Entidades;
 
 import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
-import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
+import grupo.a.modulocomun.Entidades.Maestros.Especialidades;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name="empleados")
 public class Empleado extends Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,17 +25,25 @@ public class Empleado extends Persona {
 
     private boolean administrador;
     private String comentarios;
-    private String entidadBancaria;
-    private String numCuenta;
     private Long salarioAnual;
     private Long comisionAnual;
 
-    @Embedded
-    private TarjetaCredito tarjeta;
+    @Column(name = "fecha_alta")
+    private LocalDate fecha_alta;
 
-    //crea una tabla adicional con las especializaciones (strings)
-    @ElementCollection
-    private List<String> especializaciones = new ArrayList<>();
+    //al guardar un empleado también guarda los datos bancarios
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "datos_bancarios_id", referencedColumnName = "id")
+    private DatosBancarios datosBancarios;
+
+    @ManyToMany
+    @JoinTable(
+            name = "empleado_especialidades",
+            joinColumns = @JoinColumn(name = "empleado_id"),
+            inverseJoinColumns = @JoinColumn(name = "especialidad_id")
+    )
+    private List<Especialidades> especialidades = new ArrayList<>();
+
 
 
     //Relaciones

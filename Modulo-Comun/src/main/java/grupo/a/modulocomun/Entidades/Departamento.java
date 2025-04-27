@@ -12,14 +12,22 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "departamentos")
 public class Departamento {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PK_departamento")
-    private UUID id_dept;
+    private Long id_dept;
 
     private String nombre_dept;
     private String cod;
     private String loc;
     private BigDecimal presupuesto;
+
+    public Departamento(String nombre_dept, String cod, String loc, BigDecimal presupuesto) {
+        this.nombre_dept = nombre_dept;
+        this.cod = cod;
+        this.loc = loc;
+        this.presupuesto = presupuesto;
+    }
 }

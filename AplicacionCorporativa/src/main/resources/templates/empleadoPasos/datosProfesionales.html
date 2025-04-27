@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Datos Profesionales</title>
+</head>
+<body>
+<a href="/paso1"><button>Paso 1</button></a>
+<a href="/paso2"><button>Paso 2</button></a>
+<a href="/paso3"><button>Paso 3</button></a>
+<a href="/paso4"><button>Paso 4</button></a>
+<a href="/resumen"><button>Resumen</button></a>
+<form id="formulario" method="post" th:action="@{/paso3}" th:object="${datos}">
+  <fieldset>
+    <legend>Datos Profesionales</legend>
+    <label for="depart">Departamento</label>
+    <select id="depart" th:field="*{departamento}" >
+      <option th:each="depart: ${departamentos}" th:value="${depart.getId_dept()}" th:text="${depart.getNombre_dept()}"></option>
+    </select>
+    <div th:if="${enviado}">
+      <div th:each="error: ${#fields.errors('depart')}" th:text="${error} " class="error"></div>
+    </div>
+    <br><br>
+    <label for="especialidades">Especialidades</label>
+    <div th:each="espec: ${especialidades}">
+      <input id="especialidades" type="checkbox" th:field="*{especializaciones}" th:value="${espec.getId()}" th:text="${espec.getNombre()}">
+    </div>
+    <div th:if="${enviado}">
+      <div th:each="error: ${#fields.errors('especialidades')}" th:text="${error} " class="error"></div>
+    </div>
+    <br><br>
+
+  </fieldset>
+  <a href="/paso2"><button type="button">Volver</button></a>
+  <button type="submit">Grabar Informarción - Pasar al paso 4: Datos Económicos</button>
+</form>
+</body>
+</html>

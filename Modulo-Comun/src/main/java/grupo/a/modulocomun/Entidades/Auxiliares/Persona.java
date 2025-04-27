@@ -1,30 +1,45 @@
 package grupo.a.modulocomun.Entidades.Auxiliares;
 
+import grupo.a.modulocomun.Entidades.Maestros.Genero;
+import grupo.a.modulocomun.Entidades.Maestros.Pais;
+import grupo.a.modulocomun.Entidades.Maestros.TipoDocumento;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@AllArgsConstructor @NoArgsConstructor @Data
 /*
 * dos opciones para que usuario y empleado hereden de persona
 * @Inheritance(strategy = InheritanceType.JOINED)
-* @MappedSuperclass
 * */
+@AllArgsConstructor @NoArgsConstructor @Data
+@MappedSuperclass
 public class Persona {
     private String nombre;
     private String apellido;
-    private String genero;
+
+    @ManyToOne
+    @JoinColumn(name = "genero_id")
+    private Genero genero;
+
     private int edad;
-    private LocalDate fecha_nacimiento;
+    private String fecha_nacimiento;
     private int prefijoTel;
     private String telefono;
+    private String otroTelefono;
     private String email;
+
+    @Embedded
     private Direccion direccion;
-    private int cod_postal;
-    private String paisNacimiento;
-    private String tipoDocumento;
+
+    @ManyToOne
+    @JoinColumn(name = "pais_nacimiento_id")
+    private Pais paisNacimiento;
+
+    @OneToOne
+    private TipoDocumento tipoDocumento;
     private String documento;
 
 }
