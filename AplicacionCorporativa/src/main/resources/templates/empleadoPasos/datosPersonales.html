@@ -37,7 +37,7 @@
         </div>
         <br>
         <label for="nacimiento">Fecha de Nacimiento</label>
-        <input type="text" id="nacimiento" th:field="*{fecha_nacimiento}">
+        <input type="text" id="nacimiento" th:field="*{fechaNacimiento}">
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('fecha_nacimiento')}" th:text="${error} " class="error"></div>
         </div>

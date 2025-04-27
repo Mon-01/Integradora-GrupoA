@@ -138,11 +138,12 @@ public class controladorEmpleadoPasos {
         return "empleadoPasos/resumen";
     }
 
-//    @PostMapping("/resumen")
-//    public String guardarDatosEmpleado(HttpSession session) {
-//        EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
-//
-//    }
+    @PostMapping("/resumen")
+    public String guardarDatosEmpleado(HttpSession session) {
+        EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
+        datosAuxiliaresService.getEmpleadoService().guardarEmpleado(empleado);
+        return "registroExitoso";
+    }
 
     @GetMapping("/resetearSesion")
     public String resetearSesion(HttpSession session) {

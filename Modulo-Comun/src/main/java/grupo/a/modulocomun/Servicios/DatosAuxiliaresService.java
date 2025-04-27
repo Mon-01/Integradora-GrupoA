@@ -19,4 +19,5 @@ public class DatosAuxiliaresService {
     private final EspecialidadesService especialidadesService;
     private final EntidadBancariaService entidadBancariaService;
     private final TipoTarjetaService tipoTarjetaService;
+    private final EmpleadoService empleadoService;
 }

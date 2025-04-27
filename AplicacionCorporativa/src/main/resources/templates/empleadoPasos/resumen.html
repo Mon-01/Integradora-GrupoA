@@ -17,7 +17,7 @@
         <p for="name">Nombre: <span th:text="${empleadoForm.getNombre()}"></span></p>
         <p for="apellido">Apellidos: <span th:text="${empleadoForm.getApellido()}"></span></p>
         <p for="genero">Género: <span th:text="${generoService.obtenerNombrePorId(empleadoForm.getGenero())}"></span></p>
-        <p for="nacimiento">Fecha de Nacimiento: <span th:text="${empleadoForm.getFecha_nacimiento()}"></span></p>
+        <p for="nacimiento">Fecha de Nacimiento: <span th:text="${empleadoForm.getFechaNacimiento()}"></span></p>
         <p for="edad">Edad: <span th:text="${empleadoForm.getEdad()}"></span></p>
         <p for="pais">País de Nacimiento: <span th:text="${paisService.obtenerNombrePorId(empleadoForm.getPaisNacimiento())}"></span></p>
         <p for="comentarios">Comentarios: <span th:text="${empleadoForm.getComentarios()}"></span></p>
@@ -53,23 +53,26 @@
     <fieldset>
         <legend>Datos Profesinales</legend>
         <p for="depart">Departamento: <span th:text="${empleadoForm.getDepartamento()}"></span></p>
-        <p for="espec">Especialidades: <span th:text="${empleadoForm.getEspecializaciones()}"></span></p>
+        <p for="espec">Especialidades: </p>
+            <ul>
+                <li th:each="especialidad : ${empleadoForm.getEspecializaciones()}" th:text="${especialidadStat}"></li>
+            </ul>
         <br>
     </fieldset>
 
     <!--Datos Ecónomicos-->
     <fieldset>
         <legend>Datos Económicos</legend>
-        <p for="entidad">Entidad Bancaria: <span th:text="${entidadBancariaService.obtenerNombrePorId(empleadoForm.getEntidadBancaria())}"></span></p>
-        <p for="numCuen">Número de Cuenta: <span th:text="${empleadoForm.getNumCuenta()}"></span></p>
+        <p for="entidad">Entidad Bancaria: <span th:text="${entidadBancariaService.obtenerNombrePorId(empleadoForm.datosBancarios.entidadBancaria)}"></span></p>
+        <p for="numCuen">Número de Cuenta: <span th:text="${empleadoForm.getDatosBancarios().numCuenta}"></span></p>
         <p for="sal">Salario: <span th:text="${empleadoForm.getSalarioAnual()}"></span></p>
         <p for="comision">Comisión: <span th:text="${empleadoForm.getComisionAnual()}"></span></p>
         <fieldset>
             <legend>Tarjeta</legend>
             <div>
-                <p>Tipo Tarjeta: <span th:text="${tipoTarjetaService.obtenerNombrePorId(empleadoForm.getTarjeta().tipo)}"></span>
-                <p>Número: <span th:text="${empleadoForm.getTarjeta().numero}"></span></p>
-                <p>CVC: <span th:text="${empleadoForm.getTarjeta().cvc}"></span></p>
+                <p>Tipo Tarjeta: <span th:text="${tipoTarjetaService.obtenerNombrePorId(empleadoForm.getDatosBancarios().tarjeta.tipo)}"></span>
+                <p>Número: <span th:text="${empleadoForm.datosBancarios.tarjeta.numero}"></span></p>
+                <p>CVC: <span th:text="${empleadoForm.datosBancarios.tarjeta.cvc}"></span></p>
                </div>
         </fieldset>
         <br>
@@ -77,6 +80,6 @@
 </form>
 <a href="/paso4"><button>Volver</button></a>
 <a href="/resetearSesion"><button>Volver al principio</button></a>
-<button>Guardar Datos</button>
+<a href="/resumen"><button>Guardar Datos</button></a>
 </body>
 </html>

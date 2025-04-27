@@ -2,10 +2,8 @@ package grupo.a.modulocomun.Entidades.Auxiliares;
 
 import grupo.a.modulocomun.Entidades.Maestros.Genero;
 import grupo.a.modulocomun.Entidades.Maestros.Pais;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MappedSuperclass;
+import grupo.a.modulocomun.Entidades.Maestros.TipoDocumento;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,7 +38,8 @@ public class Persona {
     @JoinColumn(name = "pais_nacimiento_id")
     private Pais paisNacimiento;
 
-    private String tipoDocumento;
+    @OneToOne
+    private TipoDocumento tipoDocumento;
     private String documento;
 
 }

@@ -1,6 +1,5 @@
 package grupo.a.modulocomun.Entidades;
 
-import grupo.a.modulocomun.Entidades.Auxiliares.DatosBancarios;
 import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
 import grupo.a.modulocomun.Entidades.Maestros.Especialidades;
 import jakarta.persistence.*;

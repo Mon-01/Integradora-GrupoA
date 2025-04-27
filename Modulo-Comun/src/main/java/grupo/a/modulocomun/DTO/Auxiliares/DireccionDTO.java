@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DireccionDTO {
-    private TipoVia tipoVia;
+    private Long tipoVia;
 
     private String nombreVia;
     private int numero;

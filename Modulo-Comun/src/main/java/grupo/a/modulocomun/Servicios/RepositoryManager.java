@@ -1,9 +1,7 @@
 package grupo.a.modulocomun.Servicios;
 
-import grupo.a.modulocomun.Repositorios.Maestros.GeneroRepository;
-import grupo.a.modulocomun.Repositorios.Maestros.PaisRepository;
-import grupo.a.modulocomun.Repositorios.Maestros.TipoTarjetaRepository;
-import grupo.a.modulocomun.Repositorios.Maestros.TipoViaRepository;
+import grupo.a.modulocomun.Repositorios.DepartamentoRepository;
+import grupo.a.modulocomun.Repositorios.Maestros.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +14,8 @@ public class RepositoryManager {
     private final TipoViaRepository tipoViaRepository;
     private final PaisRepository paisRepository;
     private final TipoTarjetaRepository tipoTarjetaRepository;
-
+    private final DepartamentoRepository departamentoRepository;
+    private final TipoDocumentoRepository tipoDocumentoRepository;
+    private final EspecialidadesRepository especialidadesRepository;
 
 }

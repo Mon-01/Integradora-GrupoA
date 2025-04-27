@@ -16,7 +16,7 @@
         <fieldset>
             <legend>Cuenta corriente</legend>
             <label for="entidad">Entidad bancaria</label>
-            <select id="entidad" th:field="*{entidadBancaria}" >
+            <select id="entidad" th:field="*{datosBancarios.entidadBancaria}" >
                 <option th:each="entidad: ${entidades}" th:value="${entidad.getId()}" th:text="${entidad.getNombre()}"></option>
             </select>
             <div th:if="${enviado}">
@@ -24,7 +24,7 @@
             </div>
             <br>
             <label for="numCuenta">Número de cuenta</label>
-            <input type="text" id="numCuenta" th:field="*{numCuenta}">
+            <input type="text" id="numCuenta" th:field="*{datosBancarios.numCuenta}">
             <div th:if="${enviado}">
                 <div th:each="error: ${#fields.errors('numCuenta')}" th:text="${error} " class="error"></div>
             </div>
@@ -45,17 +45,17 @@
         <fieldset>
             <legend>Tarjeta de Crédito</legend>
             <label for="tipo">Tipo de tarjeta</label>
-            <select id="tipo" th:field="*{tarjeta.tipo}" >
+            <select id="tipo" th:field="*{datosBancarios.tarjeta.tipo}" >
             <option th:each="tar: ${tarjetaTipo}" th:value="${tar.getId()}" th:text="${tar.getNombre()}"></option>
             </select>
             <br><br>
             <label for="numeroTarjeta">Número</label>
-            <input type="text" id="numeroTarjeta" th:field="*{tarjeta.numero}">
+            <input type="text" id="numeroTarjeta" th:field="*{datosBancarios.tarjeta.numero}">
             <br><br>
             <label for="caducidad">Caducidad</label>
 <!--            <input type="text" id="caducidad" th:field="*{tarjeta.caducidad}">-->
             <label for="cvc">CVC</label>
-            <input type="text" id="cvc" th:field="*{tarjeta.cvc}">
+            <input type="text" id="cvc" th:field="*{datosBancarios.tarjeta.cvc}">
         </fieldset>
     </fieldset>
     <a href="/paso3"><button type="button">Volver</button></a>

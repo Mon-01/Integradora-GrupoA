@@ -26,6 +26,6 @@ public class PersonaDTO {
 
     private Long paisNacimiento;
 
-    private String tipoDocumento;
+    private Long tipoDocumento;
     private String documento;
 }
