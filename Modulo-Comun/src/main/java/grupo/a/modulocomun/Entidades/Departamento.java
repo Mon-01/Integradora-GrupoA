@@ -15,9 +15,9 @@ import java.util.UUID;
 @Table(name = "departamentos")
 public class Departamento {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PK_departamento")
-    private UUID id_dept;
+    private Long id_dept;
 
     private String nombre_dept;
     private String cod;

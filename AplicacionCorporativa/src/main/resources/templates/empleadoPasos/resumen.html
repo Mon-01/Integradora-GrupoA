@@ -55,7 +55,7 @@
         <p for="depart">Departamento: <span th:text="${empleadoForm.getDepartamento()}"></span></p>
         <p for="espec">Especialidades: </p>
             <ul>
-                <li th:each="especialidad : ${empleadoForm.getEspecializaciones()}" th:text="${especialidadStat}"></li>
+                <li th:each="especialidad : ${empleadoForm.getEspecializaciones()}" th:text="${especialidadesService.obtenerNombrePorId(especialidad)}"></li>
             </ul>
         <br>
     </fieldset>
@@ -77,9 +77,9 @@
         </fieldset>
         <br>
     </fieldset>
-</form>
 <a href="/paso4"><button>Volver</button></a>
 <a href="/resetearSesion"><button>Volver al principio</button></a>
-<a href="/resumen"><button>Guardar Datos</button></a>
+<button type="submit">Guardar Datos</button>
+</form>
 </body>
 </html>

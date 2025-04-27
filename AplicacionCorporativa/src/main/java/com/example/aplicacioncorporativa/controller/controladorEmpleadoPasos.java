@@ -135,14 +135,16 @@ public class controladorEmpleadoPasos {
         model.addAttribute("departamentoService",datosAuxiliaresService.getDepartamentoService());
         model.addAttribute("entidadBancariaService",datosAuxiliaresService.getEntidadBancariaService());
         model.addAttribute("tipoTarjetaService",datosAuxiliaresService.getTipoTarjetaService());
+        model.addAttribute("especialidadesService",datosAuxiliaresService.getEspecialidadesService());
         return "empleadoPasos/resumen";
     }
 
     @PostMapping("/resumen")
     public String guardarDatosEmpleado(HttpSession session) {
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
-        datosAuxiliaresService.getEmpleadoService().guardarEmpleado(empleado);
-        return "registroExitoso";
+
+            datosAuxiliaresService.getEmpleadoService().guardarEmpleado(empleado);
+            return "registroExitoso";
     }
 
     @GetMapping("/resetearSesion")
