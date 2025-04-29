@@ -38,7 +38,8 @@ public class Persona {
     @JoinColumn(name = "pais_nacimiento_id")
     private Pais paisNacimiento;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "tipo_documento_id")
     private TipoDocumento tipoDocumento;
     private String documento;
 

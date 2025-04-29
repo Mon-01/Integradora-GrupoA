@@ -1,28 +1,35 @@
 package com.example.aplicacioncorporativa.controller;
 
 import com.example.aplicacioncorporativa.DTO.UsuarioDTO;
+import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.Usuario;
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
+import grupo.a.modulocomun.Servicios.EmpleadoService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class controladorMVCCorporativo {
 
     private final UsuarioService usuarioService;
     private final HttpSession session;
+    private final EmpleadoService empleadoService;
 
-    public controladorMVCCorporativo(UsuarioService usuarioService, HttpSession session) {
+    public controladorMVCCorporativo(UsuarioService usuarioService, HttpSession session, EmpleadoService empleadoService) {
         this.usuarioService = usuarioService;
         this.session = session;
+        this.empleadoService = empleadoService;
     }
     @GetMapping("/reg")
     public String mostrarFormularioRegistro(Model model) {
@@ -102,6 +109,17 @@ public class controladorMVCCorporativo {
     public String logout() {
         session.invalidate();
         return "redirect:/login";
+    }
+
+    @GetMapping("/detalle/{id}")
+    public String mostrarDetalle(@PathVariable Long id, Model model) {
+        Optional<Empleado> empleado = empleadoService.obtenerEmpleadoPorId(id);
+        if (empleado.isPresent()) {
+            model.addAttribute("empleado", empleado.get());
+            return "corporativo/detalle";
+        } else {
+            return "corporativo/404"; // o puedes redirigir a una página de error genérica
+        }
     }
 
 }

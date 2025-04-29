@@ -12,17 +12,179 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class EmpleadoService {
 
+
+
     @Autowired
-    private EmpleadoRepository empleadoRepository;
+    private final EmpleadoRepository empleadoRepository;
 
     @Autowired
     private RepositoryManager repositoryManager;
+
+    public EmpleadoService(EmpleadoRepository empleadoRepository) {
+        this.empleadoRepository = empleadoRepository;
+    }
+
+    public void cargarEmpleado(){
+
+        empleadoRepository.save(insertarEmpleado1());
+        empleadoRepository.save(insertarEmpleado2());
+        empleadoRepository.save(insertarEmpleado3());
+        empleadoRepository.save(insertarEmpleado4());
+
+    }
+
+    public Empleado insertarEmpleado1(){
+        Empleado empleado1 = new Empleado();
+        empleado1.setNombre("Laura");
+        empleado1.setApellido("Martínez");
+
+        empleado1.setGenero(repositoryManager.getGeneroRepository().findById(1L).orElseThrow(EntityNotFoundException::new));
+        empleado1.setEdad(28);
+        empleado1.setFecha_nacimiento("1996-07-23");
+        empleado1.setPrefijoTel(34);
+        empleado1.setTelefono("612345678");
+        empleado1.setOtroTelefono("699112233");
+        empleado1.setEmail("laura.martinez@empresa.com");
+
+        empleado1.setDireccion(new Direccion(repositoryManager.getTipoViaRepository().findById(2L)
+                .orElseThrow(EntityNotFoundException::new),
+                "Avenida del Sol", 10, 2, 1, "A", "Sevilla", "41001", "Andalucía"));
+
+        empleado1.setPaisNacimiento(repositoryManager.getPaisRepository().findById(2L).orElseThrow(EntityNotFoundException::new));
+        empleado1.setTipoDocumento(repositoryManager.getTipoDocumentoRepository().findById(2L).orElseThrow(EntityNotFoundException::new));
+        empleado1.setDocumento("98765432Z");
+
+        empleado1.setAdministrador(false);
+        empleado1.setComentarios("Incorporada recientemente al departamento de ventas.");
+        empleado1.setSalarioAnual(28000L);
+        empleado1.setComisionAnual(1500L);
+        empleado1.setFecha_alta(LocalDate.of(2023, 6, 1));
+
+        empleado1.setEspecialidades(List.of(
+                repositoryManager.getEspecialidadesRepository().findById(2L).orElseThrow(EntityNotFoundException::new)
+        ));
+
+        return empleado1;
+    }
+
+    public Empleado insertarEmpleado2(){
+        Empleado empleado2 = new Empleado();
+        empleado2.setNombre("Ana");
+        empleado2.setApellido("García");
+
+        empleado2.setGenero(repositoryManager.getGeneroRepository().findById(2L).orElseThrow(EntityNotFoundException::new));
+        empleado2.setEdad(30);
+        empleado2.setFecha_nacimiento("1995-04-12");
+        empleado2.setPrefijoTel(34);
+        empleado2.setTelefono("600123456");
+        empleado2.setOtroTelefono("699987654");
+        empleado2.setEmail("ana.garcia@empresa.com");
+
+        empleado2.setDireccion(new Direccion(repositoryManager.getTipoViaRepository().findById(1L)
+                .orElseThrow(EntityNotFoundException::new),
+                "Calle Mayor",24, 12, 3, "B", "Madrid", "28013", "Madrid"));
+
+        empleado2.setPaisNacimiento(repositoryManager.getPaisRepository().findById(1L).orElseThrow(EntityNotFoundException::new));
+        empleado2.setTipoDocumento(repositoryManager.getTipoDocumentoRepository().findById(1L).orElseThrow(EntityNotFoundException::new));
+        empleado2.setDocumento("12345678A");
+
+        empleado2.setAdministrador(true);
+        empleado2.setComentarios("Trabajadora muy eficiente.");
+        empleado2.setSalarioAnual(35000L);
+        empleado2.setComisionAnual(3000L);
+        empleado2.setFecha_alta(LocalDate.of(2022, 1, 10));
+
+
+        empleado2.setEspecialidades(List.of(
+                repositoryManager.getEspecialidadesRepository().findById(1L).orElseThrow(EntityNotFoundException::new),
+                repositoryManager.getEspecialidadesRepository().findById(4L).orElseThrow(EntityNotFoundException::new)
+        ));
+
+        return empleado2;
+    }
+
+    public Empleado insertarEmpleado3(){
+        Empleado empleado3 = new Empleado();
+        empleado3.setNombre("Carlos");
+        empleado3.setApellido("López");
+
+        empleado3.setGenero(repositoryManager.getGeneroRepository().findById(1L).orElseThrow(EntityNotFoundException::new));
+        empleado3.setEdad(40);
+        empleado3.setFecha_nacimiento("1984-02-15");
+        empleado3.setPrefijoTel(34);
+        empleado3.setTelefono("622334455");
+        empleado3.setOtroTelefono("688554433");
+        empleado3.setEmail("carlos.lopez@empresa.com");
+
+        empleado3.setDireccion(new Direccion(repositoryManager.getTipoViaRepository().findById(3L)
+                .orElseThrow(EntityNotFoundException::new),
+                "Camino Real", 45, 0, 0, "", "Valencia", "46001", "Comunidad Valenciana"));
+
+        empleado3.setPaisNacimiento(repositoryManager.getPaisRepository().findById(1L).orElseThrow(EntityNotFoundException::new));
+        empleado3.setTipoDocumento(repositoryManager.getTipoDocumentoRepository().findById(1L).orElseThrow(EntityNotFoundException::new));
+        empleado3.setDocumento("11223344B");
+
+        empleado3.setAdministrador(true);
+        empleado3.setComentarios("Responsable del área de IT.");
+        empleado3.setSalarioAnual(50000L);
+        empleado3.setComisionAnual(5000L);
+        empleado3.setFecha_alta(LocalDate.of(2021, 3, 15));
+
+        empleado3.setEspecialidades(List.of(
+                repositoryManager.getEspecialidadesRepository().findById(3L).orElseThrow(EntityNotFoundException::new),
+                repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
+        ));
+
+        return empleado3;
+    }
+
+    public Empleado insertarEmpleado4(){
+        Empleado empleado4 = new Empleado();
+        empleado4.setNombre("Elena");
+        empleado4.setApellido("Ríos");
+
+        empleado4.setGenero(repositoryManager.getGeneroRepository().findById(2L).orElseThrow(EntityNotFoundException::new));
+        empleado4.setEdad(35);
+        empleado4.setFecha_nacimiento("1989-09-10");
+        empleado4.setPrefijoTel(34);
+        empleado4.setTelefono("633445566");
+        empleado4.setOtroTelefono("699776655");
+        empleado4.setEmail("elena.rios@empresa.com");
+
+        empleado4.setDireccion(new Direccion(repositoryManager.getTipoViaRepository().findById(1L)
+                .orElseThrow(EntityNotFoundException::new),
+                "Calle Luna", 5, 1, 1, "C", "Barcelona", "08001", "Cataluña"));
+
+        empleado4.setPaisNacimiento(repositoryManager.getPaisRepository().findById(3L).orElseThrow(EntityNotFoundException::new));
+        empleado4.setTipoDocumento(repositoryManager.getTipoDocumentoRepository().findById(1L).orElseThrow(EntityNotFoundException::new));
+        empleado4.setDocumento("44332211C");
+
+        empleado4.setAdministrador(false);
+        empleado4.setComentarios("Experta en atención al cliente y gestión de incidencias.");
+        empleado4.setSalarioAnual(32000L);
+        empleado4.setComisionAnual(2500L);
+        empleado4.setFecha_alta(LocalDate.of(2020, 11, 20));
+
+        empleado4.setEspecialidades(List.of(
+                repositoryManager.getEspecialidadesRepository().findById(2L).orElseThrow(EntityNotFoundException::new),
+                repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
+        ));
+
+        return empleado4;
+    }
+
+    public Optional<Empleado> obtenerEmpleadoPorId(Long id){
+        return empleadoRepository.findById(id);
+    }
 
     public void guardarEmpleado(EmpleadoDTO empleadoDTO){
 
