@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -30,4 +32,8 @@ public class Usuario{
     @OneToOne(mappedBy = "usuario")
     //el usuario pertenece al empleado, la clave ajena va en empleado
     private Empleado empleado;
+
+    private boolean bloqueado;
+    private String motivoBloqueo;
+    private LocalDateTime FechaFinBloqueo;
 }
