@@ -61,9 +61,9 @@
 
     <!-- Filtros de búsqueda -->
     <form id="filtroForm" method="get" th:action="@{/admin/inicio}">
-        <input type="text" name="nombre" placeholder="Nombre" th:value="${nombre}" onkeyup="this.form.submit()">
-        <input type="text" name="departamento" placeholder="Departamento" th:value="${departamento}" onkeyup="this.form.submit()">
-        <input type="number" name="salario" placeholder="Salario mínimo" th:value="${salario}" onkeyup="this.form.submit()">
+        <input type="text" name="nombre" placeholder="Nombre" th:value="${nombre}" onblur="this.form.submit()">
+        <input type="text" name="departamento" placeholder="Departamento" th:value="${departamento}" onblur="this.form.submit()">
+        <input type="number" name="salario" placeholder="Salario mínimo" th:value="${salario}" onblur="this.form.submit()">
         <button type="submit">Buscar</button>
     </form>
 
