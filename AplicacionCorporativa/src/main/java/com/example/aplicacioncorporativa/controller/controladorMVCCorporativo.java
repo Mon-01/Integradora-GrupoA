@@ -98,6 +98,8 @@ public class controladorMVCCorporativo {
         return "corporativo/areaPersonal";
     }
 
+
+
     @GetMapping("/logout")
     public String logout() {
         session.invalidate();

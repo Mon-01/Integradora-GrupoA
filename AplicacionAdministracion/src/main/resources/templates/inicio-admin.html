@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Administración - Lista de Empleados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .contenedor-principal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .tabla-contenedor {
+            width: 80%;
+            display: flex;
+            justify-content: center;
+        }
+
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Bienvenido, <span th:text="${adminEmail}"></span></h2>
+<h3>Empleados registrados</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Apellidos</th>
+        <th>Email</th>
+        <th>Departamento</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="emp : ${empleados}">
+        <td th:text="${emp.nombre}">Nombre</td>
+        <td th:text="${emp.apellido}">Apellidos</td>
+        <td th:text="${emp.email}">Email</td>
+        <td th:text="${emp.departamento != null ? emp.departamento.nombre_dept : 'Sin asignar'}">Depto</td>
+    </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>
