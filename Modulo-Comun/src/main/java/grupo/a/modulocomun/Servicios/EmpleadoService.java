@@ -19,10 +19,14 @@ import java.util.stream.Collectors;
 public class EmpleadoService {
 
     @Autowired
-    private EmpleadoRepository empleadoRepository;
+    private  EmpleadoRepository empleadoRepository;
 
     @Autowired
     private RepositoryManager repositoryManager;
+
+    public EmpleadoService(EmpleadoRepository empleadoRepository) {
+        this.empleadoRepository = empleadoRepository;
+    }
 
     public void guardarEmpleado(EmpleadoDTO empleadoDTO){
 

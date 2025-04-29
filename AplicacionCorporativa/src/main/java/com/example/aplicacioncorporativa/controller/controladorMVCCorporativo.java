@@ -91,6 +91,7 @@ public class controladorMVCCorporativo {
         session.getServletContext().setAttribute("contadorGlobal", contadorGlobal);
 
         // Enviamos datos a la vista
+        model.addAttribute("usuario",usuarioLogueado);
         model.addAttribute("usuarioEmail", usuarioLogueado.getEmail());
         model.addAttribute("contadorSesion", contadorSesion);
         model.addAttribute("contadorTotal", contadorTotal);
