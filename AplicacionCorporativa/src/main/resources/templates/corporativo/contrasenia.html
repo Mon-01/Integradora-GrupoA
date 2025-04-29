@@ -19,9 +19,14 @@
         }
         .login-box button:hover { background-color: #b71c1c; }
         .error { color: red; text-align: center; margin-bottom: 1rem; }
+        .login-box a { text-align: center; display: block; margin-top: 1rem; color: #d32f2f; text-decoration: none; }
+        .login-box a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
+
+<!-- Incluir barra de navegación -->
+<div th:replace="~{fragments/nav :: navbar}"></div>
 
 <div class="login-container">
     <div class="login-box">
@@ -29,9 +34,11 @@
 
         <div th:if="${error}" class="error" th:text="${error}"></div>
 
-        <form th:action="@{/password}" th:object="${usuarioDTO}" method="post">
+        <form th:action="@{/inicio}" th:object="${usuarioDTO}" method="post">
             <input type="password" th:field="*{clave}" placeholder="Contraseña" required>
             <button type="submit">Entrar</button>
+            <a th:href="@{/cambiar-clave/{id}(id=${usuarioDTO.id_usuario})}">¿No recuerdas la contraseña?</a>
+
         </form>
     </div>
 </div>

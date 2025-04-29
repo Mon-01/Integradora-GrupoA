@@ -36,6 +36,7 @@ public class UsuarioService {
                     String claveEncriptada = passwordEncoder.encode(dto.getClave());
                     usuario.setClave(claveEncriptada);
                     usuario.setConfirmarClave(dto.getConfirmarClave());
+                    usuario.setRespuestaSecreta(dto.getRespuestaSecreta());
                     return usuario;
                 })
                 .map(usuarioRepository::save); // guarda y devuelve el Optional

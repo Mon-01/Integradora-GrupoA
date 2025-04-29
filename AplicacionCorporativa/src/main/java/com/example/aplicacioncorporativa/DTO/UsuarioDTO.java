@@ -15,6 +15,7 @@ public class UsuarioDTO {
     private String clave;
     private String confirmarClave;
     private EmpleadoDTO empleado;
+    private String respuestaSecreta;
 
 }
 

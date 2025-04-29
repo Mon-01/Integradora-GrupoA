@@ -29,4 +29,7 @@ public class Usuario{
     @OneToOne(mappedBy = "usuario")
     //el usuario pertenece al empleado, la clave ajena va en empleado
     private Empleado empleado;
+
+    @Column(nullable = false)
+    private String respuestaSecreta;
 }
