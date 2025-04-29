@@ -1,7 +1,7 @@
 package com.example.aplicacioncorporativa.controller;
 
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
-import grupo.a.modulocomun.Servicios.DatosAuxiliaresService;
+import grupo.a.modulocomun.Servicios.ServiceManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class controladorEmpleadoPasos {
 
     @Autowired
-    private DatosAuxiliaresService datosAuxiliaresService;
+    private ServiceManager serviceManager;
 
     @RequestMapping(value = "/paso1", method = {RequestMethod.GET, RequestMethod.POST})
     public String paso1(@ModelAttribute("datos") EmpleadoDTO datosEmpleado,HttpServletRequest request, HttpSession sesion, Model model,
@@ -26,8 +26,8 @@ public class controladorEmpleadoPasos {
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
             model.addAttribute("datos", datosEmpleado);
-            model.addAttribute("generos", datosAuxiliaresService.getGeneroService().obtenerTodos());
-            model.addAttribute("paises", datosAuxiliaresService.getPaisService().obtenerTodosPaises());
+            model.addAttribute("generos", serviceManager.getGeneroService().obtenerTodos());
+            model.addAttribute("paises", serviceManager.getPaisService().obtenerTodosPaises());
             return "empleadoPasos/datosPersonales";
         } else {
             //si hay errores de validación los muestra en el formulario
@@ -52,8 +52,8 @@ public class controladorEmpleadoPasos {
         //si es GET cargará los datos de la sesión o creará una nueva sesión
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
-            model.addAttribute("tipoDoc", datosAuxiliaresService.getTipoDocumentoService().obtenerTiposDocumento());
-            model.addAttribute("vias", datosAuxiliaresService.getTipoViaService().obtenerTipoVia());
+            model.addAttribute("tipoDoc", serviceManager.getTipoDocumentoService().obtenerTiposDocumento());
+            model.addAttribute("vias", serviceManager.getTipoViaService().obtenerTipoVia());
             model.addAttribute("datos", datosEmpleado);
             return "empleadoPasos/datosContacto";
         } else {
@@ -80,8 +80,8 @@ public class controladorEmpleadoPasos {
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
             model.addAttribute("datos", datosEmpleado);
-            model.addAttribute("departamentos", datosAuxiliaresService.getDepartamentoService().obtenerTodos());
-            model.addAttribute("especialidades", datosAuxiliaresService.getEspecialidadesService().obtenerEspecialidades());
+            model.addAttribute("departamentos", serviceManager.getDepartamentoService().obtenerTodos());
+            model.addAttribute("especialidades", serviceManager.getEspecialidadesService().obtenerEspecialidades());
             return "empleadoPasos/datosProfesionales";
         } else {
             //si hay errores de validación los muestra en el formulario
@@ -107,8 +107,8 @@ public class controladorEmpleadoPasos {
         if (request.getMethod().equalsIgnoreCase("GET")) {
             datosEmpleado = getEmpleadoFromSession(sesion);
             model.addAttribute("datos", datosEmpleado);
-            model.addAttribute("entidades",datosAuxiliaresService.getEntidadBancariaService().obtenerEntidadesBancarias());
-            model.addAttribute("tarjetaTipo",datosAuxiliaresService.getTipoTarjetaService().obtenerTodos());
+            model.addAttribute("entidades", serviceManager.getEntidadBancariaService().obtenerEntidadesBancarias());
+            model.addAttribute("tarjetaTipo", serviceManager.getTipoTarjetaService().obtenerTodos());
             return "empleadoPasos/datosEconomicos";
         } else {
             //si hay errores de validación los muestra en el formulario
@@ -128,14 +128,14 @@ public class controladorEmpleadoPasos {
     public String resumen(Model model, HttpSession session) {
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
         model.addAttribute("empleadoForm", empleado);
-        model.addAttribute("generoService",datosAuxiliaresService.getGeneroService());
-        model.addAttribute("paisService",datosAuxiliaresService.getPaisService());
-        model.addAttribute("tipoDocService",datosAuxiliaresService.getTipoDocumentoService());
-        model.addAttribute("tipoViaService",datosAuxiliaresService.getTipoViaService());
-        model.addAttribute("departamentoService",datosAuxiliaresService.getDepartamentoService());
-        model.addAttribute("entidadBancariaService",datosAuxiliaresService.getEntidadBancariaService());
-        model.addAttribute("tipoTarjetaService",datosAuxiliaresService.getTipoTarjetaService());
-        model.addAttribute("especialidadesService",datosAuxiliaresService.getEspecialidadesService());
+        model.addAttribute("generoService", serviceManager.getGeneroService());
+        model.addAttribute("paisService", serviceManager.getPaisService());
+        model.addAttribute("tipoDocService", serviceManager.getTipoDocumentoService());
+        model.addAttribute("tipoViaService", serviceManager.getTipoViaService());
+        model.addAttribute("departamentoService", serviceManager.getDepartamentoService());
+        model.addAttribute("entidadBancariaService", serviceManager.getEntidadBancariaService());
+        model.addAttribute("tipoTarjetaService", serviceManager.getTipoTarjetaService());
+        model.addAttribute("especialidadesService", serviceManager.getEspecialidadesService());
         return "empleadoPasos/resumen";
     }
 
@@ -143,7 +143,7 @@ public class controladorEmpleadoPasos {
     public String guardarDatosEmpleado(HttpSession session) {
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
 
-        datosAuxiliaresService.getEmpleadoService().guardarEmpleado(empleado);
+        serviceManager.getEmpleadoService().guardarEmpleado(empleado);
         session.invalidate();
         return "registroExitoso";
     }

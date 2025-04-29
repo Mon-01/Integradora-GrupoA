@@ -19,9 +19,9 @@ import java.util.UUID;
 @Table(name="empleados")
 public class Empleado extends Persona {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PK_empleado")
-    private UUID id_empleado;
+    private Long id_empleado;
 
     private boolean administrador;
     private String comentarios;

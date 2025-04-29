@@ -70,6 +70,6 @@ public class controladorRESTCorporativo {
 
         return contadorGlobal.getOrDefault(usuarioLogueado.getEmail(), 0);
     }
-    }
+}
 
 
