@@ -8,6 +8,7 @@ import grupo.a.modulocomun.Entidades.Departamento;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.Maestros.*;
 import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
+import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,10 +25,14 @@ public class EmpleadoService {
     private final EmpleadoRepository empleadoRepository;
 
     @Autowired
+    private final UsuarioRepository usuarioRepository;
+
+    @Autowired
     private RepositoryManager repositoryManager;
 
-    public EmpleadoService(EmpleadoRepository empleadoRepository) {
+    public EmpleadoService(EmpleadoRepository empleadoRepository, UsuarioRepository usuarioRepository) {
         this.empleadoRepository = empleadoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public void cargarEmpleado(){

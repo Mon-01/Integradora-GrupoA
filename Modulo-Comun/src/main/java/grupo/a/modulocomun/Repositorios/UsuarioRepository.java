@@ -1,4 +1,4 @@
-package com.example.aplicacioncorporativa.Repositorios;
+package grupo.a.modulocomun.Repositorios;
 
 import grupo.a.modulocomun.Entidades.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;

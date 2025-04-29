@@ -2,7 +2,7 @@ package com.example.aplicacioncorporativa.Servicios;
 
 import com.example.aplicacioncorporativa.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
-import com.example.aplicacioncorporativa.Repositorios.UsuarioRepository;
+import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
