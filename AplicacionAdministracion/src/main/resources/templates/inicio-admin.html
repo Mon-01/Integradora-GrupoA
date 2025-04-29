@@ -79,7 +79,9 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="emp : ${empleados}">
+            <tr th:each="emp : ${empleados}"
+                th:onclick="'window.location.href=\'/admin/detalle-empleado.html?id=' + ${emp.id_empleado} + '\''"
+                style="cursor:pointer;">
                 <td th:text="${emp.nombre}">Nombre</td>
                 <td th:text="${emp.apellido}">Apellidos</td>
                 <td th:text="${emp.email}">Email</td>

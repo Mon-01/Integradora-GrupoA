@@ -1,6 +1,7 @@
 package com.example.aplicacioncorporativa.controller;
 
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
+import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Servicios.ServiceManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -142,11 +143,18 @@ public class controladorEmpleadoPasos {
     @PostMapping("/resumen")
     public String guardarDatosEmpleado(HttpSession session) {
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
+        Usuario emailUsuario = (Usuario) session.getAttribute("usuarioLogueado");
 
-        serviceManager.getEmpleadoService().guardarEmpleado(empleado);
+        if (emailUsuario.getEmail() == null) {
+            // Manejar caso donde no hay usuario autenticado
+            return "redirect:/login";
+        }
+
+        serviceManager.getEmpleadoService().guardarEmpleado(empleado,emailUsuario.getEmail());
         session.invalidate();
         return "registroExitoso";
     }
+
 
     @GetMapping("/resetearSesion")
     public String resetearSesion(HttpSession session) {

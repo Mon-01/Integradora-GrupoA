@@ -22,7 +22,7 @@
             document.getElementById("contenido-empleado").innerText = "ID de empleado no especificado en la URL.";
         } else {
             //accedemos al controlador que llama al servicio de empleado para usar el metodo "obtenerPorId"
-            fetch(`/api/admin/vista/${empleadoId}`)
+            fetch(`/api/admin/${empleadoId}`)
                 .then(response => {
                     //si la respuesta del navegador es diferente de 200 lanza el error
                     if (!response.ok) throw new Error("Empleado no encontrado");

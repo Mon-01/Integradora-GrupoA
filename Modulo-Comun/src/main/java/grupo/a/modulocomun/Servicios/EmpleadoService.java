@@ -7,6 +7,7 @@ import grupo.a.modulocomun.Entidades.DatosBancarios;
 import grupo.a.modulocomun.Entidades.Departamento;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.Maestros.*;
+import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -188,27 +189,39 @@ public class EmpleadoService {
         return empleadoRepository.findById(id);
     }
 
-    public void guardarEmpleado(EmpleadoDTO empleadoDTO){
+    public void guardarEmpleado(EmpleadoDTO empleadoDTO, String emailUsuario) {
+        // Obtener el usuario actual por email
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(emailUsuario);
+        if (usuarioOptional.isEmpty()) {
+            throw new EntityNotFoundException("Usuario no encontrado con email: " + emailUsuario);
+        }
 
+        Usuario usuario = usuarioOptional.get();
+
+        // Crear y configurar el empleado
         Empleado empleado = new Empleado();
 
-        asignarCamposSimples(empleado,empleadoDTO);
+        // Asignar campos básicos
+        asignarCamposSimples(empleado, empleadoDTO);
 
-        asignarGenero(empleado,empleadoDTO);
+        // Asignar relaciones
+        asignarGenero(empleado, empleadoDTO);
+        asignarDireccion(empleado, empleadoDTO);
+        asignarPaisNacimiento(empleado, empleadoDTO);
+        asignarDatosBancarios(empleado, empleadoDTO);
+        asignarEspecialidades(empleado, empleadoDTO);
+        asignarDepartamento(empleado, empleadoDTO);
+        asignarTipoDocumento(empleado, empleadoDTO);
 
-        asignarDireccion(empleado,empleadoDTO);
+        // Relacionar con el usuario
+        empleado.setUsuario(usuario);
 
-        asignarPaisNacimiento(empleado,empleadoDTO);
-
-        asignarDatosBancarios(empleado,empleadoDTO);
-
-        asignarEspecialidades(empleado,empleadoDTO);
-
-        asignarDepartamento(empleado,empleadoDTO);
-
-        asignarTipoDocumento(empleado,empleadoDTO);
-
+        // Guardar el empleado
         empleadoRepository.save(empleado);
+
+        // Actualizar la relación inversa (opcional)
+        usuario.setEmpleado(empleado);
+        usuarioRepository.save(usuario);
     }
 
 
