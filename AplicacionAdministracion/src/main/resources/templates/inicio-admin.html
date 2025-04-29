@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html  lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Administración - Lista de Empleados</title>
@@ -15,6 +15,23 @@
             flex-direction: column;
             align-items: center;
             margin-top: 40px;
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+
+        form#filtroForm {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        form#filtroForm input, form#filtroForm button {
+            padding: 6px 10px;
+            font-size: 14px;
         }
 
         .tabla-contenedor {
@@ -34,36 +51,45 @@
             padding: 8px;
             text-align: center;
         }
-
-        h2, h3 {
-            text-align: center;
-        }
     </style>
 </head>
 <body>
 
-<h2>Bienvenido, <span th:text="${adminEmail}"></span></h2>
-<h3>Empleados registrados</h3>
+<div class="contenedor-principal">
+    <h2>Bienvenido, <span th:text="${adminEmail}"></span></h2>
+    <h3>Empleados registrados</h3>
 
-<table>
-    <thead>
-    <tr>
-        <th>Nombre</th>
-        <th>Apellidos</th>
-        <th>Email</th>
-        <th>Departamento</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="emp : ${empleados}">
-        <td th:text="${emp.nombre}">Nombre</td>
-        <td th:text="${emp.apellido}">Apellidos</td>
-        <td th:text="${emp.email}">Email</td>
-        <td th:text="${emp.departamento != null ? emp.departamento.nombre_dept : 'Sin asignar'}">Depto</td>
-    </tr>
-    </tbody>
-</table>
+    <!-- Filtros de búsqueda -->
+    <form id="filtroForm" method="get" th:action="@{/admin/inicio}">
+        <input type="text" name="nombre" placeholder="Nombre" th:value="${nombre}" onkeyup="this.form.submit()">
+        <input type="text" name="departamento" placeholder="Departamento" th:value="${departamento}" onkeyup="this.form.submit()">
+        <input type="number" name="salario" placeholder="Salario mínimo" th:value="${salario}" onkeyup="this.form.submit()">
+        <button type="submit">Buscar</button>
+    </form>
 
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Email</th>
+                <th>Departamento</th>
+                <th>Salario</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="emp : ${empleados}">
+                <td th:text="${emp.nombre}">Nombre</td>
+                <td th:text="${emp.apellido}">Apellidos</td>
+                <td th:text="${emp.email}">Email</td>
+                <td th:text="${emp.departamento != null ? emp.departamento.nombre_dept : 'Sin asignar'}">Depto</td>
+                <td th:text="${emp.salarioAnual}">Salario</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 </body>
 </html>

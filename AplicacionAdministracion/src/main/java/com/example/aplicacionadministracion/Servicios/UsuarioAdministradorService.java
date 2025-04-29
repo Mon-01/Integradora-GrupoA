@@ -42,6 +42,10 @@ public class UsuarioAdministradorService {
     public List<Empleado> obtenerTodosLosEmpleados() {
         return empRepository.findAll(); // o cualquier otro método que ya tengas
     }
+    public List<Empleado> buscarPorParametros(String nombre, String departamento, Long salarioMinimo) {
+        return empRepository.buscarPorParametros(
+                nombre, departamento, salarioMinimo);
+    }
 
     public UsuarioAdministrador guardarDesdeDTO(UsuarioAdministradorDTO dto) {
         UsuarioAdministrador admin = new UsuarioAdministrador();
