@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UsuarioService {
@@ -21,6 +24,35 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public void bloquearUsuario(UUID id, String motivo, LocalDateTime hasta) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+        usuario.setBloqueado(true);
+        usuario.setMotivoBloqueo(motivo);
+        usuario.setFechaFinBloqueo(hasta);
+        usuarioRepository.save(usuario);
+    }
+
+    public void desbloquearUsuario(UUID id) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
+        usuario.setBloqueado(false);
+        usuario.setMotivoBloqueo(null);
+        usuario.setFechaFinBloqueo(null);
+        usuarioRepository.save(usuario);
+    }
+
+    public boolean isBloqueado(Usuario usuario) {
+        if (!usuario.isBloqueado()) return false;
+
+        if (usuario.getFechaFinBloqueo() != null &&
+                //si la fecha es anterior a la actual
+                usuario.getFechaFinBloqueo().isBefore(LocalDateTime.now())) {
+            //desbloquea al usuario automáticamente
+            desbloquearUsuario(usuario.getId_usuario());
+            return false;
+        }
+
+        return true;
+    }
 
     public Optional<Usuario> buscarPorEmail(Optional<UsuarioDTO> dtoOptional) {
         return dtoOptional
