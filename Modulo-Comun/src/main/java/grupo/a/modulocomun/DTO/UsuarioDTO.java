@@ -20,6 +20,7 @@ public class UsuarioDTO {
     private String motivoBloqueo;
     private LocalDateTime FechaFinBloqueo;
     private EmpleadoDTO empleado;
+    private String respuestaSecreta;
 
 }
 

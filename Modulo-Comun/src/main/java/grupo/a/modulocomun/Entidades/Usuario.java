@@ -38,4 +38,7 @@ public class Usuario{
     private boolean bloqueado;
     private String motivoBloqueo;
     private LocalDateTime FechaFinBloqueo;
+
+    @Column(nullable = false)
+    private String respuestaSecreta;
 }

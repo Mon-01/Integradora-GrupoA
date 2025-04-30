@@ -6,6 +6,7 @@ import grupo.a.modulocomun.Entidades.Usuario;
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class controladorMVCCorporativo {
@@ -49,7 +51,12 @@ public class controladorMVCCorporativo {
         }
 
         session.setAttribute("emailTemporal", usuarioDTO.getEmail());
-        model.addAttribute("usuarioDTO", new UsuarioDTO());
+
+        // Creamos un DTO con el id del usuario real
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setId_usuario(usuario.get().getId_usuario());
+
+        model.addAttribute("usuarioDTO", dto);
         return "corporativo/contrasenia.html";
     }
 
@@ -121,6 +128,14 @@ public class controladorMVCCorporativo {
         } else {
             return "corporativo/404"; // o puedes redirigir a una página de error genérica
         }
+    }
+
+    @GetMapping("/cambiar-clave/{id}")
+    public String mostrarFormularioCambio(@PathVariable("id") UUID id_usuario, Model model) {
+        UsuarioDTO dto = new UsuarioDTO();
+        model.addAttribute("usuarioDTO", dto);
+        dto.setId_usuario(id_usuario);
+        return "corporativo/cambiarContra";
     }
 
 }

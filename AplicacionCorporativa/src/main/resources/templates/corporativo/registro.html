@@ -34,8 +34,11 @@
         <form th:action="@{/registro}" method="post" id="registroForm" th:object="${usuarioDTO}">
             <input type="text" th:field="*{email}" placeholder="Correo electrónico" required>
             <input type="password" th:field="*{clave}" placeholder="Contraseña" id="pass" required>
-            <input type="password" th:field="*{confirmarClave}" placeholder="Confirmar contraseña" required>
+            <input type="password" th:field="*{confirmarClave}" placeholder="Confirmar contraseña" id="passconf" required>
             <label><input type="checkbox" onclick="mostrarContra()"> Mostrar contraseña</label>
+            <label>¿Dónde has nacido?</label>
+            <input type="text" th:field="*{respuestaSecreta}" placeholder="Respuesta" id="respuestaSecreta" required>
+            
             <button type="submit">Registrarse</button>
         </form>
         <a href="/login">¿Ya tienes cuenta?</a>
@@ -45,10 +48,11 @@
 <script>
     function mostrarContra() {
         const input = document.getElementById("pass");
+        const input2 = document.getElementById("passconf");
         input.type = input.type === "password" ? "text" : "password";
+        input2.type = input2.type === "password" ? "text" : "password";
     }
-</script>
-<script>
+
     document.getElementById("registroForm").addEventListener("submit", async function(event) {
         event.preventDefault(); // evitar envío clásico
 
@@ -57,7 +61,8 @@
         const datos = {
             email: form.querySelector('[name="email"]').value,
             clave: form.querySelector('[name="clave"]').value,
-            confirmarClave: form.querySelector('[name="confirmarClave"]').value
+            confirmarClave: form.querySelector('[name="confirmarClave"]').value,
+            respuestaSecreta: form.querySelector('[name="respuestaSecreta"]').value
         };
 
         try {

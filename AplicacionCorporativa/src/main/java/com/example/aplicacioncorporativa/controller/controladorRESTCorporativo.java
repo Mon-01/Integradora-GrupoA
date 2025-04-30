@@ -6,13 +6,15 @@ import com.example.aplicacioncorporativa.Servicios.UsuarioService;
 import grupo.a.modulocomun.Entidades.Usuario;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -67,6 +69,34 @@ public class controladorRESTCorporativo {
         }
 
         return contadorGlobal.getOrDefault(usuarioLogueado.getEmail(), 0);
+    }
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PutMapping("/api/usuarios/cambiar-clave")
+    public ResponseEntity<String> cambiarClave(@RequestBody UsuarioDTO dto) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(dto.getId_usuario());
+
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
+
+            // Validación de la respuesta secreta
+            if (!usuario.getRespuestaSecreta().equalsIgnoreCase(dto.getRespuestaSecreta().trim())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Respuesta secreta incorrecta");
+            }
+
+            String claveEncriptada = passwordEncoder.encode(dto.getClave());
+            usuario.setClave(claveEncriptada);
+            usuarioRepository.save(usuario);
+
+            return ResponseEntity.ok("Contraseña actualizada correctamente");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
     }
 }
 
