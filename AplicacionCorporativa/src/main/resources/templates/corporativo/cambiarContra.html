@@ -37,15 +37,9 @@
 
         <form id="formCambioClave">
             <input type="hidden" id="id_usuario" th:value="${usuarioDTO.id_usuario}" />
-
-            <label>¿Dónde has nacido?</label>
-            <input type="text" id="respuestaSecreta"><br>
-
-            <label>Nueva Contraseña:</label>
-            <input type="password" id="clave"><br>
-
-            <label>Confirmar Contraseña:</label>
-            <input type="password" id="confirmarClave"><br>
+            <input type="text" id="respuestaSecreta" placeholder="¿Dónde has nacido?"><br>
+            <input type="password" id="clave" placeholder="Nueva contraseña"><br>
+            <input type="password" id="confirmarClave" placeholder="Confirmar contraseña"><br>
             <label><input type="checkbox" onclick="mostrarContra()"> Mostrar contraseña</label>
             <button type="submit">Actualizar Contraseña</button>
         </form>
@@ -53,8 +47,8 @@
 </div>
 <script>
     function mostrarContra() {
-        const input = document.getElementById("pass");
-        const input2 = document.getElementById("passconf");
+        const input = document.getElementById("clave");
+        const input2 = document.getElementById("confirmarClave");
         input.type = input.type === "password" ? "text" : "password";
         input2.type = input2.type === "password" ? "text" : "password";
     }
@@ -91,6 +85,7 @@
                 .then(response => {
                     if (response.ok) {
                         alert("Contraseña actualizada correctamente.");
+                        window.location.href = '/login';
                     } else {
                         return response.text().then(msg => {
                             alert("Error: " + msg);

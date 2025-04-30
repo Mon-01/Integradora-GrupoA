@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -54,6 +55,8 @@ public class controladorRESTCorporativo {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+     @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PutMapping("/api/usuarios/cambiar-clave")
     public ResponseEntity<String> cambiarClave(@RequestBody UsuarioDTO dto) {
@@ -67,7 +70,8 @@ public class controladorRESTCorporativo {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Respuesta secreta incorrecta");
             }
 
-            usuario.setClave(dto.getClave());
+            String claveEncriptada = passwordEncoder.encode(dto.getClave());
+            usuario.setClave(claveEncriptada);
             usuarioRepository.save(usuario);
 
             return ResponseEntity.ok("Contraseña actualizada correctamente");
