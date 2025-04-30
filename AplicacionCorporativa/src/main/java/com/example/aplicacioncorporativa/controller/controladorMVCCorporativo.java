@@ -76,7 +76,7 @@ public class controladorMVCCorporativo {
                 usuarioService.bloquearUsuario(usuario.get().getId_usuario(), "Contraseña incorrecta 3 veces", LocalDateTime.now().plusMinutes(15));
                 usuarioService.actualizarUsuario(usuario.get());
                 model.addAttribute("bloqueado", true);
-                return "corporativo/inicio";
+                return "redirect:/login";
             }
             return "corporativo/contrasenia.html";
         }
