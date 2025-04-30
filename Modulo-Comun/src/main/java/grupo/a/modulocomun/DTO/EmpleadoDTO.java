@@ -20,4 +20,5 @@ public class EmpleadoDTO extends PersonaDTO {
     private DatosBancariosDTO datosBancarios;
     private Long departamento;
     private List<Long> especializaciones = new ArrayList<>();
+    private UsuarioDTO usuario;
 }

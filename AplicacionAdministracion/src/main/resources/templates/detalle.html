@@ -13,7 +13,6 @@
 </div>
 
 <script>
-    // Extraer ID desde la URL actual
     const pathParts = window.location.pathname.split('/');
     const empleadoId = pathParts[pathParts.length - 1];
 
@@ -26,10 +25,20 @@
             const container = document.getElementById("contenido-empleado");
             container.innerHTML = `
                 <p><strong>Nombre:</strong> ${data.nombre} ${data.apellido}</p>
-                <p><strong>Email:</strong> ${data.email}</p>
                 <p><strong>Teléfono:</strong> ${data.prefijoTel} ${data.telefono}</p>
                 <p><strong>Fecha Nacimiento:</strong> ${data.fecha_nacimiento}</p>
                 <p><strong>Departamento:</strong> ${data.departamento ? data.departamento.nombre_dept : 'Sin asignar'}</p>
+                <p><strong>Salario:</strong> ${data.salarioAnual}</p>
+                <p><strong>Comisión:</strong> ${data.comisionAnual}</p>
+                <p><strong>Comentarios:</strong> ${data.comentarios}</p>
+
+                ${data.usuario ? `
+                    <hr>
+                    <h3>Información de Usuario Asociado</h3>
+                    <p><strong>Email:</strong> ${data.usuario.email}</p>
+                    <p><strong>Bloqueado:</strong> ${data.usuario.bloqueado ? 'Sí' : 'No'}</p>
+                    <p><strong>Motivo de bloqueo:</strong> ${data.usuario.motivoBloqueo || 'Ninguno'}</p>
+                ` : '<p>No hay usuario asociado</p>'}
             `;
         })
         .catch(error => {

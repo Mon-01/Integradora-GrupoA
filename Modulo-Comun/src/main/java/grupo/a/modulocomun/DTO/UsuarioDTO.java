@@ -1,8 +1,9 @@
-package com.example.aplicacioncorporativa.DTO;
+package grupo.a.modulocomun.DTO;
 
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -15,6 +16,9 @@ public class UsuarioDTO {
     private String email;
     private String clave;
     private String confirmarClave;
+    private boolean bloqueado;
+    private String motivoBloqueo;
+    private LocalDateTime FechaFinBloqueo;
     private EmpleadoDTO empleado;
 
 }

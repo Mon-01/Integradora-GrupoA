@@ -1,13 +1,11 @@
 package com.example.aplicacioncorporativa.controller;
 
-import com.example.aplicacioncorporativa.DTO.UsuarioDTO;
+import grupo.a.modulocomun.DTO.UsuarioDTO;
 
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
 import grupo.a.modulocomun.Entidades.Usuario;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
