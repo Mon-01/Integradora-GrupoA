@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class controladorMVCCorporativo {
     private final UsuarioService usuarioService;
     private final HttpSession session;
     private final EmpleadoService empleadoService;
+    private int intentosClave = 0;
 
     public controladorMVCCorporativo(UsuarioService usuarioService, HttpSession session, EmpleadoService empleadoService) {
         this.usuarioService = usuarioService;
@@ -48,8 +50,15 @@ public class controladorMVCCorporativo {
             return "corporativo/inicio.html";
         }
 
+        if(usuarioService.isBloqueado(usuario.get())){
+
+            model.addAttribute("bloqueado", true);
+            model.addAttribute("usuario", usuario.get());
+            return "corporativo/inicio";
+        }
+
         session.setAttribute("emailTemporal", usuarioDTO.getEmail());
-        model.addAttribute("usuarioDTO", new UsuarioDTO());
+        model.addAttribute("usuarioDTO", usuarioDTO);
         return "corporativo/contrasenia.html";
     }
 
@@ -61,7 +70,14 @@ public class controladorMVCCorporativo {
         Optional<Usuario> usuario = usuarioService.buscarPorEmail(Optional.of(usuarioDTO));
         if (usuario.isEmpty() || !usuarioService.comprobarPassword(usuario.get(), usuarioDTO.getClave())) {
             model.addAttribute("error", "Contraseña incorrecta.");
+            intentosClave++;
             model.addAttribute("usuarioDTO", new UsuarioDTO());
+            if(intentosClave >= 3){
+                usuarioService.bloquearUsuario(usuario.get().getId_usuario(), "Contraseña incorrecta 3 veces", LocalDateTime.now().plusMinutes(15));
+                usuarioService.actualizarUsuario(usuario.get());
+                model.addAttribute("bloqueado", true);
+                return "corporativo/inicio";
+            }
             return "corporativo/contrasenia.html";
         }
 

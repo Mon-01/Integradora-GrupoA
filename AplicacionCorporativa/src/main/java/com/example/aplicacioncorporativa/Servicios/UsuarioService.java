@@ -1,5 +1,6 @@
 package com.example.aplicacioncorporativa.Servicios;
 
+import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
@@ -40,7 +41,7 @@ public class UsuarioService {
     }
 
     public boolean isBloqueado(Usuario usuario) {
-        if (!usuario.isBloqueado()) return false;
+        if (!usuario.isBloqueado()) {return false;}
 
         if (usuario.getFechaFinBloqueo() != null &&
                 //si la fecha es anterior a la actual
@@ -51,6 +52,35 @@ public class UsuarioService {
         }
 
         return true;
+    }
+
+    public Usuario convertirDtoAEntidad(UsuarioDTO dto) {
+        Usuario usuario = new Usuario();
+
+        usuario.setId_usuario(dto.getId_usuario());
+        usuario.setEmail(dto.getEmail());
+        usuario.setClave(dto.getClave());
+        usuario.setConfirmarClave(dto.getConfirmarClave());
+        usuario.setBloqueado(dto.isBloqueado());
+        usuario.setMotivoBloqueo(dto.getMotivoBloqueo());
+        usuario.setFechaFinBloqueo(dto.getFechaFinBloqueo());
+
+        return usuario;
+    }
+
+    public void actualizarUsuario(Usuario usuario) {
+        Usuario usuarioActualizado = usuarioRepository.findById(usuario.getId_usuario()).orElseThrow();
+
+        usuarioActualizado.setFechaFinBloqueo(usuario.getFechaFinBloqueo());
+        usuarioActualizado.setMotivoBloqueo(usuario.getMotivoBloqueo());
+        usuarioActualizado.setId_usuario(usuario.getId_usuario());
+        usuarioActualizado.setClave(usuario.getClave());
+        usuarioActualizado.setConfirmarClave(usuario.getConfirmarClave());
+        usuarioActualizado.setBloqueado(usuario.isBloqueado());
+        usuarioActualizado.setEmail(usuario.getEmail());
+        usuarioActualizado.setEmpleado(usuario.getEmpleado());
+
+        usuarioRepository.save(usuarioActualizado);
     }
 
     public Optional<Usuario> buscarPorEmail(Optional<UsuarioDTO> dtoOptional) {
