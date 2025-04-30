@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import org.slf4j.Logger;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -56,7 +57,11 @@ public class controladorMVCAdmin {
         return "inicio-admin";
     }
 
-
+    @GetMapping("/admin/detalle/{id}")
+    public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
+        model.addAttribute("empleadoId", id);
+        return "detalle";
+    }
 
 }
 

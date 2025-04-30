@@ -1,5 +1,6 @@
 package grupo.a.modulocomun.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +31,7 @@ public class Usuario{
     private String confirmarClave;
 
     @OneToOne(mappedBy = "usuario")
+    @JsonIgnore
     //el usuario pertenece al empleado, la clave ajena va en empleado
     private Empleado empleado;
 

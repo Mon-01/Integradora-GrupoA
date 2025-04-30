@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del empleado</title>
+</head>
+<body>
+
+<h1>Detalle del Empleado</h1>
+
+<div id="contenido-empleado">
+    <p>Cargando datos...</p>
+</div>
+
+<script>
+    // Extraer ID desde la URL actual
+    const pathParts = window.location.pathname.split('/');
+    const empleadoId = pathParts[pathParts.length - 1];
+
+    fetch('/api/admin/' + empleadoId)
+        .then(response => {
+            if (!response.ok) throw new Error("Empleado no encontrado");
+            return response.json();
+        })
+        .then(data => {
+            const container = document.getElementById("contenido-empleado");
+            container.innerHTML = `
+                <p><strong>Nombre:</strong> ${data.nombre} ${data.apellido}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Teléfono:</strong> ${data.prefijoTel} ${data.telefono}</p>
+                <p><strong>Fecha Nacimiento:</strong> ${data.fecha_nacimiento}</p>
+                <p><strong>Departamento:</strong> ${data.departamento ? data.departamento.nombre_dept : 'Sin asignar'}</p>
+            `;
+        })
+        .catch(error => {
+            document.getElementById("contenido-empleado").innerText = "Error al obtener el empleado";
+        });
+</script>
+
+</body>
+</html>
