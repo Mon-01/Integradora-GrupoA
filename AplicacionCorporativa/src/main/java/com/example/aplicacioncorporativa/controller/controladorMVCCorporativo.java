@@ -45,7 +45,12 @@ public class controladorMVCCorporativo {
         }
 
         session.setAttribute("emailTemporal", usuarioDTO.getEmail());
-        model.addAttribute("usuarioDTO", new UsuarioDTO());
+
+        // Creamos un DTO con el id del usuario real
+        UsuarioDTO dto = new UsuarioDTO();
+        dto.setId_usuario(usuario.get().getId_usuario());
+
+        model.addAttribute("usuarioDTO", dto);
         return "corporativo/contrasenia.html";
     }
 
@@ -108,8 +113,8 @@ public class controladorMVCCorporativo {
     @GetMapping("/cambiar-clave/{id}")
     public String mostrarFormularioCambio(@PathVariable("id") UUID id_usuario, Model model) {
         UsuarioDTO dto = new UsuarioDTO();
-        dto.setId_usuario(id_usuario);
         model.addAttribute("usuarioDTO", dto);
+        dto.setId_usuario(id_usuario);
         return "corporativo/cambiarContra";
     }
 
