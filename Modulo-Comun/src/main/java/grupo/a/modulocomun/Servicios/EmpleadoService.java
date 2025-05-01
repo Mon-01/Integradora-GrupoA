@@ -13,6 +13,7 @@ import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,6 +37,18 @@ public class EmpleadoService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    public void validarMaestrosPaso1(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+        if (empleadoDTO.getGenero() == null) {
+            bindingResult.rejectValue("genero", "genero.requerido");
+        } else if (!repositoryManager.getGeneroRepository().existsById(empleadoDTO.getGenero())) {
+            bindingResult.rejectValue("genero", "genero.invalido");
+        }
+
+        if (!repositoryManager.getPaisRepository().existsById(empleadoDTO.getPaisNacimiento())) {
+            bindingResult.rejectValue("paisNacimiento", "paisNacimiento.invalido");
+        }
+    }
+
     public void cargarEmpleado(){
 
         empleadoRepository.save(insertarEmpleado1());
@@ -44,6 +57,8 @@ public class EmpleadoService {
         empleadoRepository.save(insertarEmpleado4());
 
     }
+
+    //insertar datos empleados
 
     public Empleado insertarEmpleado1(){
         Empleado empleado1 = new Empleado();
@@ -201,7 +216,7 @@ public class EmpleadoService {
         // Crear y configurar el empleado
         Empleado empleado = new Empleado();
 
-        // Asignar campos básicos
+        // Asignar campos básicos(nombre,teléfono...)
         asignarCamposSimples(empleado, empleadoDTO);
 
         // Asignar relaciones
@@ -224,6 +239,7 @@ public class EmpleadoService {
         usuarioRepository.save(usuario);
     }
 
+    //asignaciones para guardar el empleado en la bbdd
 
     private void asignarCamposSimples(Empleado empleado, EmpleadoDTO empleadoDTO) {
 

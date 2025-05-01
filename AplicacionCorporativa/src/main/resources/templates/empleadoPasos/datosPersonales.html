@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <title>Datos Personales</title>
 </head>
+<style>
+    .error{
+        color: red;
+        font-weight: bold;
+    }
+</style>
 <body>
 <a href="/paso1"><button>Paso 1</button></a>
 <a href="/paso2"><button>Paso 2</button></a>
@@ -13,10 +19,10 @@
 <form id="formulario" method="post" th:action="@{/paso1}" th:object="${datos}">
     <fieldset>
         <legend>Datos Personales</legend>
-        <label for="name">Nombre</label>
-        <input type="text" id="name" th:field="*{nombre}">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" th:field="*{nombre}">
         <div th:if="${enviado}">
-            <div th:each="error: ${#fields.errors('name')}" th:text="${error} " class="error"></div>
+            <div th:each="error: ${#fields.errors('nombre')}" th:text="${error} " class="error"></div>
         </div>
         <label for="apellido">Apellidos</label>
         <input type="text" id="apellido" th:field="*{apellido}">
@@ -32,14 +38,16 @@
         <div th:each="genero: ${generos}">
             <input id="genero" type="radio" th:field="*{genero}" th:value="${genero.getId()}" th:text="${genero.getNombre()}">
         </div>
+        <button type="button" onclick="seleccionarPrimerGenero()" ><span th:text="#{boton.genero2}"/></button>
+        <button type="button" onclick="deseleccionarGenero()" ><span th:text="#{boton.genero}"/></button>
         <div th:if="${enviado}">
             <div th:each="error: ${#fields.errors('genero')}" th:text="${error}" class="error"></div>
         </div>
         <br>
-        <label for="nacimiento">Fecha de Nacimiento</label>
-        <input type="text" id="nacimiento" th:field="*{fechaNacimiento}">
+        <label for="fechaNacimiento">Fecha de Nacimiento</label>
+        <input type="text" id="fechaNacimiento" th:field="*{fechaNacimiento}">
         <div th:if="${enviado}">
-            <div th:each="error: ${#fields.errors('fecha_nacimiento')}" th:text="${error} " class="error"></div>
+            <div th:each="error: ${#fields.errors('fechaNacimiento')}" th:text="${error} " class="error"></div>
         </div>
         <br><br>
         <label for="edad">Edad</label>
@@ -48,12 +56,12 @@
             <div th:each="error: ${#fields.errors('edad')}" th:text="${error} " class="error"></div>
         </div>
         <br><br>
-        <label for="pais">País nacimiento</label>
-        <select id="pais" th:field="*{paisNacimiento}" >
+        <label for="paisNacimiento">País nacimiento</label>
+        <select id="paisNacimiento" th:field="*{paisNacimiento}" >
             <option th:each="pais: ${paises}" th:value="${pais.getId()}" th:text="${pais.getNombre()}"></option>
         </select>
         <div th:if="${enviado}">
-            <div th:each="error: ${#fields.errors('pais')}" th:text="${error} " class="error"></div>
+            <div th:each="error: ${#fields.errors('paisNacimiento')}" th:text="${error} " class="error"></div>
         </div>
         <br><br>
         <label for="comentarios">Comentarios</label>
@@ -61,5 +69,7 @@
     </fieldset>
     <button type="submit">Grabar Informarción - Pasar al paso 2: Datos de contacto</button>
 </form>
+<script src="/js/funciones.js" defer></script>
+
 </body>
 </html>

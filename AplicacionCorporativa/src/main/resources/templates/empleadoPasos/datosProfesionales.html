@@ -25,6 +25,9 @@
     <div th:each="espec: ${especialidades}">
       <input id="especialidades" type="checkbox" th:field="*{especializaciones}" th:value="${espec.getId()}" th:text="${espec.getNombre()}">
     </div>
+    <button type="button" onclick="seleccionarTodo()" ><span th:text="#{boton.todo}"/></button>
+    <button type="button" onclick="deseleccionarTodo()" ><span th:text="#{boton.nada}"/></button>
+
     <div th:if="${enviado}">
       <div th:each="error: ${#fields.errors('especialidades')}" th:text="${error} " class="error"></div>
     </div>
@@ -34,5 +37,6 @@
   <a href="/paso2"><button type="button">Volver</button></a>
   <button type="submit">Grabar Informarción - Pasar al paso 4: Datos Económicos</button>
 </form>
+<script src="/js/funciones.js" defer></script>
 </body>
 </html>

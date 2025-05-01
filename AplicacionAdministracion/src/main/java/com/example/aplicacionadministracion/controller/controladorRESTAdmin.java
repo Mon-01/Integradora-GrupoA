@@ -28,7 +28,7 @@ public class controladorRESTAdmin {
     @Autowired
     private EmpleadoService empleadoService;
 
-    @PostMapping("/loginAdmin")
+    @PostMapping("/loginAdmin") //error 400
     public ResponseEntity<?> loginAdmin(@RequestBody UsuarioAdministradorDTO dto,
                                         HttpSession session) {
         if (service.validarCredenciales(dto)) {

@@ -24,7 +24,11 @@ public class controladorRESTCorporativo {
     private final UsuarioService usuarioService;
     private final HttpSession session;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
      /*   @PostMapping("/registro") // cambiamos la ruta para diferenciarlo
         public ResponseEntity<?> registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
@@ -42,7 +46,7 @@ public class controladorRESTCorporativo {
         }
 
       */
-     @PostMapping("/registro")
+     @PostMapping("/registro")  //error 405
      public String registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
          if (usuarioService.buscarPorEmail(Optional.of(usuarioDTO)).isPresent()) {
              return "Ya existe una cuenta con ese email.";
@@ -56,7 +60,8 @@ public class controladorRESTCorporativo {
              return "Error al registrar el usuario.";
          }
      }
-    @GetMapping("/contador-total")
+
+    @GetMapping("/contador-total")  //error 405
     public Integer obtenerContadorTotal() {
         Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
 
@@ -72,13 +77,7 @@ public class controladorRESTCorporativo {
         return contadorGlobal.getOrDefault(usuarioLogueado.getEmail(), 0);
     }
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @PutMapping("/api/usuarios/cambiar-clave")
+    @PutMapping("/api/usuarios/cambiar-clave")  //error 405
     public ResponseEntity<String> cambiarClave(@RequestBody UsuarioDTO dto) {
         Optional<Usuario> optionalUsuario = usuarioRepository.findById(dto.getId_usuario());
 
@@ -100,5 +99,3 @@ public class controladorRESTCorporativo {
         }
     }
 }
-
-

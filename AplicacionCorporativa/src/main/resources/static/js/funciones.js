@@ -1,12 +1,25 @@
+function deseleccionarGenero(){
+    const radios = document.getElementsByName("genero");
+    radios.forEach(radio => radio.checked = false);
+}
+
+function seleccionarPrimerGenero(){
+    const radios = document.getElementsByName("genero");
+    radios[0].checked = true;
+}
+
+
 function seleccionarTodo(){
-    var musicas = document.getElementById("musicasSeleccionadas");
-    for (let i = 0; i < musicas.options.length; i++) {
-        musicas.options[i].selected = true;
+    var espec = document.getElementsByName("especialidades");
+    for (var i = 0; i < espec.length; i++) {
+        espec[i].checked = false;
     }
+
 }
 function deseleccionarTodo(){
-    var musicas = document.getElementById("musicasSeleccionadas");
-    for (let i = 0; i < musicas.options.length; i++) {
-        musicas.options[i].selected = false;
+    var espec = document.getElementsByName("especialidades");
+    for (let i = 0; i < espec.length; i++){
+        espec[i].checked = false;
     }
+
 }

@@ -1,5 +1,6 @@
 package com.example.aplicacioncorporativa.controller;
 
+import grupo.a.modulocomun.Validaciones.paso1.Paso1;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Servicios.ServiceManager;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -18,8 +20,9 @@ public class controladorEmpleadoPasos {
     private ServiceManager serviceManager;
 
     @RequestMapping(value = "/paso1", method = {RequestMethod.GET, RequestMethod.POST})
-    public String paso1(@ModelAttribute("datos") EmpleadoDTO datosEmpleado,HttpServletRequest request, HttpSession sesion, Model model,
-                        BindingResult bindingResult
+    public String paso1(HttpServletRequest request, HttpSession sesion, Model model,
+                        @Validated(Paso1.class) @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
+                         BindingResult bindingResult
     ) {
 
         //con HttpServletRequest accedemos al metodo
@@ -31,10 +34,13 @@ public class controladorEmpleadoPasos {
             model.addAttribute("paises", serviceManager.getPaisService().obtenerTodosPaises());
             return "empleadoPasos/datosPersonales";
         } else {
+            serviceManager.getEmpleadoService().validarMaestrosPaso1(datosEmpleado, bindingResult);
             //si hay errores de validación los muestra en el formulario
             if (bindingResult.hasErrors()) {
-                model.addAttribute("errors", bindingResult.getAllErrors());
+                model.addAttribute("error", bindingResult);
                 model.addAttribute("enviado", true);
+                model.addAttribute("generos", serviceManager.getGeneroService().obtenerTodos());
+                model.addAttribute("paises", serviceManager.getPaisService().obtenerTodosPaises());
                 return "empleadoPasos/datosPersonales";
             } else {
                 //si  no hay errores redirige al paso dos
