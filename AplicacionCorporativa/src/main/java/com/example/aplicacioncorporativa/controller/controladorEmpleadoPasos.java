@@ -78,7 +78,8 @@ public class controladorEmpleadoPasos {
     }
 
     @RequestMapping(value = "/paso3", method = {RequestMethod.GET, RequestMethod.POST})
-    public String paso3(@ModelAttribute("datos") EmpleadoDTO datosEmpleado,HttpServletRequest request, HttpSession sesion, Model model,
+    public String paso3(HttpServletRequest request, HttpSession sesion, Model model,
+                        @Validated @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
                         BindingResult bindingResult
     ) {
 

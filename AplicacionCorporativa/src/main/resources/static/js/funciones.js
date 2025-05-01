@@ -12,7 +12,7 @@ function seleccionarPrimerGenero(){
 function seleccionarTodo(){
     var espec = document.getElementsByName("especializaciones");
     for (var i = 0; i < espec.length; i++) {
-        espec[i].checked = false;
+        espec[i].checked = true;
     }
 
 }
