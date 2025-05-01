@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class EmpleadoService {
@@ -39,14 +40,32 @@ public class EmpleadoService {
 
     public void validarMaestrosPaso1(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
         if (empleadoDTO.getGenero() == null) {
-            bindingResult.rejectValue("genero", "genero.requerido");
+            bindingResult.rejectValue("genero", "validation.requerido");
         } else if (!repositoryManager.getGeneroRepository().existsById(empleadoDTO.getGenero())) {
-            bindingResult.rejectValue("genero", "genero.invalido");
+            bindingResult.rejectValue("genero", "valor.invalido");
         }
 
         if (!repositoryManager.getPaisRepository().existsById(empleadoDTO.getPaisNacimiento())) {
-            bindingResult.rejectValue("paisNacimiento", "paisNacimiento.invalido");
+            bindingResult.rejectValue("paisNacimiento", "valor.invalido");
         }
+    }
+
+    public void validarMaestrosPaso3(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+        if (empleadoDTO.getDepartamento() == null) {
+            bindingResult.rejectValue("departamento", "validation.requerido");
+        } else if (!repositoryManager.getDepartamentoRepository().existsById(empleadoDTO.getDepartamento())) {
+            bindingResult.rejectValue("departamento", "valor.invalido");
+        }
+
+//        if (empleadoDTO.getEspecializaciones() == null || empleadoDTO.getEspecializaciones().isEmpty()) {
+//            bindingResult.rejectValue("especializaciones", "validation.requerido");
+//        } else if (
+//                //usamos un stream para que devuelva el primer error de id que encuentre
+//                empleadoDTO.getEspecializaciones().stream()
+//            .anyMatch(id -> !repositoryManager.getEspecialidadesRepository().existsById(id))
+//        ){
+//            bindingResult.rejectValue("especializaciones", "valor.invalido");
+//        }
     }
 
     public void cargarEmpleado(){

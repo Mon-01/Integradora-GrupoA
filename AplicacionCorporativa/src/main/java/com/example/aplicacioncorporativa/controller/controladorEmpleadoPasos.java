@@ -91,10 +91,13 @@ public class controladorEmpleadoPasos {
             model.addAttribute("especialidades", serviceManager.getEspecialidadesService().obtenerEspecialidades());
             return "empleadoPasos/datosProfesionales";
         } else {
+            serviceManager.getEmpleadoService().validarMaestrosPaso3(datosEmpleado, bindingResult);
             //si hay errores de validación los muestra en el formulario
             if (bindingResult.hasErrors()) {
                 model.addAttribute("errors", bindingResult.getAllErrors());
                 model.addAttribute("enviado", true);
+                model.addAttribute("departamentos", serviceManager.getDepartamentoService().obtenerTodos());
+                model.addAttribute("especialidades", serviceManager.getEspecialidadesService().obtenerEspecialidades());
                 return "empleadoPasos/datosProfesionales";
             } else {
                 //si  no hay errores redirige al paso dos
