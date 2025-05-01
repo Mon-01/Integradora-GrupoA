@@ -8,8 +8,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = FechaNacValidator.class)
 @Target({ElementType.FIELD})
+@Constraint(validatedBy = FechaNacValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FechaNacValidation {
     String message() default "";

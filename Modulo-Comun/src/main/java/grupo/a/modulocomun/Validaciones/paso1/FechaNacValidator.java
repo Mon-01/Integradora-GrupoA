@@ -2,7 +2,6 @@ package grupo.a.modulocomun.Validaciones.paso1;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -18,6 +17,9 @@ public class FechaNacValidator  implements ConstraintValidator<FechaNacValidatio
     public boolean isValid(String value, ConstraintValidatorContext context) {
 
         if (value == null || value.isEmpty()) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("{validation.notNull}")
+                    .addConstraintViolation();
             return false; // No puede estar vacío ni ser nula
         }
 
@@ -41,14 +43,6 @@ public class FechaNacValidator  implements ConstraintValidator<FechaNacValidatio
                 })
                 .filter(Objects::nonNull)   //por si todos fallan
                 .findFirst();
-
-        //comprueba que la fecha no este en el pasado
-        if (!fechaValida.isPresent()) {
-            context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("{fechaNacimiento.pasada}")
-                    .addConstraintViolation();
-            return false;
-        }
 
         //comprobamos que la fecha sea superior a 18 años
         int edad = Period.between(fechaValida.get(), LocalDate.now()).getYears();
