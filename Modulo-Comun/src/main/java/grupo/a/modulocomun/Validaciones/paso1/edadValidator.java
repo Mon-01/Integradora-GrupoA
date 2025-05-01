@@ -21,6 +21,7 @@ public class edadValidator implements ConstraintValidator<edadValidation, Person
         if (value.getEdad() == 0) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("{validation.notNull}")
+                    .addPropertyNode("edad")
                     .addConstraintViolation();
             return false; // No puede estar vacío ni ser nula
         }

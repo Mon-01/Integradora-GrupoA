@@ -79,7 +79,8 @@ public class controladorEmpleadoPasos {
     }
 
     @RequestMapping(value = "/paso3", method = {RequestMethod.GET, RequestMethod.POST})
-    public String paso3(@ModelAttribute("datos") EmpleadoDTO datosEmpleado,HttpServletRequest request, HttpSession sesion, Model model,
+    public String paso3(HttpServletRequest request, HttpSession sesion, Model model,
+                        @Validated @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
                         BindingResult bindingResult
     ) {
 
@@ -92,10 +93,13 @@ public class controladorEmpleadoPasos {
             model.addAttribute("especialidades", serviceManager.getEspecialidadesService().obtenerEspecialidades());
             return "empleadoPasos/datosProfesionales";
         } else {
+            serviceManager.getEmpleadoService().validarMaestrosPaso3(datosEmpleado, bindingResult);
             //si hay errores de validación los muestra en el formulario
             if (bindingResult.hasErrors()) {
                 model.addAttribute("errors", bindingResult.getAllErrors());
                 model.addAttribute("enviado", true);
+                model.addAttribute("departamentos", serviceManager.getDepartamentoService().obtenerTodos());
+                model.addAttribute("especialidades", serviceManager.getEspecialidadesService().obtenerEspecialidades());
                 return "empleadoPasos/datosProfesionales";
             } else {
                 //si  no hay errores redirige al paso dos

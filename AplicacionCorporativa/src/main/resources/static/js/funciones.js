@@ -10,14 +10,14 @@ function seleccionarPrimerGenero(){
 
 
 function seleccionarTodo(){
-    var espec = document.getElementsByName("especialidades");
+    var espec = document.getElementsByName("especializaciones");
     for (var i = 0; i < espec.length; i++) {
-        espec[i].checked = false;
+        espec[i].checked = true;
     }
 
 }
 function deseleccionarTodo(){
-    var espec = document.getElementsByName("especialidades");
+    var espec = document.getElementsByName("especializaciones");
     for (let i = 0; i < espec.length; i++){
         espec[i].checked = false;
     }

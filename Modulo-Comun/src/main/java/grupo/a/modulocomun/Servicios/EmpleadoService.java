@@ -39,13 +39,31 @@ public class EmpleadoService {
 
     public void validarMaestrosPaso1(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
         if (empleadoDTO.getGenero() == null) {
-            bindingResult.rejectValue("genero", "genero.requerido");
+            bindingResult.rejectValue("genero", "validation.notNull");
         } else if (!repositoryManager.getGeneroRepository().existsById(empleadoDTO.getGenero())) {
-            bindingResult.rejectValue("genero", "genero.invalido");
+            bindingResult.rejectValue("genero", "valor.invalido");
         }
 
         if (!repositoryManager.getPaisRepository().existsById(empleadoDTO.getPaisNacimiento())) {
-            bindingResult.rejectValue("paisNacimiento", "paisNacimiento.invalido");
+            bindingResult.rejectValue("paisNacimiento", "valor.invalido");
+        }
+    }
+
+    public void validarMaestrosPaso3(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+        if (empleadoDTO.getDepartamento() == null) {
+            bindingResult.rejectValue("departamento", "validation.notNull");
+        } else if (!repositoryManager.getDepartamentoRepository().existsById(empleadoDTO.getDepartamento())) {
+            bindingResult.rejectValue("departamento", "valor.invalido");
+        }
+
+        if (empleadoDTO.getEspecializaciones() == null || empleadoDTO.getEspecializaciones().isEmpty()) {
+            bindingResult.rejectValue("especializaciones", "validation.notNull");
+        } else if (
+                //usamos un stream para que devuelva el primer error de id que encuentre
+                empleadoDTO.getEspecializaciones().stream()
+            .anyMatch(id -> !repositoryManager.getEspecialidadesRepository().existsById(id))
+        ){
+            bindingResult.rejectValue("especializaciones", "valor.invalido");
         }
     }
 
@@ -87,7 +105,7 @@ public class EmpleadoService {
         empleado1.setComisionAnual(1500L);
         empleado1.setFecha_alta(LocalDate.of(2023, 6, 1));
 
-        empleado1.setEspecialidades(List.of(
+        empleado1.setEspecializaciones(List.of(
                 repositoryManager.getEspecialidadesRepository().findById(2L).orElseThrow(EntityNotFoundException::new)
         ));
 
@@ -122,7 +140,7 @@ public class EmpleadoService {
         empleado2.setFecha_alta(LocalDate.of(2022, 1, 10));
 
 
-        empleado2.setEspecialidades(List.of(
+        empleado2.setEspecializaciones(List.of(
                 repositoryManager.getEspecialidadesRepository().findById(1L).orElseThrow(EntityNotFoundException::new),
                 repositoryManager.getEspecialidadesRepository().findById(4L).orElseThrow(EntityNotFoundException::new)
         ));
@@ -157,7 +175,7 @@ public class EmpleadoService {
         empleado3.setComisionAnual(5000L);
         empleado3.setFecha_alta(LocalDate.of(2021, 3, 15));
 
-        empleado3.setEspecialidades(List.of(
+        empleado3.setEspecializaciones(List.of(
                 repositoryManager.getEspecialidadesRepository().findById(3L).orElseThrow(EntityNotFoundException::new),
                 repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
         ));
@@ -192,7 +210,7 @@ public class EmpleadoService {
         empleado4.setComisionAnual(2500L);
         empleado4.setFecha_alta(LocalDate.of(2020, 11, 20));
 
-        empleado4.setEspecialidades(List.of(
+        empleado4.setEspecializaciones(List.of(
                 repositoryManager.getEspecialidadesRepository().findById(2L).orElseThrow(EntityNotFoundException::new),
                 repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
         ));
@@ -313,7 +331,7 @@ public class EmpleadoService {
                         .orElseThrow(() -> new EntityNotFoundException("Especialidad no encontrada")))
                 .collect(Collectors.toList());
 
-        empleado.setEspecialidades(especializaciones);
+        empleado.setEspecializaciones(especializaciones);
     }
 
     public void asignarDepartamento(Empleado empleado, EmpleadoDTO empleadoDTO) {
