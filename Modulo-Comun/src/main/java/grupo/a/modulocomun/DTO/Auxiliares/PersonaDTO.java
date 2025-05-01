@@ -3,7 +3,10 @@ package grupo.a.modulocomun.DTO.Auxiliares;
 import grupo.a.modulocomun.Validaciones.paso1.FechaNacValidation;
 import grupo.a.modulocomun.Validaciones.paso1.Paso1;
 import grupo.a.modulocomun.Validaciones.paso1.edadValidation;
+import grupo.a.modulocomun.Validaciones.paso2.Paso2;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,15 +28,22 @@ public class PersonaDTO {
     @FechaNacValidation(groups = Paso1.class)
     private String fechaNacimiento;
 
+    @Min(value = 1, message = "Prefijo no válido", groups = Paso2.class)
     private int prefijoTel = 34;
+    @NotBlank(message = "El teléfono es obligatorio", groups = Paso2.class)
     private String telefono;
     private String otroTelefono;
     private String email;
 
-    private DireccionDTO direccion;
+    @Valid
+
+    private DireccionDTO direccion= new DireccionDTO();
 
     private Long paisNacimiento = 3L;
 
+    @NotNull(message = "Seleccione un tipo de documento", groups = Paso2.class)
     private Long tipoDocumento = 1L;
+
+    @NotBlank(message = "Debe introducir un número de documento", groups = Paso2.class)
     private String documento;
 }
