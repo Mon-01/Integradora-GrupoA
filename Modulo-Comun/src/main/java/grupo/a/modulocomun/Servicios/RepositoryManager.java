@@ -17,4 +17,5 @@ public class RepositoryManager {
     private final DepartamentoRepository departamentoRepository;
     private final TipoDocumentoRepository tipoDocumentoRepository;
     private final EspecialidadesRepository especialidadesRepository;
+    private final EntidadBancariaRepository entidadBancariaRepository;
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class TarjetaCreditoDTO {
-    private Long tipo;
+    private Long tipo = 1L;
 
     private String numero;
     //    private Caducidad caducidad;

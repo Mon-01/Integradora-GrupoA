@@ -5,6 +5,7 @@ import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Servicios.ServiceManager;
 import grupo.a.modulocomun.Validaciones.paso2.Paso2;
+import grupo.a.modulocomun.Validaciones.paso4.Paso4;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,7 @@ public class controladorEmpleadoPasos {
             model.addAttribute("datos", datosEmpleado);
             return "empleadoPasos/datosContacto";
         } else {
+            serviceManager.getEmpleadoService().validarMaestrosPaso2(datosEmpleado, bindingResult);
             if (bindingResult.hasErrors()) {
                 model.addAttribute("enviado", true);
                 model.addAttribute("tipoDoc", serviceManager.getTipoDocumentoService().obtenerTiposDocumento());
@@ -110,8 +112,12 @@ public class controladorEmpleadoPasos {
     }
 
     @RequestMapping(value = "/paso4", method = {RequestMethod.GET, RequestMethod.POST})
-    public String paso4(@ModelAttribute("datos") EmpleadoDTO datosEmpleado,HttpServletRequest request, HttpSession sesion, Model model,
-                        BindingResult bindingResult
+    public String paso4(
+            @Validated(Paso4.class) @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
+            BindingResult bindingResult,
+            HttpServletRequest request,
+            HttpSession sesion,
+            Model model
     ) {
 
         //con HttpServletRequest accedemos al metodo
@@ -123,10 +129,13 @@ public class controladorEmpleadoPasos {
             model.addAttribute("tarjetaTipo", serviceManager.getTipoTarjetaService().obtenerTodos());
             return "empleadoPasos/datosEconomicos";
         } else {
+            serviceManager.getEmpleadoService().validarMaestrosPaso4(datosEmpleado, bindingResult);
             //si hay errores de validación los muestra en el formulario
             if (bindingResult.hasErrors()) {
                 model.addAttribute("errors", bindingResult.getAllErrors());
                 model.addAttribute("enviado", true);
+                model.addAttribute("entidades", serviceManager.getEntidadBancariaService().obtenerEntidadesBancarias());
+                model.addAttribute("tarjetaTipo", serviceManager.getTipoTarjetaService().obtenerTodos());
                 return "empleadoPasos/datosEconomicos";
             } else {
                 //si  no hay errores redirige al paso dos

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class DatosBancariosDTO {
 
     private Long id;
-    private String entidadBancaria;
+    private Long entidadBancaria = 1L;
     private String numCuenta;
 
     private TarjetaCreditoDTO tarjeta;

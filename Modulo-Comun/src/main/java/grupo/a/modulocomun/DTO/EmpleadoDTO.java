@@ -20,7 +20,7 @@ public class EmpleadoDTO extends PersonaDTO {
     private Long salarioAnual;
     private Long comisionAnual;
     private DatosBancariosDTO datosBancarios;
-    private Long departamento;
+    private Long idDepartamento = 1L;
     @Size(min = 2, message = "{valores.minimos}")
     private List<Long> especializaciones = new ArrayList<>();
     private UsuarioDTO usuario;

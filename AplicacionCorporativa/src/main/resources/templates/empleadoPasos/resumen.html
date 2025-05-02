@@ -52,8 +52,8 @@
     <!--Datos Profesionales-->
     <fieldset>
         <legend>Datos Profesinales</legend>
-        <p for="depart">Departamento: <span th:text="${departamentoService.obtenerNombrePorId(empleadoForm.getDepartamento())}"></span></p>
-        <p for="espec">Especialidades: </p>
+        <p for="departamento">Departamento: <span th:text="${departamentoService.obtenerNombrePorId(empleadoForm.getIdDepartamento())}"></span></p>
+        <p for="especializaciones">Especialidades: </p>
             <ul>
                 <li th:each="especialidad : ${empleadoForm.getEspecializaciones()}" th:text="${especialidadesService.obtenerNombrePorId(especialidad)}"></li>
             </ul>

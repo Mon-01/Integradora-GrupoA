@@ -49,11 +49,21 @@ public class EmpleadoService {
         }
     }
 
+    public void validarMaestrosPaso2(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+        if (empleadoDTO.getTipoDocumento() == null) {
+            bindingResult.rejectValue("tipoDocumento", "validation.notNull");
+        } else if (!repositoryManager.getTipoDocumentoRepository().existsById(empleadoDTO.getTipoDocumento())) {
+            bindingResult.rejectValue("tipoDocumento", "valor.invalido");
+        }
+
+        if (!repositoryManager.getTipoViaRepository().existsById(empleadoDTO.getDireccion().getTipoVia())) {
+            bindingResult.rejectValue("direccion.tipoVia", "valor.invalido");
+        }
+    }
+
     public void validarMaestrosPaso3(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-        if (empleadoDTO.getDepartamento() == null) {
-            bindingResult.rejectValue("departamento", "validation.notNull");
-        } else if (!repositoryManager.getDepartamentoRepository().existsById(empleadoDTO.getDepartamento())) {
-            bindingResult.rejectValue("departamento", "valor.invalido");
+            if (!repositoryManager.getDepartamentoRepository().existsById(empleadoDTO.getIdDepartamento())) {
+            bindingResult.rejectValue("idDepartamento", "valor.invalido");
         }
 
         if (empleadoDTO.getEspecializaciones() == null || empleadoDTO.getEspecializaciones().isEmpty()) {
@@ -64,6 +74,16 @@ public class EmpleadoService {
             .anyMatch(id -> !repositoryManager.getEspecialidadesRepository().existsById(id))
         ){
             bindingResult.rejectValue("especializaciones", "valor.invalido");
+        }
+    }
+
+    public void validarMaestrosPaso4(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+            if (!repositoryManager.getEntidadBancariaRepository().existsById(empleadoDTO.getDatosBancarios().getEntidadBancaria())) {
+            bindingResult.rejectValue("datosBancarios.entidadBancaria", "valor.invalido");
+        }
+
+        if (!repositoryManager.getTipoTarjetaRepository().existsById(empleadoDTO.getDatosBancarios().getTarjeta().getTipo())) {
+            bindingResult.rejectValue("datosBancarios.tarjeta.tipo", "valor.invalido");
         }
     }
 
@@ -320,7 +340,10 @@ public class EmpleadoService {
 
         datosBancarios.setTarjeta(tarjetaCredito);
         datosBancarios.setNumCuenta(empleadoDTO.getDatosBancarios().getNumCuenta());
-        datosBancarios.setEntidadBancaria(empleadoDTO.getDatosBancarios().getEntidadBancaria());
+        EntidadBancaria entidadBancaria = repositoryManager.getEntidadBancariaRepository()
+                        .findById(empleadoDTO.getDatosBancarios().getEntidadBancaria())
+                                .orElseThrow(() -> new EntityNotFoundException("Entidad bancaria no encontrado"));
+        datosBancarios.setEntidadBancaria(entidadBancaria);
         empleado.setDatosBancarios(datosBancarios);
     }
 
@@ -336,7 +359,7 @@ public class EmpleadoService {
 
     public void asignarDepartamento(Empleado empleado, EmpleadoDTO empleadoDTO) {
         Departamento departamento = repositoryManager.getDepartamentoRepository()
-                .findById(empleadoDTO.getDepartamento())
+                .findById(empleadoDTO.getIdDepartamento())
                 .orElseThrow(() -> new EntityNotFoundException("Departamento no encontrado"));
         empleado.setDepartamento(departamento);
     }

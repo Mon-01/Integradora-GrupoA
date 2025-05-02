@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DepartamentoDTO {
-    private Long id_dept;
+    private Long id_dept = 1L;
     private String nombre_dept;
     private String cod;
     private String loc;
