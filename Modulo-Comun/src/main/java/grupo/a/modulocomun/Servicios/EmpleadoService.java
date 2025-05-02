@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class EmpleadoService {
+
+    /*
+    * añadir caducidad en insertar empleado para que se guarde en la bbdd
+    * */
 
     @Autowired
     private final EmpleadoRepository empleadoRepository;
@@ -121,8 +126,8 @@ public class EmpleadoService {
 
         empleado1.setAdministrador(false);
         empleado1.setComentarios("Incorporada recientemente al departamento de ventas.");
-        empleado1.setSalarioAnual(28000L);
-        empleado1.setComisionAnual(1500L);
+        empleado1.setSalarioAnual(new BigDecimal("28000.00"));
+        empleado1.setComisionAnual(new BigDecimal("1500.00"));
         empleado1.setFecha_alta(LocalDate.of(2023, 6, 1));
 
         empleado1.setEspecializaciones(List.of(
@@ -155,8 +160,8 @@ public class EmpleadoService {
 
         empleado2.setAdministrador(true);
         empleado2.setComentarios("Trabajadora muy eficiente.");
-        empleado2.setSalarioAnual(35000L);
-        empleado2.setComisionAnual(3000L);
+        empleado2.setSalarioAnual(new BigDecimal("35000.00"));
+        empleado2.setComisionAnual(new BigDecimal("15000.90"));
         empleado2.setFecha_alta(LocalDate.of(2022, 1, 10));
 
 
@@ -191,8 +196,8 @@ public class EmpleadoService {
 
         empleado3.setAdministrador(true);
         empleado3.setComentarios("Responsable del área de IT.");
-        empleado3.setSalarioAnual(50000L);
-        empleado3.setComisionAnual(5000L);
+        empleado3.setSalarioAnual(new BigDecimal("5000.10"));
+        empleado3.setComisionAnual(new BigDecimal("15000.00"));
         empleado3.setFecha_alta(LocalDate.of(2021, 3, 15));
 
         empleado3.setEspecializaciones(List.of(
@@ -226,8 +231,8 @@ public class EmpleadoService {
 
         empleado4.setAdministrador(false);
         empleado4.setComentarios("Experta en atención al cliente y gestión de incidencias.");
-        empleado4.setSalarioAnual(32000L);
-        empleado4.setComisionAnual(2500L);
+        empleado4.setSalarioAnual(new BigDecimal("35000.00"));
+        empleado4.setComisionAnual(new BigDecimal("5000.00"));
         empleado4.setFecha_alta(LocalDate.of(2020, 11, 20));
 
         empleado4.setEspecializaciones(List.of(
@@ -291,8 +296,8 @@ public class EmpleadoService {
         empleado.setOtroTelefono(empleadoDTO.getOtroTelefono());
         empleado.setEmail(empleadoDTO.getEmail());
         empleado.setComentarios(empleadoDTO.getComentarios());
-        empleado.setSalarioAnual(empleadoDTO.getSalarioAnual());
-        empleado.setComisionAnual(empleadoDTO.getComisionAnual());
+        empleado.setSalarioAnual(new BigDecimal(empleadoDTO.getSalarioAnual()));
+        empleado.setComisionAnual(new BigDecimal(empleadoDTO.getComisionAnual()));
     }
 
     private void asignarGenero(Empleado empleado, EmpleadoDTO empleadoDTO) {
@@ -337,6 +342,8 @@ public class EmpleadoService {
         tarjetaCredito.setTipo(tipoTarjeta);
         tarjetaCredito.setNumero(empleadoDTO.getDatosBancarios().getTarjeta().getNumero());
         tarjetaCredito.setCvc(empleadoDTO.getDatosBancarios().getTarjeta().getCvc());
+        //Caducidad caducidad =
+        //tarjetaCredito.setCaducidad(empleadoDTO.getDatosBancarios().getTarjeta().getCaducidad());
 
         datosBancarios.setTarjeta(tarjetaCredito);
         datosBancarios.setNumCuenta(empleadoDTO.getDatosBancarios().getNumCuenta());

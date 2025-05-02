@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = edadValidator.class)
 @Documented
 public @interface edadValidation {
-    String message() default "{edad.valor}";
+    String message() default "{error.desconocido}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

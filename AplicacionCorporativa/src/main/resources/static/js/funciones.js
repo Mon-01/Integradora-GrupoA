@@ -23,3 +23,17 @@ function deseleccionarTodo(){
     }
 
 }
+
+function blanquear() {
+
+    const inputs = document.getElementsByTagName("input");
+
+    for (let i = 0; i < inputs.length; i++) {
+        const tipo = inputs[i].type;
+        if (tipo === "text" || tipo === "number" || tipo === "textarea") {
+            inputs[i].value = "";
+        } else if (tipo === "radio" || tipo === "checkbox") {
+            inputs[i].checked = false;
+        }
+    }
+}

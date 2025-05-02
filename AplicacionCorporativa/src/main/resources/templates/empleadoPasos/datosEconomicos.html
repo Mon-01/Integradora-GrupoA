@@ -31,7 +31,7 @@
             </div>
             <br>
             <label for="numCuenta">Número de cuenta</label>
-            <input type="text" id="numCuenta" th:field="*{datosBancarios.numCuenta}">
+            <input type="text" id="numCuenta" th:field="*{datosBancarios.numCuenta}" size="35">
             <div th:if="${enviado}">
                 <div th:each="error: ${#fields.errors('datosBancarios.numCuenta')}" th:text="${error} " class="error"></div>
             </div>
@@ -65,8 +65,26 @@
                 <div th:each="error: ${#fields.errors('datosBancarios.tarjeta.numero')}" th:text="${error} " class="error"></div>
             </div>
             <br><br>
-            <label for="caducidad">Caducidad</label>
-<!--            <input type="text" id="caducidad" th:field="*{tarjeta.caducidad}">-->
+            <label for="mes">Caducidad</label>
+            <select id="mes" th:field="*{datosBancarios.tarjeta.caducidad.mes}">
+                <option th:each="mes : ${#numbers.sequence(1, 12)}"
+                        th:value="${mes < 10 ? '0' + mes : mes}"
+                        th:text="${mes < 10 ? '0' + mes : mes}">
+                </option>
+            </select>
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.tarjeta.caducidad.mes')}" th:text="${error} " class="error"></div>
+            </div>
+            <br><br>
+            <label for="anio">Año de caducidad</label>
+            <select id="anio" th:field="*{datosBancarios.tarjeta.caducidad.anio}">
+                <option th:each="anio : ${#numbers.sequence(anioActual, anioActual + 20)}"
+                        th:value="${anio}" th:text="${anio}">Año</option>
+            </select>
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.tarjeta.caducidad.anio')}" th:text="${error} " class="error"></div>
+            </div>
+            <br><br>
             <label for="cvc">CVC</label>
             <input type="text" id="cvc" th:field="*{datosBancarios.tarjeta.cvc}">
             <div th:if="${enviado}">
@@ -75,8 +93,10 @@
         </fieldset>
     </fieldset>
     <a href="/paso3"><button type="button">Volver</button></a>
+    <button type="button" onclick="blanquear()" ><span th:text="#{boton.vaciar}"/></button>
     <button type="submit">Grabar Informarción - Resumen </button>
 </form>
+<script src="/js/funciones.js" defer></script>
 
 </body>
 </html>

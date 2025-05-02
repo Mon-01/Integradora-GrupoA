@@ -15,6 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Controller
 public class controladorEmpleadoPasos {
 
@@ -127,15 +129,18 @@ public class controladorEmpleadoPasos {
             model.addAttribute("datos", datosEmpleado);
             model.addAttribute("entidades", serviceManager.getEntidadBancariaService().obtenerEntidadesBancarias());
             model.addAttribute("tarjetaTipo", serviceManager.getTipoTarjetaService().obtenerTodos());
+            model.addAttribute("anioActual", LocalDate.now().getYear());
             return "empleadoPasos/datosEconomicos";
         } else {
             serviceManager.getEmpleadoService().validarMaestrosPaso4(datosEmpleado, bindingResult);
             //si hay errores de validación los muestra en el formulario
             if (bindingResult.hasErrors()) {
+                System.out.println(bindingResult.getAllErrors());
                 model.addAttribute("errors", bindingResult.getAllErrors());
                 model.addAttribute("enviado", true);
                 model.addAttribute("entidades", serviceManager.getEntidadBancariaService().obtenerEntidadesBancarias());
                 model.addAttribute("tarjetaTipo", serviceManager.getTipoTarjetaService().obtenerTodos());
+                model.addAttribute("anioActual", LocalDate.now().getYear());
                 return "empleadoPasos/datosEconomicos";
             } else {
                 //si  no hay errores redirige al paso dos

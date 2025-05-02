@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = FechaNacValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FechaNacValidation {
-    String message() default "";
+    String message() default "{error.desconocido}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

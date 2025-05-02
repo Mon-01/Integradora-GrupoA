@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,8 @@ public class Empleado extends Persona {
 
     private boolean administrador;
     private String comentarios;
-    private Long salarioAnual;
-    private Long comisionAnual;
+    private BigDecimal salarioAnual;
+    private BigDecimal comisionAnual;
 
     @Column(name = "fecha_alta")
     private LocalDate fecha_alta;

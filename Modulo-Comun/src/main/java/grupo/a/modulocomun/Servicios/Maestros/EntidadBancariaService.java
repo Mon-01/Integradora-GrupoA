@@ -15,6 +15,14 @@ public class EntidadBancariaService {
     @Autowired
     private EntidadBancariaRepository entidadBancariaRepository;
 
+    public String obtenerCodPaisPorId(Long id){
+        return entidadBancariaRepository.findById(id).get().getPais();
+    }
+
+    public String obtenerCodEntidadPorId(Long id){
+        return entidadBancariaRepository.findById(id).get().getCod_entidad();
+    }
+
     public String obtenerNombrePorId(Long id){
         return entidadBancariaRepository.findById(id)
                 .map(EntidadBancaria::getNombre)
@@ -24,12 +32,13 @@ public class EntidadBancariaService {
     public void cargarEntidadesBancarias() {
         if (entidadBancariaRepository.count() == 0) {
             entidadBancariaRepository.saveAll(List.of(
-                    new EntidadBancaria("BBVA"),
-                    new EntidadBancaria("Santander"),
-                    new EntidadBancaria("CaixaBank"),
-                    new EntidadBancaria("Banco Sabadell"),
-                    new EntidadBancaria("ING"),
-                    new EntidadBancaria("Bankinter")
+                    new EntidadBancaria("ES","BBVA","0182"),
+                    new EntidadBancaria("ES", "Santander", "0049"),
+                    new EntidadBancaria("ES", "CaixaBank", "2100"),
+                    new EntidadBancaria("ES", "Banco Sabadell", "0081"),
+                    new EntidadBancaria("ES", "ING", "1465"),
+                    new EntidadBancaria("ES", "Bankinter", "0128")
+
             ));
         }
     }

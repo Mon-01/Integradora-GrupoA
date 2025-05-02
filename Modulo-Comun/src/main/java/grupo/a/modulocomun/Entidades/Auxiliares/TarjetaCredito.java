@@ -2,6 +2,7 @@ package grupo.a.modulocomun.Entidades.Auxiliares;
 
 import grupo.a.modulocomun.Entidades.Maestros.TipoTarjeta;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class TarjetaCredito {
     private TipoTarjeta tipo;
 
     private String numero;
-//    private Caducidad caducidad;
-    private int cvc;
+    @Embedded
+    private Caducidad caducidad;
+    private String cvc;
 }
