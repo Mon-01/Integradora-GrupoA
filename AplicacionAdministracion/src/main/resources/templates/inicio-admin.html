@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html  lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administración - Lista de Empleados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .contenedor-principal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+
+        form#filtroForm {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        form#filtroForm input, form#filtroForm button {
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+        .tabla-contenedor {
+            width: 80%;
+            display: flex;
+            justify-content: center;
+        }
+
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor-principal">
+    <h2>Bienvenido, <span th:text="${adminEmail}"></span></h2>
+    <h3>Empleados registrados</h3>
+
+    <!-- Filtros de búsqueda -->
+    <form id="filtroForm" method="get" th:action="@{/admin/inicio}">
+        <input type="text" name="nombre" placeholder="Nombre" th:value="${nombre}" onblur="this.form.submit()">
+        <input type="text" name="departamento" placeholder="Departamento" th:value="${departamento}" onblur="this.form.submit()">
+        <input type="number" name="salario" placeholder="Salario mínimo" th:value="${salario}" onblur="this.form.submit()">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Email</th>
+                <th>Departamento</th>
+                <th>Salario</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="emp : ${empleados}"
+                th:onclick="'window.location.href=\'/admin/detalle/' + ${emp.id_empleado} + '\''"
+                style="cursor:pointer;">
+                <td th:text="${emp.nombre}">Nombre</td>
+                <td th:text="${emp.apellido}">Apellidos</td>
+                <td th:text="${emp.email}">Email</td>
+                <td th:text="${emp.departamento != null ? emp.departamento.nombre_dept : 'Sin asignar'}">Depto</td>
+                <td th:text="${emp.salarioAnual}">Salario</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

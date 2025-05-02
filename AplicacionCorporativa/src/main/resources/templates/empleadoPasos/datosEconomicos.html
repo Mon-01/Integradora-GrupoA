@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Datos Económicos</title>
+</head>
+
+<style>
+    .error{
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<body>
+<a href="/paso1"><button>Paso 1</button></a>
+<a href="/paso2"><button>Paso 2</button></a>
+<a href="/paso3"><button>Paso 3</button></a>
+<a href="/paso4"><button>Paso 4</button></a>
+<a href="/resumen"><button>Resumen</button></a>
+<form id="formulario" method="post" th:action="@{/paso4}" th:object="${datos}">
+    <fieldset>
+        <legend>Datos Económicos</legend>
+        <fieldset>
+            <legend>Cuenta corriente</legend>
+            <label for="entidadBancaria">Entidad bancaria</label>
+            <select id="entidadBancaria" th:field="*{datosBancarios.entidadBancaria}" >
+                <option th:each="entidad: ${entidades}" th:value="${entidad.getId()}" th:text="${entidad.getNombre()}"></option>
+            </select>
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.entidadBancaria')}" th:text="${error} " class="error"></div>
+            </div>
+            <br>
+            <label for="numCuenta">Número de cuenta</label>
+            <input type="text" id="numCuenta" th:field="*{datosBancarios.numCuenta}" size="35">
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.numCuenta')}" th:text="${error} " class="error"></div>
+            </div>
+        </fieldset>
+        <br>
+        <label for="salarioAnual">Salario</label>
+        <input type="text" id="salarioAnual" th:field="*{salarioAnual}">
+        <div th:if="${enviado}">
+            <div th:each="error: ${#fields.errors('salarioAnual')}" th:text="${error} " class="error"></div>
+        </div>
+        <br><br>
+        <label for="comisionAnual">Comisión</label>
+        <input type="text" id="comisionAnual" th:field="*{comisionAnual}">
+        <div th:if="${enviado}">
+            <div th:each="error: ${#fields.errors('comisionAnual')}" th:text="${error} " class="error"></div>
+        </div>
+        <br><br>
+        <fieldset>
+            <legend>Tarjeta de Crédito</legend>
+            <label for="tipo">Tipo de tarjeta</label>
+            <select id="tipo" th:field="*{datosBancarios.tarjeta.tipo}" >
+            <option th:each="tar: ${tarjetaTipo}" th:value="${tar.getId()}" th:text="${tar.getNombre()}"></option>
+            </select>
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.tarjeta.tipo')}" th:text="${error} " class="error"></div>
+            </div>
+            <br><br>
+            <label for="numero">Número</label>
+            <input type="text" id="numero" th:field="*{datosBancarios.tarjeta.numero}">
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.tarjeta.numero')}" th:text="${error} " class="error"></div>
+            </div>
+            <br><br>
+            <label for="mes">Caducidad</label>
+            <select id="mes" th:field="*{datosBancarios.tarjeta.caducidad.mes}">
+                <option th:each="mes : ${#numbers.sequence(1, 12)}"
+                        th:value="${mes < 10 ? '0' + mes : mes}"
+                        th:text="${mes < 10 ? '0' + mes : mes}">
+                </option>
+            </select>
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.tarjeta.caducidad.mes')}" th:text="${error} " class="error"></div>
+            </div>
+            <br><br>
+            <label for="anio">Año de caducidad</label>
+            <select id="anio" th:field="*{datosBancarios.tarjeta.caducidad.anio}">
+                <option th:each="anio : ${#numbers.sequence(anioActual, anioActual + 20)}"
+                        th:value="${anio}" th:text="${anio}">Año</option>
+            </select>
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.tarjeta.caducidad.anio')}" th:text="${error} " class="error"></div>
+            </div>
+            <br><br>
+            <label for="cvc">CVC</label>
+            <input type="text" id="cvc" th:field="*{datosBancarios.tarjeta.cvc}">
+            <div th:if="${enviado}">
+                <div th:each="error: ${#fields.errors('datosBancarios.tarjeta.cvc')}" th:text="${error} " class="error"></div>
+            </div>
+        </fieldset>
+    </fieldset>
+    <a href="/paso3"><button type="button">Volver</button></a>
+    <button type="button" onclick="blanquear()" ><span th:text="#{boton.vaciar}"/></button>
+    <button type="submit">Grabar Informarción - Resumen </button>
+</form>
+<script src="/js/funciones.js" defer></script>
+
+</body>
+</html>

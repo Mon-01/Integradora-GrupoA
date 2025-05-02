@@ -1,0 +1,157 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio de sesión - MonArNa SL</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-box h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #d32f2f;
+        }
+
+        .login-box form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-box input[type="text"],
+        .login-box input[type="password"] {
+            padding: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-box button {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .login-box button:hover {
+            background-color: #b71c1c;
+        }
+
+        .login-box a {
+            margin-top: 1rem;
+            display: block;
+            text-align: center;
+            color: #d32f2f;
+            text-decoration: none;
+        }
+
+        .login-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilo para el modal de cuenta bloqueada */
+        #modalBloqueado {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        #modalBloqueado .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        #modalBloqueado h2 {
+            color: #d32f2f;
+            margin-bottom: 1rem;
+        }
+
+        #modalBloqueado button {
+            margin-top: 1.5rem;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #modalBloqueado button:hover {
+            background-color: #b71c1c;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Incluir barra de navegación -->
+<div th:replace="~{fragments/nav :: navbar}"></div>
+
+<div class="login-container">
+    <div class="login-box">
+        <h2>Iniciar sesión</h2>
+        <form th:action="@{/email}" th:object="${usuarioDTO}" method="post">
+            <input type="text" th:field="*{email}" placeholder="Correo electrónico" >
+            <div th:text="${error} " class="error"></div>
+            <button type="submit">Entrar</button>
+        </form>
+        <a href="/reg">¿No tienes Usuario?</a>
+    </div>
+
+    <!--div con la ventana de usuario bloqueado-->
+        <div id="modalBloqueado" style="display:none;" th:if="${usuario != null}">
+            <!--como usuario solo está en caso de que el usuario este bloqueado, usamos el th:if-->
+            <div class="modal-content">
+                <h2>Cuenta bloqueada</h2>
+                <p>Tu cuenta ha sido bloqueada.</p>
+                <p ><strong>Motivo:</strong><span th:text="${usuario.getMotivoBloqueo()}"></span></p>
+                <p ><strong>Hasta:</strong><span th:text="${usuario.getFechaFinBloqueo()}"></span></p>
+                <button onclick="document.getElementById('modalBloqueado').style.display='none'">Cerrar</button>
+            </div>
+        </div>
+</div>
+
+<script th:inline="javascript">
+    window.onload = function() {
+        //obtien true o false de la función isBloqueado del controlador
+        const estaBloqueado = /*[[${bloqueado}]]*/ false;
+        if (estaBloqueado) {
+            document.getElementById("modalBloqueado").style.display = "block";
+        }
+    };
+</script>
+</body>
+</html>

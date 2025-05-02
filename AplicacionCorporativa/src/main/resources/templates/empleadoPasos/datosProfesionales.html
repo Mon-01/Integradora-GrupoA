@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Datos Profesionales</title>
+</head>
+<style>
+  .error{
+    color: red;
+    font-weight: bold;
+  }
+</style>
+<body>
+<a href="/paso1"><button>Paso 1</button></a>
+<a href="/paso2"><button>Paso 2</button></a>
+<a href="/paso3"><button>Paso 3</button></a>
+<a href="/paso4"><button>Paso 4</button></a>
+<a href="/resumen"><button>Resumen</button></a>
+<form id="formulario" method="post" th:action="@{/paso3}" th:object="${datos}">
+  <fieldset>
+    <legend>Datos Profesionales</legend>
+    <label for="idDepartamento">Departamento</label>
+    <select id="idDepartamento" th:field="*{idDepartamento}" >
+      <option th:each="depart: ${departamentos}" th:value="${depart.getId_dept()}" th:text="${depart.getNombre_dept()}"></option>
+    </select>
+    <div th:if="${enviado}">
+      <div th:each="error: ${#fields.errors('idDepartamento')}" th:text="${error} " class="error"></div>
+    </div>
+    <br><br>
+    <label for="especializaciones">Especialidades</label>
+    <div th:each="espec: ${especialidades}">
+      <input id="especializaciones" type="checkbox" th:field="*{especializaciones}" th:value="${espec.getId()}" th:text="${espec.getNombre()}">
+    </div>
+    <button type="button" onclick="seleccionarTodo()" ><span th:text="#{boton.todo}"/></button>
+    <button type="button" onclick="deseleccionarTodo()" ><span th:text="#{boton.nada}"/></button>
+
+    <div th:if="${enviado}">
+      <div th:each="error: ${#fields.errors('especializaciones')}" th:text="${error} " class="error"></div>
+    </div>
+    <br><br>
+
+  </fieldset>
+  <a href="/paso2"><button type="button">Volver</button></a>
+  <button type="button" onclick="blanquear()" ><span th:text="#{boton.vaciar}"/></button>
+  <button type="submit">Grabar Informarción - Pasar al paso 4: Datos Económicos</button>
+</form>
+<script src="/js/funciones.js" defer></script>
+</body>
+</html>

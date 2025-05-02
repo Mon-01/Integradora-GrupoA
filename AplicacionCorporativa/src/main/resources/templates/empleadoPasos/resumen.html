@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen</title>
+</head>
+<body>
+<a href="/paso1"><button>Paso 1</button></a>
+<a href="/paso2"><button>Paso 2</button></a>
+<a href="/paso3"><button>Paso 3</button></a>
+<a href="/paso4"><button>Paso 4</button></a>
+<a href="/resumen"><button>Resumen</button></a>
+<!--Datos Personales-->
+<form id="formulario" method="post" th:action="@{/resumen}" th:object="${empleadoForm}">
+    <fieldset>
+        <legend>Datos Personales</legend>
+        <p for="name">Nombre: <span th:text="${empleadoForm.getNombre()}"></span></p>
+        <p for="apellido">Apellidos: <span th:text="${empleadoForm.getApellido()}"></span></p>
+        <p for="genero">Género: <span th:text="${generoService.obtenerNombrePorId(empleadoForm.getGenero())}"></span></p>
+        <p for="nacimiento">Fecha de Nacimiento: <span th:text="${empleadoForm.getFechaNacimiento()}"></span></p>
+        <p for="edad">Edad: <span th:text="${empleadoForm.getEdad()}"></span></p>
+        <p for="pais">País de Nacimiento: <span th:text="${paisService.obtenerNombrePorId(empleadoForm.getPaisNacimiento())}"></span></p>
+        <p for="comentarios">Comentarios: <span th:text="${empleadoForm.getComentarios()}"></span></p>
+        <br>
+    </fieldset>
+
+    <!--Datos Contacto-->
+    <fieldset>
+        <legend>Datos de contacto</legend>
+        <p for="tipoDoc">Tipo de Documento: <span th:text="${tipoDocService.obtenerNombrePorId(empleadoForm.getTipoDocumento())}"></span></p>
+        <p for="doc">Documento: <span th:text="${empleadoForm.getDocumento()}"></span></p>
+        <p for="prefijo">Prefijo Teléfono: <span th:text="${empleadoForm.getPrefijoTel()}"></span></p>
+        <p for="tel">Teléfono: <span th:text="${empleadoForm.getTelefono()}"></span></p>
+        <p for="otrosTel">Otros Teléfonos: <span th:text="${empleadoForm.getOtroTelefono()}"></span></p>
+        <fieldset>
+            <legend>Dirección</legend>
+            <div>
+                <p>Tipo Vía: <span th:text="${tipoViaService.obtenerNombrePorId(empleadoForm.getDireccion().tipoVia)}"></span>
+                Nombre Vía: <span th:text="${empleadoForm.getDireccion().nombreVia}"></span></p>
+                <p>Número: <span th:text="${empleadoForm.getDireccion().numero}"></span></p>
+                <p>Portal: <span th:text="${empleadoForm.getDireccion().portal}"></span></p>
+                <p>Planta: <span th:text="${empleadoForm.getDireccion().planta}"></span></p>
+                <p>Puerta: <span th:text="${empleadoForm.getDireccion().puerta}"></span></p>
+                <p>Localidad: <span th:text="${empleadoForm.getDireccion().localidad}"></span></p>
+                <p>Región: <span th:text="${empleadoForm.getDireccion().region}"></span></p>
+                <p>Código Postal: <span th:text="${empleadoForm.getDireccion().cod_postal}"></span></p>
+            </div>
+        </fieldset>
+        <br>
+    </fieldset>
+
+    <!--Datos Profesionales-->
+    <fieldset>
+        <legend>Datos Profesinales</legend>
+        <p for="departamento">Departamento: <span th:text="${departamentoService.obtenerNombrePorId(empleadoForm.getIdDepartamento())}"></span></p>
+        <p for="especializaciones">Especialidades: </p>
+            <ul>
+                <li th:each="especialidad : ${empleadoForm.getEspecializaciones()}" th:text="${especialidadesService.obtenerNombrePorId(especialidad)}"></li>
+            </ul>
+        <br>
+    </fieldset>
+
+    <!--Datos Ecónomicos-->
+    <fieldset>
+        <legend>Datos Económicos</legend>
+        <p for="entidad">Entidad Bancaria: <span th:text="${entidadBancariaService.obtenerNombrePorId(empleadoForm.datosBancarios.entidadBancaria)}"></span></p>
+        <p for="numCuen">Número de Cuenta: <span th:text="${empleadoForm.getDatosBancarios().numCuenta}"></span></p>
+        <p for="sal">Salario: <span th:text="${empleadoForm.getSalarioAnual()}"></span></p>
+        <p for="comision">Comisión: <span th:text="${empleadoForm.getComisionAnual()}"></span></p>
+        <fieldset>
+            <legend>Tarjeta</legend>
+            <div>
+                <p>Tipo Tarjeta: <span th:text="${tipoTarjetaService.obtenerNombrePorId(empleadoForm.getDatosBancarios().tarjeta.tipo)}"></span>
+                <p>Número: <span th:text="${empleadoForm.datosBancarios.tarjeta.numero}"></span></p>
+                <p>CVC: <span th:text="${empleadoForm.datosBancarios.tarjeta.cvc}"></span></p>
+               </div>
+        </fieldset>
+        <br>
+    </fieldset>
+<a href="/paso4"><button>Volver</button></a>
+<a href="/resetearSesion"><button>Volver al principio</button></a>
+<button type="submit">Guardar Datos</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Datos de Contacto - Paso 2</title>
+</head>
+<style>
+    .error{
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<body>
+
+<nav>
+    <a href="/paso1"><button>Paso 1</button></a>
+    <a href="/paso2"><button>Paso 2</button></a>
+    <a href="/paso3"><button>Paso 3</button></a>
+    <a href="/paso4"><button>Paso 4</button></a>
+    <a href="/resumen"><button>Resumen</button></a>
+</nav>
+
+<form method="post" th:action="@{/paso2}" th:object="${datos}">
+    <fieldset>
+        <legend>Datos de contacto</legend>
+
+        <!-- Tipo de documento -->
+        <label>Tipo de documento</label>
+        <div th:each="tipo : ${tipoDoc}">
+            <input type="radio" th:field="*{tipoDocumento}" th:value="${tipo.id}" th:text="${tipo.nombre}">
+        </div>
+        <div th:if="${enviado}">
+            <div th:each="err : ${#fields.errors('tipoDocumento')}" th:text="${err}" class="error"></div>
+        </div>
+
+        <!-- Documento -->
+        <label for="doc">Documento</label>
+        <input type="text" id="doc" th:field="*{documento}">
+        <div th:if="${enviado}">
+            <div th:each="err : ${#fields.errors('documento')}" th:text="${err}" class="error"></div>
+        </div>
+
+        <!-- Prefijo -->
+        <label for="prefijo">Prefijo</label>
+        <input type="text" id="prefijo" th:field="*{prefijoTel}">
+        <div th:if="${enviado}">
+            <div th:each="err : ${#fields.errors('prefijoTel')}" th:text="${err}" class="error"></div>
+        </div>
+
+        <!-- Teléfono -->
+        <label for="tel">Teléfono</label>
+        <input type="text" id="tel" th:field="*{telefono}">
+        <div th:if="${enviado}">
+            <div th:each="err : ${#fields.errors('telefono')}" th:text="${err}" class="error"></div>
+        </div>
+
+        <!-- Otro teléfono -->
+        <label for="otrosTel">Otros teléfonos</label>
+        <input type="text" id="otrosTel" th:field="*{otroTelefono}">
+        <div th:if="${enviado}">
+            <div th:each="err : ${#fields.errors('otroTelefono')}" th:text="${err}" class="error"></div>
+        </div>
+
+        <!-- Email -->
+        <label for="email">Email</label>
+        <input type="text" id="email" th:field="*{email}">
+        <div th:if="${enviado}">
+            <div th:each="err : ${#fields.errors('email')}" th:text="${err}" class="error"></div>
+        </div>
+
+        <fieldset>
+            <legend>Dirección</legend>
+
+            <!-- Tipo de vía -->
+            <label for="tipoVia">Tipo de vía</label>
+            <select id="tipoVia" th:field="*{direccion.tipoVia}">
+                <option value="">-- Selecciona --</option>
+                <option th:each="via : ${vias}" th:value="${via.id}" th:text="${via.nombre}"></option>
+            </select>
+            <div th:if="${enviado}">
+                <div th:each="err : ${#fields.errors('direccion.tipoVia')}" th:text="${err}" class="error"></div>
+            </div>
+
+            <!-- Nombre vía -->
+            <label for="nombreVia">Nombre de la vía</label>
+            <input type="text" id="nombreVia" th:field="*{direccion.nombreVia}">
+            <div th:if="${enviado}">
+                <div th:each="err : ${#fields.errors('direccion.nombreVia')}" th:text="${err}" class="error"></div>
+            </div>
+
+            <!-- Número -->
+            <label for="numero">Número</label>
+            <input type="text" id="numero" th:field="*{direccion.numero}">
+            <div th:if="${enviado}">
+                <div th:each="err : ${#fields.errors('direccion.numero')}" th:text="${err}" class="error"></div>
+            </div>
+
+            <!-- Portal -->
+            <label for="portal">Portal</label>
+            <input type="text" id="portal" th:field="*{direccion.portal}">
+
+            <!-- Planta -->
+            <label for="planta">Planta</label>
+            <input type="text" id="planta" th:field="*{direccion.planta}">
+
+            <!-- Puerta -->
+            <label for="puerta">Puerta</label>
+            <input type="text" id="puerta" th:field="*{direccion.puerta}">
+
+            <!-- Localidad -->
+            <label for="localidad">Localidad</label>
+            <input type="text" id="localidad" th:field="*{direccion.localidad}">
+            <div th:if="${enviado}">
+                <div th:each="err : ${#fields.errors('direccion.localidad')}" th:text="${err}" class="error"></div>
+            </div>
+
+            <!-- Región -->
+            <label for="region">Región</label>
+            <input type="text" id="region" th:field="*{direccion.region}">
+
+            <!-- Código postal -->
+            <label for="cod_postal">Código Postal</label>
+            <input type="text" id="cod_postal" th:field="*{direccion.cod_postal}">
+            <div th:if="${enviado}">
+                <div th:each="err : ${#fields.errors('direccion.cod_postal')}" th:text="${err}" class="error"></div>
+            </div>
+        </fieldset>
+
+    </fieldset>
+    <a href="/paso1"><button type="button">Volver</button></a>
+    <button type="button" onclick="blanquear()" ><span th:text="#{boton.vaciar}"/></button>
+    <button type="submit">Grabar Información y continuar al paso 3</button>
+</form>
+<script src="/js/funciones.js" defer></script>
+
+</body>
+</html>
