@@ -39,6 +39,9 @@
         <div th:if="${enviado}">
             <div th:each="err : ${#fields.errors('documento')}" th:text="${err}" class="error"></div>
         </div>
+        <div th:if="${#fields.hasGlobalErrors()}">
+                    <div th:each="err : ${#fields.globalErrors()}" th:text="${err}" class="error"></div>
+        </div>
 
         <!-- Prefijo -->
         <label for="prefijo">Prefijo</label>

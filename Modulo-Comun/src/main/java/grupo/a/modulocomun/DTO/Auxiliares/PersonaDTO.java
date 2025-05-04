@@ -4,6 +4,7 @@ import grupo.a.modulocomun.Validaciones.paso1.FechaNacValidation;
 import grupo.a.modulocomun.Validaciones.paso1.Paso1;
 import grupo.a.modulocomun.Validaciones.paso1.edadValidation;
 import grupo.a.modulocomun.Validaciones.paso2.Paso2;
+import grupo.a.modulocomun.Validaciones.paso2.ValidarDocumento;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.*;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @edadValidation(groups = Paso1.class)
+@ValidarDocumento(groups = Paso2.class)
 public class PersonaDTO {
 
     @NotBlank(message = "{validation.notBlank}",groups = Paso1.class)
@@ -31,7 +33,9 @@ public class PersonaDTO {
     @Min(value = 1, message = "Prefijo no válido", groups = Paso2.class)
     private int prefijoTel = 34;
     @NotBlank(message = "El teléfono es obligatorio", groups = Paso2.class)
+    @Size(min = 9, max = 9, message = "Debe tener exactamente 9 números", groups = Paso2.class)
     private String telefono;
+    @Size(min = 9, max = 9, message = "Debe tener exactamente 9 números", groups = Paso2.class)
     private String otroTelefono;
     private String email;
 
