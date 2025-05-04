@@ -11,6 +11,7 @@ import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -35,11 +36,15 @@ public class EmpleadoService {
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
+    private final DepartamentoService departamentoService;
+
+    @Autowired
     private RepositoryManager repositoryManager;
 
-    public EmpleadoService(EmpleadoRepository empleadoRepository, UsuarioRepository usuarioRepository) {
+    public EmpleadoService(EmpleadoRepository empleadoRepository, UsuarioRepository usuarioRepository, DepartamentoService departamentoService) {
         this.empleadoRepository = empleadoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.departamentoService = departamentoService;
     }
 
     public void validarMaestrosPaso1(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
@@ -92,13 +97,30 @@ public class EmpleadoService {
         }
     }
 
-    public void cargarEmpleado(){
+    @Transactional
+    public void cargarEmpleado() {
+        // Primero asegurarnos que los departamentos existen
+        departamentoService.cargarDepartamentos();
 
-        empleadoRepository.save(insertarEmpleado1());
-        empleadoRepository.save(insertarEmpleado2());
-        empleadoRepository.save(insertarEmpleado3());
-        empleadoRepository.save(insertarEmpleado4());
+        // Crear empleados asignando departamentos específicos
+        Empleado emp1 = insertarEmpleado1();
+        emp1.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Administración")
+                .orElseThrow(() -> new EntityNotFoundException("Departamento Administración no encontrado")));
 
+        Empleado emp2 = insertarEmpleado2();
+        emp2.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Tecnología")
+                .orElseThrow(() -> new EntityNotFoundException("Departamento Tecnología no encontrado")));
+
+        Empleado emp3 = insertarEmpleado3();
+        emp3.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Tecnología")
+                .orElseThrow(() -> new EntityNotFoundException("Departamento Tecnología no encontrado")));
+
+        Empleado emp4 = insertarEmpleado4();
+        emp4.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Recursos Humanos")
+                .orElseThrow(() -> new EntityNotFoundException("Departamento Recursos Humanos no encontrado")));
+
+        // Guardar todos los empleados
+        empleadoRepository.saveAll(List.of(emp1, emp2, emp3, emp4));
     }
 
     //insertar datos empleados

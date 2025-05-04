@@ -36,22 +36,27 @@ public class controladorMVCAdmin {
 
     @GetMapping("/admin/inicio")
     public String mostrarInicioAdmin(
-            @RequestParam(required = false, defaultValue = "") String nombre,
-            @RequestParam(required = false, defaultValue = "") String departamento,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String departamento,
             @RequestParam(required = false, defaultValue = "0") Long salario,
             Model model, HttpSession session) {
 
         UsuarioAdministradorDTO dto = (UsuarioAdministradorDTO) session.getAttribute("adminLogueado");
         if (dto == null) return "redirect:/admin/login";
 
-        model.addAttribute("adminEmail", dto.getEmail());
+        List<Empleado> empleados = adminService.buscarFiltrados(nombre, departamento, salario);
 
-        // guardar los filtros en el modelo para que el HTML los conserve
-        model.addAttribute("nombre", nombre);
-        model.addAttribute("departamento", departamento);
+        // Log de diagnóstico
+        logger.info("Número de empleados encontrados: {}", empleados.size());
+        empleados.forEach(e -> logger.info("Empleado: {} {}, Depto: {}, Salario: {}",
+                e.getNombre(), e.getApellido(),
+                e.getDepartamento() != null ? e.getDepartamento().getNombre_dept() : "N/A",
+                e.getSalarioAnual()));
+
+        model.addAttribute("nombre", nombre != null ? nombre : "");
+        model.addAttribute("departamento", departamento != null ? departamento : "");
         model.addAttribute("salario", salario);
-
-        List<Empleado> empleados = adminService.buscarPorParametros(nombre, departamento, salario);
+        model.addAttribute("adminEmail", dto.getEmail());
         model.addAttribute("empleados", empleados);
 
         return "inicio-admin";
