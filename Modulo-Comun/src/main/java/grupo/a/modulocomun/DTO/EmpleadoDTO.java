@@ -35,4 +35,5 @@ public class EmpleadoDTO extends PersonaDTO {
     @Size(min = 2, message = "{valores.minimos}")
     private List<Long> especializaciones = new ArrayList<>();
     private UsuarioDTO usuario;
+    private List<NominaDTO> nominas;
 }

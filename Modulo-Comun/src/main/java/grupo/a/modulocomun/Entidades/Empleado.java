@@ -44,6 +44,9 @@ public class Empleado extends Persona {
     )
     private List<Especialidades> especializaciones = new ArrayList<>();
 
+    @OneToMany(mappedBy = "empleado")
+    private List<Nomina> nominas = new ArrayList<>();
+
 
 
     //Relaciones
