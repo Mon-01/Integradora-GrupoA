@@ -399,4 +399,7 @@ public class EmpleadoService {
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de documento no encontrado"));
         empleado.setTipoDocumento(tipoDocumento);
     }
+    public List<Empleado> obtenerTodosEmpleados() {
+        return empleadoRepository.findAll();
+    }
 }

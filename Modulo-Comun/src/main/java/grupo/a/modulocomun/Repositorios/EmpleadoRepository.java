@@ -1,5 +1,6 @@
 package grupo.a.modulocomun.Repositorios;
 
+import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,4 +38,6 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
             @Param("nombre") String nombre,
             @Param("departamento") String departamento,
             @Param("salarioMin") BigDecimal salarioMin);
+
+
 }

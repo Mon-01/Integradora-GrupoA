@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class LineaNomina {
 
     @Id
@@ -18,7 +20,7 @@ public class LineaNomina {
     private String descripcion;
     private BigDecimal importe;
 
-    @ManyToOne
-    @JoinColumn(name = "nomina_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nomina_id",nullable = false)
     private Nomina nomina;
 }
