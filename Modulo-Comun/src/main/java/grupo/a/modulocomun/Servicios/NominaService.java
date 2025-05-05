@@ -62,7 +62,7 @@ public class NominaService {
         Nomina nominaGuardada = nominaRepository.save(nomina);
         return convertirADTO(nominaGuardada);
     }
-
+/*
     private NominaDTO convertirADTO(Nomina nomina) {
         NominaDTO dto = new NominaDTO();
         dto.setId(nomina.getId());
@@ -86,6 +86,41 @@ public class NominaService {
                 })
                 .collect(Collectors.toList());
         dto.setLineas(lineasDTO);
+
+        // Calcular total
+        BigDecimal total = nomina.getLineas().stream()
+                .map(LineaNomina::getImporte)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        dto.setTotal(total);
+
+        return dto;
+    }
+
+ */
+    public List<NominaDTO> obtenerNominasPorEmpleado(Long empleadoId) {
+        return nominaRepository.findNominasConLineasByEmpleadoId(empleadoId).stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
+    }
+
+
+
+    private NominaDTO convertirADTO(Nomina nomina) {
+        NominaDTO dto = new NominaDTO();
+        dto.setId(nomina.getId());
+        dto.setFecha(nomina.getFecha());
+
+        // Convertir líneas
+        List<LineaNominaDTO> lineas = nomina.getLineas().stream()
+                .map(linea -> {
+                    LineaNominaDTO lineaDTO = new LineaNominaDTO();
+                    lineaDTO.setId(linea.getId());
+                    lineaDTO.setConcepto(linea.getDescripcion());
+                    lineaDTO.setCantidad(linea.getImporte());
+                    return lineaDTO;
+                })
+                .collect(Collectors.toList());
+        dto.setLineas(lineas);
 
         // Calcular total
         BigDecimal total = nomina.getLineas().stream()

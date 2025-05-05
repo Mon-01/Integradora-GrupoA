@@ -1,5 +1,6 @@
 package grupo.a.modulocomun.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
 import grupo.a.modulocomun.Entidades.Maestros.Especialidades;
 import jakarta.persistence.*;
@@ -46,7 +47,8 @@ public class Empleado extends Persona {
     )
     private List<Especialidades> especializaciones = new ArrayList<>();
 
-    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("empleado") // Evita recursión
     private List<Nomina> nominas = new ArrayList<>();
 
 

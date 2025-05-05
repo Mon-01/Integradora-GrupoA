@@ -1,5 +1,6 @@
 package grupo.a.modulocomun.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.*;
@@ -23,8 +24,9 @@ public class Nomina {
 
     private LocalDate fecha;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empleado_id",nullable = false)
+    @JsonIgnoreProperties("nominas")
     private Empleado empleado;
 
     @OneToMany(mappedBy = "nomina", cascade = CascadeType.ALL)
