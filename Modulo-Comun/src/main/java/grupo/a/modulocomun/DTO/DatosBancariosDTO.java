@@ -19,7 +19,7 @@ public class DatosBancariosDTO {
 
     private Long id;
     private Long entidadBancaria = 1L;
-    private String numCuenta;
+    private String numCuenta = "ES91 2100 0418 4502 0005 1332";
 
     @Valid
     private TarjetaCreditoDTO tarjeta;

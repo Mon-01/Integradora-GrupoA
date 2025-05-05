@@ -177,7 +177,7 @@ public class controladorEmpleadoPasos {
 
         serviceManager.getEmpleadoService().guardarEmpleado(empleado,emailUsuario.getEmail());
         session.invalidate();
-        return "registroExitoso";
+        return "redirect:/inicio";
     }
 
 

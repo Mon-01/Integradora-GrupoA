@@ -319,7 +319,11 @@ public class EmpleadoService {
         empleado.setEmail(empleadoDTO.getEmail());
         empleado.setComentarios(empleadoDTO.getComentarios());
         empleado.setSalarioAnual(new BigDecimal(empleadoDTO.getSalarioAnual()));
-        empleado.setComisionAnual(new BigDecimal(empleadoDTO.getComisionAnual()));
+        if(empleadoDTO.getComisionAnual().isEmpty()){
+            empleado.setComisionAnual(BigDecimal.ZERO);
+        }else{
+           empleado.setComisionAnual(new BigDecimal(empleadoDTO.getComisionAnual()));
+        }
     }
 
     private void asignarGenero(Empleado empleado, EmpleadoDTO empleadoDTO) {

@@ -19,7 +19,7 @@ public class TarjetaCreditoDTO {
     private Long tipo = 1L;
 
     @numeroValidation(groups = Paso4.class)
-    private String numero;
+    private String numero = "4539 1488 0343 6467";
     private Caducidad caducidad;
 
     @cvcValidation(groups = Paso4.class)

@@ -81,5 +81,18 @@
 <a href="/resetearSesion"><button>Volver al principio</button></a>
 <button type="submit">Guardar Datos</button>
 </form>
+
+<script>
+    const form = document.getElementById('formulario');
+
+    form.addEventListener('submit', function(event) {
+        const confirmar = confirm("¿Estás seguro de que deseas enviar los datos del empleado?");
+        if (!confirmar) {
+            event.preventDefault(); // Cancela el envío si el usuario elige "Cancelar"
+        }else{
+          window.alert("Se ha registrado el empleado correctamente");
+        }
+    });
+</script>
 </body>
 </html>
