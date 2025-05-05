@@ -1,9 +1,11 @@
 package grupo.a.modulocomun.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
 import grupo.a.modulocomun.Entidades.Maestros.Especialidades;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name="empleados")
 public class Empleado extends Persona {
@@ -44,6 +47,10 @@ public class Empleado extends Persona {
     )
     private List<Especialidades> especializaciones = new ArrayList<>();
 
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("empleado") // Evita recursión
+    private List<Nomina> nominas = new ArrayList<>();
+
 
 
     //Relaciones
@@ -54,5 +61,6 @@ public class Empleado extends Persona {
     @ManyToOne
     @JoinColumn(name = "FK_empleado_departamento_id_dept",nullable = true)
     private Departamento departamento;
+
 
 }

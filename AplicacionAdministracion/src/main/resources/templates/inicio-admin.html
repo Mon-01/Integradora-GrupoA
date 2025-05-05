@@ -56,6 +56,7 @@
 <body>
 <div th:replace="~{fragments/navPersonal :: navP}"></div>
 
+
 <div class="contenedor-principal">
     <h2>Bienvenido, <span th:text="${adminEmail}"></span></h2>
     <h3>Empleados registrados</h3>
@@ -67,6 +68,10 @@
         <input type="number" name="salario" placeholder="Salario mínimo" th:value="${salario}" onblur="this.form.submit()">
         <button type="submit">Buscar</button>
     </form>
+
+    <div>
+        <a href="/listado" class="btn btn-primary">Ver Listado de Nóminas</a>
+    </div>
 
     <div class="tabla-contenedor">
         <table>

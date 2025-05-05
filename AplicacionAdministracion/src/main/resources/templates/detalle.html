@@ -3,46 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <title>Detalle del empleado</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; }
+        .info-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .nominas-list { margin-top: 30px; }
+        .nomina-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .linea-nomina {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: white;
+            border-left: 3px solid #4CAF50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 3px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            border: 1px solid red;
+            border-radius: 5px;
+            background-color: #ffeeee;
+        }
+    </style>
 </head>
 <body>
 
 <h1>Detalle del Empleado</h1>
 
 <div id="contenido-empleado">
-    <p>Cargando datos...</p>
+    <p>Cargando datos del empleado...</p>
 </div>
 
 <script>
-    const pathParts = window.location.pathname.split('/');
-    const empleadoId = pathParts[pathParts.length - 1];
+    const empleadoId = window.location.pathname.split('/').pop();
 
-    fetch('/api/admin/' + empleadoId)
+    fetch(`/api/admin/${empleadoId}`)
         .then(response => {
-            if (!response.ok) throw new Error("Empleado no encontrado");
+            if (!response.ok) throw new Error("Error al cargar empleado");
             return response.json();
         })
         .then(data => {
             const container = document.getElementById("contenido-empleado");
-            container.innerHTML = `
-                <p><strong>Nombre:</strong> ${data.nombre} ${data.apellido}</p>
-                <p><strong>Teléfono:</strong> ${data.prefijoTel} ${data.telefono}</p>
-                <p><strong>Fecha Nacimiento:</strong> ${data.fecha_nacimiento}</p>
-                <p><strong>Departamento:</strong> ${data.departamento ? data.departamento.nombre_dept : 'Sin asignar'}</p>
-                <p><strong>Salario:</strong> ${data.salarioAnual}</p>
-                <p><strong>Comisión:</strong> ${data.comisionAnual}</p>
-                <p><strong>Comentarios:</strong> ${data.comentarios}</p>
 
-                ${data.usuario ? `
-                    <hr>
-                    <h3>Información de Usuario Asociado</h3>
-                    <p><strong>Email:</strong> ${data.usuario.email}</p>
-                    <p><strong>Bloqueado:</strong> ${data.usuario.bloqueado ? 'Sí' : 'No'}</p>
-                    <p><strong>Motivo de bloqueo:</strong> ${data.usuario.motivoBloqueo || 'Ninguno'}</p>
-                ` : '<p>No hay usuario asociado</p>'}
+            // Construir HTML para la información básica
+            let html = `
+                <div class="info-section">
+                    <h2>Información Básica</h2>
+                    <p><strong>Nombre:</strong> ${data.nombre} ${data.apellido}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Teléfono:</strong> ${data.telefono}</p>
+                    <p><strong>Fecha Nacimiento:</strong> ${data.fechaNacimiento}</p>
+                </div>
+
+                <div class="info-section">
+                    <h2>Información Laboral</h2>
+                    <p><strong>Salario Anual:</strong> ${data.salarioAnual} €</p>
+                    <p><strong>Comisión Anual:</strong> ${data.comisionAnual} €</p>
+                    <p><strong>Comentarios:</strong> ${data.comentarios || 'Ninguno'}</p>
+                </div>
             `;
+
+            // Agregar información de usuario si existe
+            if (data.usuario) {
+                html += `
+                <div class="info-section">
+                    <h2>Información de Usuario</h2>
+                    <p><strong>Email:</strong> ${data.usuario.email}</p>
+                    <p><strong>Estado:</strong> ${data.usuario.bloqueado ? 'Bloqueado' : 'Activo'}</p>
+                    ${data.usuario.motivoBloqueo ? `<p><strong>Motivo de bloqueo:</strong> ${data.usuario.motivoBloqueo}</p>` : ''}
+                </div>
+                `;
+            }
+
+            // Agregar sección de nóminas si existen
+            if (data.nominas && data.nominas.length > 0) {
+                html += `
+                <div class="info-section">
+                    <h2>Nóminas</h2>
+                    ${data.nominas.map(nomina => `
+                        <div class="nomina-item">
+                            <h3>Nómina #${nomina.id} - ${new Date(nomina.fecha).toLocaleDateString()}</h3>
+                            <p><strong>Total:</strong> ${nomina.total.toFixed(2)} €</p>
+                            <h4>Líneas:</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Concepto</th>
+                                        <th>Importe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${nomina.lineas.map(linea => `
+                                        <tr class="linea-nomina">
+                                            <td>${linea.concepto}</td>
+                                            <td>${linea.cantidad.toFixed(2)} €</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `).join('')}
+                </div>
+                `;
+            } else {
+                html += `
+                <div class="info-section">
+                    <h2>Nóminas</h2>
+                    <p>No hay nóminas registradas para este empleado</p>
+                </div>
+                `;
+            }
+
+            container.innerHTML = html;
         })
         .catch(error => {
-            document.getElementById("contenido-empleado").innerText = "Error al obtener el empleado";
+            document.getElementById("contenido-empleado").innerHTML = `
+                <div class="error">
+                    <p>Error al cargar los datos del empleado: ${error.message}</p>
+                    <a href="/admin/inicio" class="btn">Volver al listado</a>
+                </div>
+            `;
         });
 </script>
 
