@@ -106,45 +106,18 @@
                 `;
             }
 
+
             // Agregar sección de nóminas si existen
             if (data.nominas && data.nominas.length > 0) {
                 html += `
-                <div class="info-section">
-                    <h2>Nóminas</h2>
-                    ${data.nominas.map(nomina => `
-                        <div class="nomina-item">
-                            <h3>Nómina #${nomina.id} - ${new Date(nomina.fecha).toLocaleDateString()}</h3>
-                            <p><strong>Total:</strong> ${nomina.total.toFixed(2)} €</p>
-                            <h4>Líneas:</h4>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Concepto</th>
-                                        <th>Importe</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${nomina.lineas.map(linea => `
-                                        <tr class="linea-nomina">
-                                            <td>${linea.concepto}</td>
-                                            <td>${linea.cantidad.toFixed(2)} €</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `).join('')}
-                </div>
-                `;
-            } else {
-                html += `
-                <div class="info-section">
-                    <h2>Nóminas</h2>
-                    <p>No hay nóminas registradas para este empleado</p>
-                </div>
+                    <a href="/admin/nomina/${data.id_empleado}?empleadoId=${data.id_empleado}"
+           class="btn-ver-nomina">
+           Ver nóminas
+        </a>
                 `;
             }
 
+            html += `</div>`;
             container.innerHTML = html;
         })
         .catch(error => {

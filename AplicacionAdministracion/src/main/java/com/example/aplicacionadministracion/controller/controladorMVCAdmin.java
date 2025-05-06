@@ -88,6 +88,12 @@ public class controladorMVCAdmin {
         model.addAttribute("empleados", empleadoService.obtenerTodosEmpleados());
         return "nueva";
     }
+
+    @GetMapping("/admin/nomina/{id}")
+    public String mostrarDetalleNomina(@PathVariable Long id, Model model) {
+        model.addAttribute("nominaId", id);
+        return "detalle-nomina"; // Nombre de la plantilla Thymeleaf
+    }
 /*
     @GetMapping("nom/{id}")
     public String detalle(@PathVariable Long id, Model model) {

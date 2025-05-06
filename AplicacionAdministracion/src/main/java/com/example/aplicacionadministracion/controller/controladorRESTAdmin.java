@@ -4,9 +4,12 @@ package com.example.aplicacionadministracion.controller;
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
+import grupo.a.modulocomun.DTO.LineaNominaDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
+import grupo.a.modulocomun.Entidades.LineaNomina;
+import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import grupo.a.modulocomun.Servicios.NominaService;
@@ -18,9 +21,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -114,6 +119,15 @@ public class controladorRESTAdmin {
             return ResponseEntity.internalServerError().body("Error al crear la nómina: " + e.getMessage());
         }
     }
+
+    @GetMapping("/nomina/{id}")
+    public ResponseEntity<List<NominaDTO>> obtenerDetalleNomina(@PathVariable Long id) {
+        List<NominaDTO> nominas = nominaService.obtenerNominasPorEmpleado(id);
+        return nominas != null ? ResponseEntity.ok(nominas) : ResponseEntity.notFound().build();
+    }
+
+    // Añade este método al servicio NominaService
+
 
 
 }
