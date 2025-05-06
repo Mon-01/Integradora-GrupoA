@@ -29,7 +29,7 @@ public class Nomina {
     @JsonIgnoreProperties("nominas")
     private Empleado empleado;
 
-    @OneToMany(mappedBy = "nomina", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "nomina", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LineaNomina> lineas = new ArrayList<>();
     public void agregarLinea(LineaNomina linea) {
         this.lineas.add(linea);

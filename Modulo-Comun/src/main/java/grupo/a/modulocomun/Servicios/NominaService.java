@@ -26,6 +26,10 @@ public class NominaService {
         this.nominaRepository = nominaRepository;
         this.empleadoRepository = empleadoRepository;
     }
+    public void eliminarNomina(Long id) {
+        // Esto eliminará en cascada las líneas de nómina debido a la configuración CascadeType.ALL
+        nominaRepository.deleteById(id);
+    }
 
     public NominaDTO crearNomina(NominaDTO nominaDTO) {
         // Validar empleado

@@ -128,6 +128,15 @@ public class controladorRESTAdmin {
 
     // Añade este método al servicio NominaService
 
-
+    @DeleteMapping("/del/nomina/{id}")
+    public ResponseEntity<?> eliminarNomina(@PathVariable Long id) {
+        try {
+            nominaService.eliminarNomina(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al eliminar la nómina: " + e.getMessage());
+        }
+    }
 
 }

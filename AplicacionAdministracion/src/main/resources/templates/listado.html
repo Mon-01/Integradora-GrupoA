@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Listado de Nóminas</title>
@@ -11,12 +11,14 @@
     .btn-primary { background: blue; }
     .btn-danger { background: red; }
   </style>
+  <!-- Añadir jQuery para AJAX -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <h1>Nóminas</h1>
 <a href="/nueva" class="btn btn-primary">Nueva Nómina</a>
 
-<table>
+<table id="nominasTable">
   <thead>
   <tr>
     <th>ID</th>
@@ -35,10 +37,35 @@
       € <span th:text="${#numbers.formatDecimal(totalValue, 1, 2)}">0.00</span>
     </td>
     <td>
-      <a th:href="@{/admin/detalle/{id}(id=${nomina.id})}" class="btn btn-primary">Ver</a>
+      <button th:data-id="${nomina.id}" class="btn btn-danger eliminar-btn">Eliminar</button>
     </td>
   </tr>
   </tbody>
 </table>
+
+<script>
+  $(document).ready(function() {
+    $('.eliminar-btn').click(function() {
+      const id = $(this).data('id');
+      const row = $(this).closest('tr');
+
+      if(confirm('¿Está seguro de que desea eliminar esta nómina? Esta acción no se puede deshacer.')) {
+        $.ajax({
+          url: '/api/admin/del/nomina/' + id,
+          type: 'DELETE',
+          success: function(result) {
+            row.fadeOut(400, function() {
+              row.remove();
+            });
+            alert('Nómina eliminada correctamente');
+          },
+          error: function(xhr) {
+            alert('Error al eliminar la nómina: ' + xhr.responseText);
+          }
+        });
+      }
+    });
+  });
+</script>
 </body>
 </html>
