@@ -66,7 +66,7 @@ public class controladorMVCCorporativo {
         dto.setId_usuario(usuario.get().getId_usuario());
 
         model.addAttribute("usuarioDTO", dto);
-        model.addAttribute("usuarioDTO", usuarioDTO);
+//        model.addAttribute("usuarioDTO", usuarioDTO); esto no se que rompe al comentarlo, pero con esto se rompe lo mio
         return "corporativo/contrasenia.html";
     }
 
