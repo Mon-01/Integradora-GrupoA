@@ -44,8 +44,8 @@
 <a id="btn-volver" href="#" class="btn-volver">Volver al empleado</a>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const empleadoId = urlParams.get('empleadoId');
+
+    const empleadoId = window.location.pathname.split('/').pop();
 
     document.getElementById('btn-volver').href = `/admin/detalle/${empleadoId}`;
 

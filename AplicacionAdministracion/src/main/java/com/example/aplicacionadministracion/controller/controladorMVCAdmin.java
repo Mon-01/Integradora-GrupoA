@@ -89,10 +89,10 @@ public class controladorMVCAdmin {
         return "nueva";
     }
 
-    @GetMapping("/admin/nomina/{id}")
-    public String mostrarDetalleNomina(@PathVariable Long id, Model model) {
-        model.addAttribute("nominaId", id);
-        return "detalle-nomina"; // Nombre de la plantilla Thymeleaf
+    @GetMapping("/admin/nomina/{empleadoId}")
+    public String mostrarDetalleNomina(@PathVariable Long empleadoId, Model model) {
+        model.addAttribute("empleadoId", empleadoId);
+        return "detalle-nomina";
     }
 /*
     @GetMapping("nom/{id}")
