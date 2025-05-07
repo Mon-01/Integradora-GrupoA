@@ -33,6 +33,7 @@ public class EmpleadoDTO extends PersonaDTO {
     @Valid
     private DatosBancariosDTO datosBancarios;
     private Long idDepartamento = 1L;
+    private DepartamentoDTO departamento;
 
     @Size(min = 2, message = "{valores.minimos}")
     private List<Long> especializaciones = new ArrayList<>();

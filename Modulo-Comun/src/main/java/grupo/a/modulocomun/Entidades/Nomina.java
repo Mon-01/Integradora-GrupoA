@@ -35,4 +35,10 @@ public class Nomina {
         this.lineas.add(linea);
         linea.setNomina(this);
     }
+
+    public Nomina(LocalDate fecha, Empleado empleado, List<LineaNomina> lineas) {
+        this.fecha = fecha;
+        this.empleado = empleado;
+        this.lineas = lineas;
+    }
 }

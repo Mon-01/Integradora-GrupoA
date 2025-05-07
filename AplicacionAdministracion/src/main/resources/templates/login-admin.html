@@ -27,7 +27,9 @@
         try {
             const response = await fetch('/api/admin/loginAdmin', {
                 method: 'POST',
+                //indica que se están enviando datos en formato json
                 headers: { 'Content-Type': 'application/json' },
+                //
                 body: JSON.stringify({ email, clave: password })
             });
 

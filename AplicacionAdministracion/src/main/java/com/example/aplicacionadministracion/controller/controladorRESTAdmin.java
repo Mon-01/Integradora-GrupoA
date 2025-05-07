@@ -11,6 +11,7 @@ import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
+import grupo.a.modulocomun.Servicios.DepartamentoService;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import grupo.a.modulocomun.Servicios.NominaService;
 import jakarta.servlet.http.HttpSession;
@@ -35,6 +36,7 @@ public class controladorRESTAdmin {
 
     @Autowired private NominaService nominaService;
     @Autowired private NominaRepository nominaRepository;
+    @Autowired private DepartamentoService departamentoService;
 
     @Autowired
     public controladorRESTAdmin(UsuarioAdministradorService service) {
@@ -137,6 +139,13 @@ public class controladorRESTAdmin {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al eliminar la nómina: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/filtroNominas")
+    public ResponseEntity<?> obtenerFiltroNominas(@RequestBody NominaDTO nominaDTO) {
+        List<Nomina> nominas = nominaService.filtrarPorNomina(nominaDTO.getEmpleado().getNombre(),
+                nominaDTO.getFecha());
+        return nominas != null ? ResponseEntity.ok(nominas) : ResponseEntity.status(404).body("No hay resultados");
     }
 
 }

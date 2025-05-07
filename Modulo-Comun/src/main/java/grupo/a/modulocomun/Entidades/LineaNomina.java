@@ -23,4 +23,9 @@ public class LineaNomina {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nomina_id",nullable = false)
     private Nomina nomina;
+
+    public LineaNomina(String descripcion,BigDecimal importe) {
+        this.importe = importe;
+        this.descripcion = descripcion;
+    }
 }

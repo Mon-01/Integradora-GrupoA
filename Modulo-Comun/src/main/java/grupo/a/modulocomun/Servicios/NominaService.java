@@ -7,6 +7,7 @@ import grupo.a.modulocomun.Entidades.*;
 import grupo.a.modulocomun.Repositorios.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -146,4 +147,35 @@ public class NominaService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<Nomina> filtrarPorNomina(String nombre,LocalDate fecha){
+        if( (nombre == null || nombre.trim().isEmpty())){
+            return nominaRepository.findAll(Sort.by("empleado.nombre"));
+        }
+        return nominaRepository.filtroNomina(nombre);
+    }
+
+//    public void cargarNominas() {
+//            List<Empleado> empleados = empleadoRepository.findAll();
+//            List<Nomina> nominas = empleados.stream().map(empleado -> {
+//                Nomina nomina = new Nomina();
+//                nomina.setFecha(LocalDate.now());
+//                nomina.setEmpleado(empleado);
+//
+//                // Crear líneas de nómina (ajusta los importes y las descripciones según sea necesario)
+//                LineaNomina linea1 = new LineaNomina("Salario Base", new BigDecimal("1500.00"));
+//                LineaNomina linea2 = new LineaNomina("Bonificación", new BigDecimal("300.00"));
+//                LineaNomina linea3 = new LineaNomina("Horas Extra", new BigDecimal("200.00"));
+//
+//                // Asociar las líneas de nómina con la nómina
+//                nomina.agregarLinea(linea1);
+//                nomina.agregarLinea(linea2);
+//                nomina.agregarLinea(linea3);
+//
+//                return nomina;
+//            }).collect(Collectors.toList());
+//
+//            nominaRepository.saveAll(nominas);
+//        System.out.println("nominas guardadas, supuestamente");
+//    }
 }
