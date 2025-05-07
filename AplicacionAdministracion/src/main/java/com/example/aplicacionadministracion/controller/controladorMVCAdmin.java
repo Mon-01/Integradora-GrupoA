@@ -1,5 +1,6 @@
 package com.example.aplicacionadministracion.controller;
 
+// Importación de clases necesarias para el controlador.
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
 import grupo.a.modulocomun.DTO.NominaDTO;
@@ -19,98 +20,95 @@ import org.slf4j.Logger;
 import java.time.LocalDate;
 import java.util.List;
 
-@Controller
+@Controller // Indica que esta clase es un controlador de Spring MVC que gestionará peticiones HTTP.
 public class controladorMVCAdmin {
+
+    // Logger para registrar mensajes en la consola o fichero (útil para depuración y monitoreo).
     private static final Logger logger = LoggerFactory.getLogger(controladorMVCAdmin.class);
 
+    // Inyección automática del servicio de nómina.
     @Autowired private NominaService nominaService;
+
+    // Inyección automática del repositorio de nómina (posiblemente para operaciones CRUD directas).
     @Autowired private NominaRepository nominaRepository;
+
+    // Servicio para acceder a datos y lógica de empleados.
     @Autowired private EmpleadoService empleadoService;
 
+    // Método GET que muestra el formulario de login de administrador.
+    @GetMapping("/admin/login")
+    public String mostrarLoginAdmin() {
+        return "login-admin"; // Retorna la vista "login-admin.html" ubicada en /templates/.
+    }
 
-        @GetMapping("/admin/login")
-        public String mostrarLoginAdmin() {
-            UsuarioAdministradorDTO usu = new UsuarioAdministradorDTO();
-            return "login-admin"; // buscará templates/admin-login.html
-        }
-
-
-
+    // Inyección del servicio que maneja lógica de administradores (ej: autenticación, filtrado).
     @Autowired
-    private UsuarioAdministradorService adminService; // o el servicio que accede a los empleados
+    private UsuarioAdministradorService adminService;
 
+    // Muestra la pantalla de inicio del panel administrador, con filtros para buscar empleados.
     @GetMapping("/admin/inicio")
     public String mostrarInicioAdmin(
-            @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String departamento,
-            @RequestParam(required = false, defaultValue = "0") Long salario,
-            Model model, HttpSession session) {
+            @RequestParam(required = false) String nombre, // Filtro opcional por nombre.
+            @RequestParam(required = false) String departamento, // Filtro opcional por departamento.
+            @RequestParam(required = false, defaultValue = "0") Long salario, // Filtro opcional por salario mínimo.
+            Model model, HttpSession session) { // Model para pasar datos a la vista, HttpSession para controlar sesión.
 
+        // Recupera del session el DTO del administrador logueado.
         UsuarioAdministradorDTO dto = (UsuarioAdministradorDTO) session.getAttribute("adminLogueado");
+
+        // Si no hay sesión iniciada, redirige al login.
         if (dto == null) return "redirect:/admin/login";
 
+        // Llama al servicio para obtener empleados según los filtros proporcionados.
         List<Empleado> empleados = adminService.buscarFiltrados(nombre, departamento, salario);
 
-        // Log de diagnóstico
+        // Logs de depuración: muestra cantidad de empleados encontrados y sus datos.
         logger.info("Número de empleados encontrados: {}", empleados.size());
         empleados.forEach(e -> logger.info("Empleado: {} {}, Depto: {}, Salario: {}",
                 e.getNombre(), e.getApellido(),
                 e.getDepartamento() != null ? e.getDepartamento().getNombre_dept() : "N/A",
                 e.getSalarioAnual()));
 
-        model.addAttribute("nombre", nombre != null ? nombre : "");
+        // Añade atributos al modelo que se usarán en la vista HTML.
+        model.addAttribute("nombre", nombre != null ? nombre : ""); // Para mantener el filtro seleccionado.
         model.addAttribute("departamento", departamento != null ? departamento : "");
         model.addAttribute("salario", salario);
-        model.addAttribute("adminEmail", dto.getEmail());
-        model.addAttribute("empleados", empleados);
+        model.addAttribute("adminEmail", dto.getEmail()); // Mostrar el email del admin logueado.
+        model.addAttribute("empleados", empleados); // Lista de empleados filtrados.
 
-        return "inicio-admin";
+        return "inicio-admin"; // Retorna la vista HTML principal del administrador.
     }
 
+    // Muestra el detalle de un empleado a través de su ID.
     @GetMapping("/admin/detalle/{id}")
     public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
-        model.addAttribute("empleadoId", id);
-        return "detalle";
+        model.addAttribute("empleadoId", id); // Pasa el ID del empleado a la vista.
+        return "detalle"; // Renderiza la vista "detalle.html".
     }
 
-
+    // Muestra una lista de todas las nóminas disponibles.
     @GetMapping("/listado")
     public String listar(Model model) {
-        model.addAttribute("nominas",nominaService.obtenerTodasNominas());
-        return "listado";
+        model.addAttribute("nominas", nominaService.obtenerTodasNominas()); // Consulta todas las nóminas y las pasa a la vista.
+        return "listado"; // Muestra la vista con la lista de nóminas.
     }
 
+    // Muestra un formulario para crear una nueva nómina.
     @GetMapping("/nueva")
     public String nueva(Model model) {
-        NominaDTO dto = new NominaDTO();
-        dto.setFecha(LocalDate.now());
-        model.addAttribute("nomina", dto);
-        model.addAttribute("empleados", empleadoService.obtenerTodosEmpleados());
-        return "nueva";
+        NominaDTO dto = new NominaDTO(); // Crea un nuevo objeto de tipo NominaDTO vacío.
+        dto.setFecha(LocalDate.now()); // Asigna la fecha actual como predeterminada.
+        model.addAttribute("nomina", dto); // Pasa el objeto nómina a la vista.
+        model.addAttribute("empleados", empleadoService.obtenerTodosEmpleados()); // Lista de empleados para seleccionar uno.
+        return "nueva"; // Renderiza la vista "nueva.html".
     }
 
+    // Muestra el detalle de una nómina específica para un empleado determinado.
     @GetMapping("/admin/nomina/{empleadoId}")
     public String mostrarDetalleNomina(@PathVariable Long empleadoId, Model model) {
-        model.addAttribute("empleadoId", empleadoId);
-        return "detalle-nomina";
+        model.addAttribute("empleadoId", empleadoId); // Pasa el ID del empleado a la vista.
+        return "detalle-nomina"; // Retorna la vista "detalle-nomina.html".
     }
-/*
-    @GetMapping("nom/{id}")
-    public String detalle(@PathVariable Long id, Model model) {
-        model.addAttribute("nomina", nominaService.obtenerPorId(id));
-        return "detalle2";
-    }
-
-    // Modificar nómina
-    @PostMapping("/nom/{id}")
-    public String actualizar(@PathVariable Long id, @ModelAttribute NominaDTO nominaDTO) {
-        nominaService.actualizarNomina(id, nominaDTO);
-        return "redirect:/api/admin/nomina/" + id;
-    }
-
- */
 }
-
-
 
 
