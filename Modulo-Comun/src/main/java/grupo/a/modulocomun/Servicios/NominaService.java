@@ -3,6 +3,7 @@ package grupo.a.modulocomun.Servicios;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.LineaNominaDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
+import grupo.a.modulocomun.DTO.filtros.devueltaFiltroNominasDTO;
 import grupo.a.modulocomun.Entidades.*;
 import grupo.a.modulocomun.Repositorios.*;
 import org.modelmapper.ModelMapper;
@@ -110,9 +111,16 @@ public class NominaService {
                 .collect(Collectors.toList());
     }
 
+    public devueltaFiltroNominasDTO returnConsultaFiltradoNominas (Nomina nomina) {
+        devueltaFiltroNominasDTO filtrado = new devueltaFiltroNominasDTO();
+        filtrado.setNombre(nomina.getEmpleado().getNombre());
+        filtrado.setIdUsuario(nomina.getEmpleado().getId_empleado());
+        filtrado.setFecha(nomina.getFecha());
+        return filtrado;
+    }
 
 
-    private NominaDTO convertirADTO(Nomina nomina) {
+    public NominaDTO convertirADTO(Nomina nomina) {
         NominaDTO dto = new NominaDTO();
         dto.setId(nomina.getId());
         dto.setFecha(nomina.getFecha());

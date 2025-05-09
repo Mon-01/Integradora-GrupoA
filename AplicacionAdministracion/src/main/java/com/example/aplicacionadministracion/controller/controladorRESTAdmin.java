@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -171,6 +172,13 @@ public class controladorRESTAdmin {
     @PostMapping("/filtroNominas")
     public ResponseEntity<?> obtenerFiltroNominas(@RequestBody filtrosNominasDTO filtros) {
         List<Nomina> nominas = nominaService.filtrarPorNomina(filtros.getNombre(), filtros.getDepartamento(), filtros.getFecha());
-        return nominas != null ? ResponseEntity.ok(nominas) : ResponseEntity.status(404).body("No hay resultados");
+
+        List<devueltaFiltroNominasDTO> nominaDTOs = nominas.stream()
+                .map(n -> nominaService.returnConsultaFiltradoNominas(n))
+                .collect(Collectors.toList());
+
+
+        return nominas != null ? ResponseEntity.ok(nominaDTOs) : ResponseEntity.status(404).body("No hay resultados");
     }
+
 }
