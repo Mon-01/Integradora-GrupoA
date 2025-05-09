@@ -1,6 +1,7 @@
 package grupo.a.modulocomun.Servicios;
 
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
+import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Auxiliares.Direccion;
 import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
 import grupo.a.modulocomun.Entidades.DatosBancarios;
@@ -405,5 +406,35 @@ public class EmpleadoService {
     }
     public List<Empleado> obtenerTodosEmpleados() {
         return empleadoRepository.findAll();
+    }
+
+    public EmpleadoDTO convertirEmpleadoADTO(Empleado empleado) {
+        EmpleadoDTO dto = new EmpleadoDTO();
+        dto.setId_empleado(empleado.getId_empleado());
+        dto.setNombre(empleado.getNombre());
+        dto.setApellido(empleado.getApellido());
+        dto.setEmail(empleado.getEmail());
+        dto.setTelefono(empleado.getPrefijoTel() + " " + empleado.getTelefono());
+        dto.setFechaNacimiento(empleado.getFecha_nacimiento());
+        dto.setSalarioAnual(empleado.getSalarioAnual().toString());
+        dto.setComisionAnual(empleado.getComisionAnual().toString());
+        dto.setComentarios(empleado.getComentarios());
+
+        // Datos del departamento
+        if(empleado.getDepartamento() != null) {
+            dto.setIdDepartamento(empleado.getDepartamento().getId_dept());
+        }
+
+        // Datos del usuario si existe
+        if(empleado.getUsuario() != null) {
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.setId_usuario(empleado.getUsuario().getId_usuario());
+            usuarioDTO.setEmail(empleado.getUsuario().getEmail());
+            usuarioDTO.setBloqueado(empleado.getUsuario().isBloqueado());
+            usuarioDTO.setMotivoBloqueo(empleado.getUsuario().getMotivoBloqueo());
+            dto.setUsuario(usuarioDTO);
+        }
+
+        return dto;
     }
 }

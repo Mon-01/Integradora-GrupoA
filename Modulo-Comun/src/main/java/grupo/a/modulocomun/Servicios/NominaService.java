@@ -21,11 +21,13 @@ public class NominaService {
 
     private final NominaRepository nominaRepository;
     private final EmpleadoRepository empleadoRepository;
+    private final EmpleadoService empleadoService;
 
     @Autowired
-    public NominaService(NominaRepository nominaRepository, EmpleadoRepository empleadoRepository) {
+    public NominaService(NominaRepository nominaRepository, EmpleadoRepository empleadoRepository, EmpleadoService empleadoService) {
         this.nominaRepository = nominaRepository;
         this.empleadoRepository = empleadoRepository;
+        this.empleadoService = empleadoService;
     }
     public void eliminarNomina(Long id) {
         // Esto eliminará en cascada las líneas de nómina debido a la configuración CascadeType.ALL
@@ -114,6 +116,7 @@ public class NominaService {
         NominaDTO dto = new NominaDTO();
         dto.setId(nomina.getId());
         dto.setFecha(nomina.getFecha());
+        dto.setEmpleado(empleadoService.convertirEmpleadoADTO(nomina.getEmpleado()));
 
         // Convertir líneas
         List<LineaNominaDTO> lineas = nomina.getLineas().stream()
@@ -147,13 +150,18 @@ public class NominaService {
                 })
                 .collect(Collectors.toList());
     }
-
+/*
     public List<Nomina> filtrarPorNomina(String nombre,LocalDate fecha){
         if( (nombre == null || nombre.trim().isEmpty())){
             return nominaRepository.findAll(Sort.by("empleado.nombre"));
         }
         return nominaRepository.filtroNomina(nombre);
     }
+
+ */
+public List<Nomina> filtrarPorNomina(String nombre, LocalDate fecha) {
+    return nominaRepository.filtroNomina(nombre, fecha);
+}
 
 //    public void cargarNominas() {
 //            List<Empleado> empleados = empleadoRepository.findAll();

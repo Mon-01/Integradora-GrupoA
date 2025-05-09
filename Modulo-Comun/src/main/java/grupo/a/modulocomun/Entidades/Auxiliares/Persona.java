@@ -1,5 +1,6 @@
 package grupo.a.modulocomun.Entidades.Auxiliares;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import grupo.a.modulocomun.Entidades.Maestros.Genero;
 import grupo.a.modulocomun.Entidades.Maestros.Pais;
 import grupo.a.modulocomun.Entidades.Maestros.TipoDocumento;
@@ -31,6 +32,7 @@ public class Persona {
     private String otroTelefono;
     private String email;
 
+    @JsonManagedReference
     @Embedded
     private Direccion direccion;
 

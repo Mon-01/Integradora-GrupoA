@@ -28,12 +28,19 @@ public interface NominaRepository extends JpaRepository<Nomina, Long> {
     // Otra alternativa válida
  //   List<Nomina> findByEmpleadoIdEmpleado(Long idEmpleado);
 
-
+/*
     @EntityGraph(attributePaths = {"empleado"})
     @Query("SELECT n FROM Nomina n " +
             "JOIN n.empleado e " +
             "WHERE (COALESCE(:nombre, '') = '' OR LOWER(e.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')))")
     List<Nomina> filtroNomina(@Param("nombre") String nombre);
 
+ */
+@EntityGraph(attributePaths = {"empleado"})
+@Query("SELECT DISTINCT n FROM Nomina n " +
+        "JOIN n.empleado e " +
+        "WHERE (COALESCE(:nombre, '') = '' OR LOWER(e.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))) " +
+        "AND (:fecha IS NULL OR n.fecha = :fecha)")
+List<Nomina> filtroNomina(@Param("nombre") String nombre, @Param("fecha") LocalDate fecha);
 
 }

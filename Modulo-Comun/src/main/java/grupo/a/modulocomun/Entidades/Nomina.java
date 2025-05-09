@@ -24,7 +24,7 @@ public class Nomina {
 
     private LocalDate fecha;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "empleado_id",nullable = false)
     @JsonIgnoreProperties("nominas")
     private Empleado empleado;
