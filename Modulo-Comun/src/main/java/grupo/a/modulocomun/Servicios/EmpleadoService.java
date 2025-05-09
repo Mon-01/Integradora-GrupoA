@@ -15,9 +15,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -275,7 +279,6 @@ public class EmpleadoService {
         if (usuarioOptional.isEmpty()) {
             throw new EntityNotFoundException("Usuario no encontrado con email: " + emailUsuario);
         }
-
         Usuario usuario = usuarioOptional.get();
 
         // Crear y configurar el empleado
@@ -305,7 +308,6 @@ public class EmpleadoService {
     }
 
     //asignaciones para guardar el empleado en la bbdd
-
     private void asignarCamposSimples(Empleado empleado, EmpleadoDTO empleadoDTO) {
 
         empleado.setNombre(empleadoDTO.getNombre());
@@ -324,6 +326,7 @@ public class EmpleadoService {
         }else{
            empleado.setComisionAnual(new BigDecimal(empleadoDTO.getComisionAnual()));
         }
+        empleado.setImagenBase64(empleadoDTO.getImagenBase64());
     }
 
     private void asignarGenero(Empleado empleado, EmpleadoDTO empleadoDTO) {

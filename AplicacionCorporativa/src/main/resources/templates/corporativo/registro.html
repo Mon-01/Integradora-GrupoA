@@ -31,10 +31,10 @@
 <div class="login-container">
     <div class="login-box">
         <h2>Registro de usuario</h2>
-        <form th:action="@{/registro}" method="post" id="registroForm" th:object="${usuarioDTO}">
+        <form th:action="@{/registro}" enctype="multipart/form-data" method="post" id="registroForm" th:object="${usuarioDTO}">
             <input type="text" th:field="*{email}" placeholder="Correo electrónico" required>
-            <input type="password" th:field="*{clave}" placeholder="Contraseña" id="pass" required>
-            <input type="password" th:field="*{confirmarClave}" placeholder="Confirmar contraseña" id="passconf" required>
+            <input type="password" th:field="*{clave}" placeholder="Contraseña" required>
+            <input type="password" th:field="*{confirmarClave}" placeholder="Confirmar contraseña" required>
             <label><input type="checkbox" onclick="mostrarContra()"> Mostrar contraseña</label>
             <label>¿Dónde has nacido?</label>
             <input type="text" th:field="*{respuestaSecreta}" placeholder="Respuesta" id="respuestaSecreta" required>
@@ -47,8 +47,8 @@
 
 <script>
     function mostrarContra() {
-        const input = document.getElementById("pass");
-        const input2 = document.getElementById("passconf");
+        const input = document.getElementById("clave");
+        const input2 = document.getElementById("confirmarClave");
         input.type = input.type === "password" ? "text" : "password";
         input2.type = input2.type === "password" ? "text" : "password";
     }
@@ -62,7 +62,7 @@
             email: form.querySelector('[name="email"]').value,
             clave: form.querySelector('[name="clave"]').value,
             confirmarClave: form.querySelector('[name="confirmarClave"]').value,
-            respuestaSecreta: form.querySelector('[name="respuestaSecreta"]').value
+            respuestaSecreta: form.querySelector('[name="respuestaSecreta"]').value,
         };
 
         try {

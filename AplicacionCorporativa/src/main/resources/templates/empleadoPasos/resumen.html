@@ -21,6 +21,10 @@
         <p for="edad">Edad: <span th:text="${empleadoForm.getEdad()}"></span></p>
         <p for="pais">País de Nacimiento: <span th:text="${paisService.obtenerNombrePorId(empleadoForm.getPaisNacimiento())}"></span></p>
         <p for="comentarios">Comentarios: <span th:text="${empleadoForm.getComentarios()}"></span></p>
+        <p>Imagen de perfil:<img th:src="'data:image/png;base64,' + ${empleadoForm.imagenBase64}"
+             alt="Imagen del empleado"
+             style="max-width: 200px;"/>
+        <br>
         <br>
     </fieldset>
 

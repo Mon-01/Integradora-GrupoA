@@ -37,3 +37,16 @@ function blanquear() {
         }
     }
 }
+
+//Convierte la imagen en base64 para poder almacenarla en la base de datos
+document.getElementById('imagen').addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+            document.getElementById('imagenBase64').value = reader.result.split(',')[1]; // solo la parte base64
+        };
+        reader.readAsDataURL(file);
+    }
+});
+

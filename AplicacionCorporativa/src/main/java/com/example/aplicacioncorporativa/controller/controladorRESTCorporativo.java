@@ -1,5 +1,6 @@
 package com.example.aplicacioncorporativa.controller;
 
+import ch.qos.logback.core.model.Model;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 import java.util.Optional;
