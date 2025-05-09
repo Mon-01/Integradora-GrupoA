@@ -11,5 +11,6 @@ import java.time.LocalDate;
 public class filtrosNominasDTO {
 
     private String nombre;
+    private String departamento;
     private LocalDate fecha;
 }

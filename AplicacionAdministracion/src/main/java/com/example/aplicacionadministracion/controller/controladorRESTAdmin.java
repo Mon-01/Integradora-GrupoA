@@ -170,8 +170,7 @@ public class controladorRESTAdmin {
 
     @PostMapping("/filtroNominas")
     public ResponseEntity<?> obtenerFiltroNominas(@RequestBody filtrosNominasDTO filtros) {
-        List<Nomina> nominas = nominaService.filtrarPorNomina(filtros.getNombre(),
-                filtros.getFecha());
+        List<Nomina> nominas = nominaService.filtrarPorNomina(filtros.getNombre(), filtros.getDepartamento(), filtros.getFecha());
         return nominas != null ? ResponseEntity.ok(nominas) : ResponseEntity.status(404).body("No hay resultados");
     }
 }

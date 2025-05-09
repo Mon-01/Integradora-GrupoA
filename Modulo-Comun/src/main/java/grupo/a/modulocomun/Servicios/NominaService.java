@@ -159,8 +159,8 @@ public class NominaService {
     }
 
  */
-public List<Nomina> filtrarPorNomina(String nombre, LocalDate fecha) {
-    return nominaRepository.filtroNomina(nombre, fecha);
+public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDate fecha) {
+    return nominaRepository.filtroNomina(nombre, departamento, fecha);
 }
 
 //    public void cargarNominas() {

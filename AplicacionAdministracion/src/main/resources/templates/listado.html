@@ -24,6 +24,7 @@
 <!-- Filtros de búsqueda -->
 <form id="filtroForm">
   <input type="text" id="nombre" placeholder="Nombre" >
+  <input type="text" id="departamento" placeholder="Departamento" >
   <input type="date" id="fecha" placeholder="Fecha de emisión" >
   <button type="submit">Buscar</button>
 </form>
@@ -82,12 +83,13 @@
 
     const nombre = document.getElementById("nombre").value;
     const fecha = document.getElementById("fecha").value;
+    const departamento = document.getElementById("departamento").value;
 
     const filtroData = {
-      fecha: fecha,
-      empleado: {
-        nombre: nombre
-      },
+      nombre: nombre,
+      departamento: departamento,
+      fecha: fecha
+
     };
 
     try {
