@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,4 +39,6 @@ public class EmpleadoDTO extends PersonaDTO {
     private List<Long> especializaciones = new ArrayList<>();
     private UsuarioDTO usuario;
     private List<NominaDTO> nominas;
+
+    private String imagenBase64;
 }

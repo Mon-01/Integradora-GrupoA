@@ -62,5 +62,6 @@ public class Empleado extends Persona {
     @JoinColumn(name = "FK_empleado_departamento_id_dept",nullable = true)
     private Departamento departamento;
 
-
+    @Column(columnDefinition = "LONGTEXT")
+    private String imagenBase64;
 }

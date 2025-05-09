@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @Controller
@@ -108,6 +109,8 @@ public class controladorEmpleadoPasos {
             } else {
                 //si  no hay errores redirige al paso dos
                 sesion.setAttribute("empleado", datosEmpleado);
+
+
                 return "redirect:/paso4";
             }
         }
@@ -162,6 +165,7 @@ public class controladorEmpleadoPasos {
         model.addAttribute("entidadBancariaService", serviceManager.getEntidadBancariaService());
         model.addAttribute("tipoTarjetaService", serviceManager.getTipoTarjetaService());
         model.addAttribute("especialidadesService", serviceManager.getEspecialidadesService());
+
         return "empleadoPasos/resumen";
     }
 
@@ -177,6 +181,7 @@ public class controladorEmpleadoPasos {
 
         serviceManager.getEmpleadoService().guardarEmpleado(empleado,emailUsuario.getEmail());
         session.invalidate();
+
         return "redirect:/inicio";
     }
 

@@ -62,12 +62,12 @@ public class controladorMVCCorporativo {
         session.setAttribute("emailTemporal", usuarioDTO.getEmail());
 
         // Creamos un DTO con el id del usuario real
-        UsuarioDTO dto = new UsuarioDTO();
-        dto.setId_usuario(usuario.get().getId_usuario());
+        UsuarioDTO dto_id = new UsuarioDTO();
+        dto_id.setId_usuario(usuario.get().getId_usuario());
 
-        model.addAttribute("usuarioDTO", dto);
-//        model.addAttribute("usuarioDTO", usuarioDTO); esto no se que rompe al comentarlo, pero con esto se rompe lo mio
-        return "corporativo/contrasenia.html";
+        model.addAttribute("dto", dto_id);
+        model.addAttribute("usuarioDTO", usuarioDTO);
+        return "corporativo/contrasenia";
     }
 
     @PostMapping("/password")
