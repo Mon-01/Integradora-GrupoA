@@ -1,5 +1,6 @@
 package com.example.aplicacioncorporativa.controller;
 
+import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.Usuario;
@@ -15,17 +16,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 public class controladorMVCCorporativo {
 
+    @Autowired
+    private EmpleadoService empleadoService;
+
     private final UsuarioService usuarioService;
     private final HttpSession session;
-    private final EmpleadoService empleadoService;
+//    private final EmpleadoService empleadoService;
     private int intentosClave = 0;
 
     public controladorMVCCorporativo(UsuarioService usuarioService, HttpSession session, EmpleadoService empleadoService) {
@@ -93,8 +94,16 @@ public class controladorMVCCorporativo {
         return "redirect:/inicio";
     }
     @GetMapping("/inicio")
-    public String areaPersonal(Model model) {
+    public String areaPersonal(@ModelAttribute("usuarioDTO") UsuarioDTO usuarioDTO, Model model) {
         Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        String email = (String) session.getAttribute("emailTemporal");
+        usuarioDTO.setEmail(email);
+
+        // Obtener la imagen en base64
+        String imagenBase64 = empleadoService.obtenerImagenBase64PorCorreo(email);
+
+        // Agregar la imagen al modelo
+        model.addAttribute("imagenBase64", imagenBase64);
 
         if (usuarioLogueado == null) {
             return "redirect:/login"; // Si no hay usuario en sesión, lo mandamos al login

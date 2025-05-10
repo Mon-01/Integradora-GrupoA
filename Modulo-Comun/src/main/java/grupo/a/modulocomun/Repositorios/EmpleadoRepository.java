@@ -2,6 +2,7 @@ package grupo.a.modulocomun.Repositorios;
 
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
+import grupo.a.modulocomun.Entidades.Usuario;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 import java.util.List;
@@ -39,5 +41,5 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
             @Param("departamento") String departamento,
             @Param("salarioMin") BigDecimal salarioMin);
 
-
+    Optional<Empleado> findByEmail(String email);
 }

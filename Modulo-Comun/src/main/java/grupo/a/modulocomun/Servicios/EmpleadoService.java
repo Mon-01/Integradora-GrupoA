@@ -441,4 +441,21 @@ public class EmpleadoService {
 
         return dto;
     }
+
+    public Optional<Empleado> obtenerEmpleadoPorCorreo(String correo) {
+        return empleadoRepository.findByEmail(correo);
+    }
+    public String obtenerImagenBase64PorCorreo(String correo) {
+        Optional<Empleado> empleadoOpt = obtenerEmpleadoPorCorreo(correo);
+
+        if (empleadoOpt.isPresent()) {
+            Empleado empleado = empleadoOpt.get();
+            if (empleado.getImagenBase64() != null && !empleado.getImagenBase64().isEmpty()) {
+                return empleado.getImagenBase64(); // Devuelve la imagen en base64
+            }
+        }
+        return null; // Devuelve null si no se encontró imagen
+    }
+
+
 }

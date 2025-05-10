@@ -1,4 +1,4 @@
-<nav th:fragment="navP" class="navbar">
+<nav th:fragment="navP" class="navbar" >
     <div class="navbar-container">
         <!-- Logo -->
         <div class="navbar-brand">
@@ -16,7 +16,12 @@
         <div class="navbar-right">
             <div class="profile-dropdown">
                 <button class="profile-button">
-                    <img th:src="@{/img/user-icon.png}" alt="Perfil" class="profile-icon">
+                    <th:block th:if="${imagenBase64 != null}">
+                    <img th:if="${imagenBase64 != null}"
+                         th:src="'data:image/png;base64,' + ${imagenBase64}"
+                         alt="Foto de perfil"
+                         class="profile-icon">
+                    </th:block>
                     <span th:text="${usuarioEmail}"></span>
                 </button>
                 <div class="dropdown-content">
