@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva Nómina</title>
+    <style>
+        .form-group { margin-bottom: 15px; }
+        input, select { width: 100%; padding: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+    </style>
+</head>
+<body>
+<h1>Nueva Nómina</h1>
+<form id="nominaForm">
+    <div class="form-group">
+        <label>Fecha:</label>
+        <input type="date" id="fecha" name="fecha" required>
+    </div>
+
+    <div class="form-group">
+        <label>Empleado:</label>
+        <select id="empleadoId" name="empleadoId" required>
+            <option value="">Seleccione...</option>
+            <option th:each="emp : ${empleados}" th:value="${emp.id_empleado}" th:text="${emp.nombre + ' ' + emp.apellido}"></option>
+        </select>
+    </div>
+
+    <h3>Líneas</h3>
+    <table id="lineas">
+        <thead>
+        <tr>
+            <th>Concepto</th>
+            <th>Importe</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Las filas se agregarán dinámicamente -->
+        </tbody>
+    </table>
+
+    <button type="button" onclick="agregarLinea()">Añadir Línea</button>
+    <button type="button" onclick="guardarNomina()">Guardar</button>
+</form>
+
+<script src="/js/CrearNuevaNomina.js"></script>
+
+</body>
+</html>
+

@@ -8,6 +8,9 @@ import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import grupo.a.modulocomun.Servicios.NominaService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller // Indica que esta clase es un controlador de Spring MVC que gestionará peticiones HTTP.
@@ -35,7 +39,7 @@ public class controladorMVCAdmin {
     // Servicio para acceder a datos y lógica de empleados.
     @Autowired private EmpleadoService empleadoService;
 
-    // Método GET que muestra el formulario de login de administrador.
+    // Metodo GET que muestra el formulario de login de administrador.
     @GetMapping("/admin/login")
     public String mostrarLoginAdmin() {
         return "login-admin"; // Retorna la vista "login-admin.html" ubicada en /templates/.
@@ -83,14 +87,14 @@ public class controladorMVCAdmin {
     @GetMapping("/admin/detalle/{id}")
     public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
         model.addAttribute("empleadoId", id); // Pasa el ID del empleado a la vista.
-        return "detalle"; // Renderiza la vista "detalle.html".
+        return "DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
     }
 
     // Muestra una lista de todas las nóminas disponibles.
     @GetMapping("/listado")
     public String listar(Model model) {
         model.addAttribute("nominas", nominaService.obtenerTodasNominas()); // Consulta todas las nóminas y las pasa a la vista.
-        return "listado"; // Muestra la vista con la lista de nóminas.
+        return "listadoNominas"; // Muestra la vista con la lista de nóminas.
     }
 
     // Muestra un formulario para crear una nueva nómina.
@@ -100,7 +104,7 @@ public class controladorMVCAdmin {
         dto.setFecha(LocalDate.now()); // Asigna la fecha actual como predeterminada.
         model.addAttribute("nomina", dto); // Pasa el objeto nómina a la vista.
         model.addAttribute("empleados", empleadoService.obtenerTodosEmpleados()); // Lista de empleados para seleccionar uno.
-        return "nueva"; // Renderiza la vista "nueva.html".
+        return "nuevaNomina"; // Renderiza la vista "nuevaNomina.html".
     }
 
     // Muestra el detalle de una nómina específica para un empleado determinado.
@@ -108,6 +112,30 @@ public class controladorMVCAdmin {
     public String mostrarDetalleNomina(@PathVariable Long empleadoId, Model model) {
         model.addAttribute("empleadoId", empleadoId); // Pasa el ID del empleado a la vista.
         return "detalle-nomina"; // Retorna la vista "detalle-nomina.html".
+    }
+
+    //botón para cerrar la sesión
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        //simplemente invalidamos la sesión
+        request.getSession().invalidate();
+
+        //obtenemos las cookies
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies != null) {
+            Arrays.stream(cookies)
+                    // Filtra las cookies de sesión
+                    .filter(cookie -> "JSESSIONID".equals(cookie.getName()))
+                    .forEach(cookie -> {
+
+                cookie.setMaxAge(0);  // Establece la edad de la cookie a 0, para eliminarla
+                cookie.setPath("/");  // Asegura que el path sea el adecuado (esto es importante para que se borre correctamente)
+                response.addCookie(cookie);
+            });
+        }
+        //y redirigimos al login
+        return "redirect:/admin/login";
     }
 }
 

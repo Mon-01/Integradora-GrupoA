@@ -3,58 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Administración - Lista de Empleados</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    <link rel="stylesheet" href="/estilos/InicioAdminEstilos.css">
 
-        .contenedor-principal {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 40px;
-        }
-
-        h2, h3 {
-            text-align: center;
-        }
-
-        form#filtroForm {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        form#filtroForm input, form#filtroForm button {
-            padding: 6px 10px;
-            font-size: 14px;
-        }
-
-        .tabla-contenedor {
-            width: 80%;
-            display: flex;
-            justify-content: center;
-        }
-
-        table {
-            border: 1px solid #ccc;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
-<div th:replace="~{fragments/navPersonal :: navP}"></div>
+<!--<div th:replace="~{fragments/navPersonal :: navP}"></div>-->
+
+<!-- Barra superior de navegación -->
+<div class="barra-superior">
+
+    <div style="font-size: 1.2rem;">
+        Zona Administración
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <span th:text="${adminEmail}" style="color: #ccc;"></span>
+        <form th:action="@{/logout}" method="post" style="margin: 0;">
+            <button type="submit" class="btn-logout">Cerrar sesión</button>
+        </form>
+    </div>
+</div>
 
 
 <div class="contenedor-principal">
@@ -97,7 +65,8 @@
             </tbody>
         </table>
     </div>
-</div>
 
+</div>
+<script src="/static/js/DesconexionAutomatica.js"></script>
 </body>
 </html>

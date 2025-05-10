@@ -1,68 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Nóminas del Empleado</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .lineas-nomina {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-left: 4px solid #2196F3;
+const empleadoId = window.location.pathname.split('/').pop();
+
+document.getElementById('btn-volver').href = `/admin/detalle/${empleadoId}`;
+
+fetch(`/api/admin/nomina/${empleadoId}`)
+    .then(response => {
+        if (!response.ok) throw new Error("Error al cargar nóminas");
+        return response.json();
+    })
+    .then(nominas => {
+        const container = document.getElementById("contenido-nomina");
+
+        if (nominas.length === 0) {
+            container.innerHTML = "<p>No hay nóminas registradas para este empleado.</p>";
+            return;
         }
-        .btn-volver {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 8px 15px;
-            background-color: #2196F3;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .btn-toggle {
-            background: none;
-            border: none;
-            color: #2196F3;
-            cursor: pointer;
-            padding: 0;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
 
-<h1>Nóminas del Empleado</h1>
-
-<div id="contenido-nomina">
-    <p>Cargando nóminas...</p>
-</div>
-
-<a id="btn-volver" href="#" class="btn-volver">Volver al empleado</a>
-
-<script>
-
-    const empleadoId = window.location.pathname.split('/').pop();
-
-    document.getElementById('btn-volver').href = `/admin/detalle/${empleadoId}`;
-
-    fetch(`/api/admin/nomina/${empleadoId}`)
-        .then(response => {
-            if (!response.ok) throw new Error("Error al cargar nóminas");
-            return response.json();
-        })
-        .then(nominas => {
-            const container = document.getElementById("contenido-nomina");
-
-            if (nominas.length === 0) {
-                container.innerHTML = "<p>No hay nóminas registradas para este empleado.</p>";
-                return;
-            }
-
-            container.innerHTML = `
+        container.innerHTML = `
                 <table>
                     <thead>
                         <tr>
@@ -111,16 +64,12 @@
                     </tbody>
                 </table>
             `;
-        })
-        .catch(error => {
-            container.innerHTML = `<div style="color:red;">Error: ${error.message}</div>`;
-        });
+    })
+    .catch(error => {
+        container.innerHTML = `<div style="color:red;">Error: ${error.message}</div>`;
+    });
 
-    function toggleLineas(nominaId) {
-        const lineasRow = document.getElementById(`lineas-${nominaId}`);
-        lineasRow.style.display = lineasRow.style.display === 'none' ? 'table-row' : 'none';
-    }
-</script>
-
-</body>
-</html>
+function toggleLineas(nominaId) {
+    const lineasRow = document.getElementById(`lineas-${nominaId}`);
+    lineasRow.style.display = lineasRow.style.display === 'none' ? 'table-row' : 'none';
+}
