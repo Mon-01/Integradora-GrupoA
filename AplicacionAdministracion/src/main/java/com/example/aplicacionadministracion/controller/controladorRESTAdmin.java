@@ -142,32 +142,6 @@ public class controladorRESTAdmin {
                     .body("Error al eliminar la nómina: " + e.getMessage());
         }
     }
-/*
-    @PostMapping("/filtroNominas")
-    public ResponseEntity<?> obtenerFiltroNominas(@RequestBody NominaDTO nominaDTO) {
-        List<Nomina> nominas = nominaService.filtrarPorNomina(nominaDTO.getEmpleado().getNombre(),
-                nominaDTO.getFecha());
-        return nominas != null ? ResponseEntity.ok(nominas) : ResponseEntity.status(404).body("No hay resultados");
-    }
-
-// */
-//@PostMapping("/filtroNominas")
-//public ResponseEntity<?> obtenerFiltroNominas(@RequestBody filtrosNominasDTO filtros) {
-//    try {
-//        List<Nomina> nominas = nominaService.filtrarPorNomina(
-//                filtros.getNombre() != null ? filtros.getNombre() : null,
-//                filtros.getFecha()
-//        );
-//
-//        if (nominas.isEmpty()) {
-//            return ResponseEntity.status(404).body("No hay resultados");
-//        }
-//
-//        return ResponseEntity.ok(nominas);
-//    } catch (Exception e) {
-//        return ResponseEntity.internalServerError().body("Error al filtrar nóminas: " + e.getMessage());
-//    }
-//}
 
     @PostMapping("/filtroNominas")
     public ResponseEntity<?> obtenerFiltroNominas(@RequestBody filtrosNominasDTO filtros) {
