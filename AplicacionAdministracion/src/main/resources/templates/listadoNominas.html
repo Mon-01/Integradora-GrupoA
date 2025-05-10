@@ -36,6 +36,7 @@
     <th>ID</th>
     <th>Fecha</th>
     <th>Empleado</th>
+    <th>Departamento</th>
     <th>Total</th>
     <th>Acciones</th>
   </tr>
@@ -45,6 +46,8 @@
     <td th:text="${nomina.id}"></td>
     <td th:text="${nomina.fecha != null} ? ${#temporals.format(nomina.fecha, 'dd/MM/yyyy')} : 'Sin fecha'"></td>
     <td th:text="${nomina.empleado?.nombre}"></td>
+    <td th:text="${nomina.empleado.departamento.nombre_dept}"></td>
+
     <td th:with="totalValue=${nomina.total != null ? nomina.total : 0}">
       € <span th:text="${#numbers.formatDecimal(totalValue, 1, 2)}">0.00</span>
     </td>

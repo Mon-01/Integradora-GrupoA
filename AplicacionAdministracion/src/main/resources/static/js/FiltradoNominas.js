@@ -42,6 +42,7 @@ function actualizarTabla(nominas) {
             <td>${nomina.id}</td>
             <td>${nomina.fecha ? new Date(nomina.fecha).toLocaleDateString() : 'Sin fecha'}</td>
             <td>${nomina.nombre}</td>
+            <td>${nomina.departamento}</td>
             <td>€ ${nomina.total ? nomina.total.toFixed(2) : '0.00'}</td>
             <td>
                 <button data-id="${nomina.id}" class="btn btn-danger eliminar-btn">Eliminar</button>

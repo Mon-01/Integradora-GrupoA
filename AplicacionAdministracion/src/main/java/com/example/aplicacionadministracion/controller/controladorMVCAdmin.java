@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller // Indica que esta clase es un controlador de Spring MVC que gestionará peticiones HTTP.
 public class controladorMVCAdmin {
@@ -87,13 +89,14 @@ public class controladorMVCAdmin {
     @GetMapping("/admin/detalle/{id}")
     public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
         model.addAttribute("empleadoId", id); // Pasa el ID del empleado a la vista.
-        return "DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
+        return "/detalles/DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
     }
 
     // Muestra una lista de todas las nóminas disponibles.
     @GetMapping("/listado")
-    public String listar(Model model) {
-        model.addAttribute("nominas", nominaService.obtenerTodasNominas()); // Consulta todas las nóminas y las pasa a la vista.
+    public String listar(Model model, Map map) {
+
+        model.addAttribute("nominas", nominaService.obtenerTodasNominas()); // ← Aquí pasas los DTO, no las entidades
         return "listadoNominas"; // Muestra la vista con la lista de nóminas.
     }
 
@@ -111,7 +114,7 @@ public class controladorMVCAdmin {
     @GetMapping("/admin/nomina/{empleadoId}")
     public String mostrarDetalleNomina(@PathVariable Long empleadoId, Model model) {
         model.addAttribute("empleadoId", empleadoId); // Pasa el ID del empleado a la vista.
-        return "detalle-nomina"; // Retorna la vista "detalle-nomina.html".
+        return "/detalles/detalle-nomina"; // Retorna la vista "detalle-nomina.html".
     }
 
     //botón para cerrar la sesión

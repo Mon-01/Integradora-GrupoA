@@ -3,12 +3,10 @@ package grupo.a.modulocomun.Servicios;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.LineaNominaDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
-import grupo.a.modulocomun.DTO.filtros.devueltaFiltroNominasDTO;
+import grupo.a.modulocomun.DTO.filtros.filtrosNominasDTO;
 import grupo.a.modulocomun.Entidades.*;
 import grupo.a.modulocomun.Repositorios.*;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,52 +68,28 @@ public class NominaService {
         Nomina nominaGuardada = nominaRepository.save(nomina);
         return convertirADTO(nominaGuardada);
     }
-/*
-    private NominaDTO convertirADTO(Nomina nomina) {
-        NominaDTO dto = new NominaDTO();
-        dto.setId(nomina.getId());
-        dto.setFecha(nomina.getFecha());
 
-        // Convertir empleado a DTO
-        EmpleadoDTO empleadoDTO = new EmpleadoDTO();
-        empleadoDTO.setId_empleado(nomina.getEmpleado().getId_empleado());
-        empleadoDTO.setNombre(nomina.getEmpleado().getNombre());
-        empleadoDTO.setApellido(nomina.getEmpleado().getApellido());
-        dto.setEmpleado(empleadoDTO);
-
-        // Convertir líneas
-        List<LineaNominaDTO> lineasDTO = nomina.getLineas().stream()
-                .map(linea -> {
-                    LineaNominaDTO lineaDTO = new LineaNominaDTO();
-                    lineaDTO.setId(linea.getId());
-                    lineaDTO.setConcepto(linea.getDescripcion());
-                    lineaDTO.setCantidad(linea.getImporte());
-                    return lineaDTO;
-                })
-                .collect(Collectors.toList());
-        dto.setLineas(lineasDTO);
-
-        // Calcular total
-        BigDecimal total = nomina.getLineas().stream()
-                .map(LineaNomina::getImporte)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        dto.setTotal(total);
-
-        return dto;
-    }
-
- */
     public List<NominaDTO> obtenerNominasPorEmpleado(Long empleadoId) {
         return nominaRepository.findNominasConLineasByEmpleadoId(empleadoId).stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
 
-    public devueltaFiltroNominasDTO returnConsultaFiltradoNominas (Nomina nomina) {
-        devueltaFiltroNominasDTO filtrado = new devueltaFiltroNominasDTO();
+    public filtrosNominasDTO returnConsultaFiltradoNominas (Nomina nomina) {
+        filtrosNominasDTO filtrado = new filtrosNominasDTO();
         filtrado.setNombre(nomina.getEmpleado().getNombre());
-        filtrado.setIdUsuario(nomina.getEmpleado().getId_empleado());
+        filtrado.setId(nomina.getEmpleado().getId_empleado());
         filtrado.setFecha(nomina.getFecha());
+        BigDecimal total = nomina.getLineas().stream()
+                .map(LineaNomina::getImporte)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        filtrado.setSalario(total);
+
+        if(nomina.getEmpleado() != null && nomina.getEmpleado().getDepartamento() != null){
+            filtrado.setDepartamento(nomina.getEmpleado().getDepartamento().getNombre_dept());
+        }else {
+            filtrado.setDepartamento("Sin departamento");
+        }
         return filtrado;
     }
 

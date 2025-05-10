@@ -147,7 +147,7 @@ public class controladorRESTAdmin {
     public ResponseEntity<?> obtenerFiltroNominas(@RequestBody filtrosNominasDTO filtros) {
         List<Nomina> nominas = nominaService.filtrarPorNomina(filtros.getNombre(), filtros.getDepartamento(), filtros.getFecha());
 
-        List<devueltaFiltroNominasDTO> nominaDTOs = nominas.stream()
+        List<filtrosNominasDTO> nominaDTOs = nominas.stream()
                 .map(n -> nominaService.returnConsultaFiltradoNominas(n))
                 .collect(Collectors.toList());
 

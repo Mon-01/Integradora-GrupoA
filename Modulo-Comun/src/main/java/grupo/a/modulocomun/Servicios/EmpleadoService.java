@@ -423,6 +423,7 @@ public class EmpleadoService {
         // Datos del departamento
         if(empleado.getDepartamento() != null) {
             dto.setIdDepartamento(empleado.getDepartamento().getId_dept());
+            dto.setDepartamento(departamentoService.convertirDTO(empleado.getDepartamento()));
         }
 
         // Datos del usuario si existe

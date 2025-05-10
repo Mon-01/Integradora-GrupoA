@@ -37,7 +37,7 @@ public interface NominaRepository extends JpaRepository<Nomina, Long> {
 
  */
 
-@EntityGraph(attributePaths = {"empleado"})
+@EntityGraph(attributePaths = {"empleado", "empleado.departamento"})
 @Query("SELECT DISTINCT n FROM Nomina n " +
         "JOIN n.empleado e " +
         "WHERE (COALESCE(:nombre, '') = '' OR LOWER(e.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))) " +

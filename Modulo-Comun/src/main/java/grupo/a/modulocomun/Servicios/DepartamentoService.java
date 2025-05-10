@@ -42,7 +42,7 @@ public class DepartamentoService {
     }
 
     //metodo para dinamizar el paso de entidad a dto por ser una tabla con varias columnas
-    private DepartamentoDTO convertirDTO(Departamento departamento) {
+    public DepartamentoDTO convertirDTO(Departamento departamento) {
         return new DepartamentoDTO(
                 departamento.getId_dept(),
                 departamento.getNombre_dept(),
