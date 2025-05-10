@@ -20,4 +20,5 @@ public class ServiceManager {
     private final EntidadBancariaService entidadBancariaService;
     private final TipoTarjetaService tipoTarjetaService;
     private final EmpleadoService empleadoService;
+    private final NominaService nominaService;
 }

@@ -20,7 +20,12 @@ public class LineaNomina {
     private String descripcion;
     private BigDecimal importe;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "nomina_id",nullable = false)
     private Nomina nomina;
+
+    public LineaNomina(String descripcion,BigDecimal importe) {
+        this.importe = importe;
+        this.descripcion = descripcion;
+    }
 }

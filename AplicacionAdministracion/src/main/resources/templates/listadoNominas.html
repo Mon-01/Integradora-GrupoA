@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Listado de Nóminas</title>
+  <style>
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .btn { padding: 5px 10px; text-decoration: none; color: white; }
+    .btn-primary { background-color: #2196F3; border-radius: 4px; display: inline-block;
+    }
+    .btn-danger { background: red; }
+  </style>
+  <!-- Añadir jQuery para AJAX -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>Nóminas</h1>
+<a href="/nueva" class="btn btn-primary">Nueva Nómina</a>
+<a href="/admin/inicio" class="btn btn-primary">Volver al listado de empleados</a>
+
+<div id="error" style="color: red;"></div>
+<!-- Filtros de búsqueda -->
+<form id="filtroForm">
+  <input type="text" id="nombre" placeholder="Nombre" >
+  <input type="text" id="departamento" placeholder="Departamento" >
+  <input type="date" id="fecha" placeholder="Fecha de emisión" >
+  <button type="submit">Buscar</button>
+</form>
+
+<table id="nominasTable">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Fecha</th>
+    <th>Empleado</th>
+    <th>Departamento</th>
+    <th>Total</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="nomina : ${nominas}">
+    <td th:text="${nomina.id}"></td>
+    <td th:text="${nomina.fecha != null} ? ${#temporals.format(nomina.fecha, 'dd/MM/yyyy')} : 'Sin fecha'"></td>
+    <td th:text="${nomina.empleado?.nombre}"></td>
+    <td th:text="${nomina.empleado.departamento.nombre_dept}"></td>
+
+    <td th:with="totalValue=${nomina.total != null ? nomina.total : 0}">
+      € <span th:text="${#numbers.formatDecimal(totalValue, 1, 2)}">0.00</span>
+    </td>
+    <td>
+      <button th:data-id="${nomina.id}" class="btn btn-danger eliminar-btn">Eliminar</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<script src="/js/EliminarNomina.js"></script>
+<script src="/js/FiltradoNominas.js"></script>
+</body>
+</html>

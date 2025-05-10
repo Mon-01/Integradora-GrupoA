@@ -24,7 +24,7 @@ public class Nomina {
 
     private LocalDate fecha;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "empleado_id",nullable = false)
     @JsonIgnoreProperties("nominas")
     private Empleado empleado;
@@ -34,5 +34,11 @@ public class Nomina {
     public void agregarLinea(LineaNomina linea) {
         this.lineas.add(linea);
         linea.setNomina(this);
+    }
+
+    public Nomina(LocalDate fecha, Empleado empleado, List<LineaNomina> lineas) {
+        this.fecha = fecha;
+        this.empleado = empleado;
+        this.lineas = lineas;
     }
 }

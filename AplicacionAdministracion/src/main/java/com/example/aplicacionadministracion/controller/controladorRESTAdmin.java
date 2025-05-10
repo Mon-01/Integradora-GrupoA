@@ -6,11 +6,13 @@ import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorServic
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.LineaNominaDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
+import grupo.a.modulocomun.DTO.filtros.*;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
+import grupo.a.modulocomun.Servicios.DepartamentoService;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import grupo.a.modulocomun.Servicios.NominaService;
 import jakarta.servlet.http.HttpSession;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -35,6 +38,7 @@ public class controladorRESTAdmin {
 
     @Autowired private NominaService nominaService;
     @Autowired private NominaRepository nominaRepository;
+    @Autowired private DepartamentoService departamentoService;
 
     @Autowired
     public controladorRESTAdmin(UsuarioAdministradorService service) {
@@ -137,6 +141,18 @@ public class controladorRESTAdmin {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al eliminar la nómina: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/filtroNominas")
+    public ResponseEntity<?> obtenerFiltroNominas(@RequestBody filtrosNominasDTO filtros) {
+        List<Nomina> nominas = nominaService.filtrarPorNomina(filtros.getNombre(), filtros.getDepartamento(), filtros.getFecha());
+
+        List<filtrosNominasDTO> nominaDTOs = nominas.stream()
+                .map(n -> nominaService.returnConsultaFiltradoNominas(n))
+                .collect(Collectors.toList());
+
+
+        return nominas != null ? ResponseEntity.ok(nominaDTOs) : ResponseEntity.status(404).body("No hay resultados");
     }
 
 }

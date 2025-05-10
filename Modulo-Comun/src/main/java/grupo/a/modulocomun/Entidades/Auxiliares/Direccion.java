@@ -1,5 +1,7 @@
 package grupo.a.modulocomun.Entidades.Auxiliares;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import grupo.a.modulocomun.Entidades.Maestros.TipoVia;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
@@ -9,8 +11,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+
 @Embeddable
 public class Direccion {
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "tipo_via_id")
     private TipoVia tipoVia;

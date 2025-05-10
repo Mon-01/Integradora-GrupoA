@@ -47,7 +47,7 @@ public class Empleado extends Persona {
     )
     private List<Especialidades> especializaciones = new ArrayList<>();
 
-    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "empleado", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("empleado") // Evita recursión
     private List<Nomina> nominas = new ArrayList<>();
 
