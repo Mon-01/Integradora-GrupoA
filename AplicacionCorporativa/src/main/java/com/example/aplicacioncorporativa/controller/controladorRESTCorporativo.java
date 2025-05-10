@@ -4,9 +4,12 @@ import ch.qos.logback.core.model.Model;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
+import grupo.a.modulocomun.DTO.filtros.filtrosNominasDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
+import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
+import grupo.a.modulocomun.Servicios.NominaService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,6 +41,9 @@ public class controladorRESTCorporativo {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private NominaService nominaService;
 
      /*   @PostMapping("/registro") // cambiamos la ruta para diferenciarlo
         public ResponseEntity<?> registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
@@ -155,6 +163,18 @@ public class controladorRESTCorporativo {
                             "status", "error"
                     ));
         }
+    }
+
+    @PostMapping("/filtroNominasEmpleado")
+    public ResponseEntity<?> obtenerFiltroNominas(@RequestBody filtrosNominasDTO filtros) {
+        List<Nomina> nominas = nominaService.filtrarPorNomina(filtros.getNombre(), filtros.getDepartamento(), filtros.getFecha());
+
+        List<filtrosNominasDTO> nominaDTOs = nominas.stream()
+                .map(n -> nominaService.returnConsultaFiltradoNominas(n))
+                .collect(Collectors.toList());
+
+
+        return nominas != null ? ResponseEntity.ok(nominaDTOs) : ResponseEntity.status(404).body("No hay resultados");
     }
 
 }
