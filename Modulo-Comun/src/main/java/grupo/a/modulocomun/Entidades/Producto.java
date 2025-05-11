@@ -5,9 +5,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Data @AllArgsConstructor
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "tipo_producto")
 @Entity
 public class Producto {
 
@@ -19,8 +23,18 @@ public class Producto {
     private String nombre;
     private BigDecimal precio;
     private String descripcion;
+    private int valoracion;
+    private String marca;
+    private Boolean esPerecedero;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
+    @Temporal(TemporalType.DATE)
+    private Date fechaAlta;
+
+    @ManyToMany
+    @JoinTable(
+            name = "producto_categoria",
+            joinColumns = @JoinColumn(name = "producto_id"),
+            inverseJoinColumns = @JoinColumn(name = "categoria_id")
+    )
+    private List<Categoria> categorias;
 }

@@ -3,6 +3,7 @@ package com.example.aplicacionadministracion.controller;
 
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
+import grupo.a.modulocomun.DTO.Auxiliares.CatalogoProductosDTO;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.LineaNominaDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
@@ -14,6 +15,7 @@ import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.DepartamentoService;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
+import grupo.a.modulocomun.Servicios.ImportacionCatalogoService;
 import grupo.a.modulocomun.Servicios.NominaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,7 @@ public class controladorRESTAdmin {
 
     private final UsuarioAdministradorService service;
 
+    @Autowired private ImportacionCatalogoService importacionCatalogoService;
     @Autowired private NominaService nominaService;
     @Autowired private NominaRepository nominaRepository;
     @Autowired private DepartamentoService departamentoService;
@@ -153,6 +156,15 @@ public class controladorRESTAdmin {
 
 
         return nominas != null ? ResponseEntity.ok(nominaDTOs) : ResponseEntity.status(404).body("No hay resultados");
+    }
+    @PostMapping("/importar")
+    public ResponseEntity<String> importar(@RequestBody CatalogoProductosDTO catalogo) {
+        try {
+            String resultado = importacionCatalogoService.importarCatalogo(catalogo);
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al importar: " + e.getMessage());
+        }
     }
 
 }

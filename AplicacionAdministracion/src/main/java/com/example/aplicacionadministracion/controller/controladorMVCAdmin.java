@@ -109,6 +109,10 @@ public class controladorMVCAdmin {
         model.addAttribute("empleados", empleadoService.obtenerTodosEmpleados()); // Lista de empleados para seleccionar uno.
         return "nuevaNomina"; // Renderiza la vista "nuevaNomina.html".
     }
+    @GetMapping("/productos")
+    public String product(){
+        return "producto";
+    }
 
     // Muestra el detalle de una nómina específica para un empleado determinado.
     @GetMapping("/admin/nomina/{empleadoId}")
