@@ -114,6 +114,11 @@ public class controladorMVCAdmin {
         return "producto";
     }
 
+    @GetMapping("/listadoProductos")
+    public String listadoP(){
+        return "listadoProductos";
+    }
+
     // Muestra el detalle de una nómina específica para un empleado determinado.
     @GetMapping("/admin/nomina/{empleadoId}")
     public String mostrarDetalleNomina(@PathVariable Long empleadoId, Model model) {

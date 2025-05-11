@@ -4,6 +4,8 @@ import grupo.a.modulocomun.DTO.Auxiliares.CatalogoProductosDTO;
 import grupo.a.modulocomun.DTO.Auxiliares.ProductoLibroDTO;
 import grupo.a.modulocomun.DTO.Auxiliares.ProductoMuebleDTO;
 import grupo.a.modulocomun.DTO.ProductoDTO;
+import grupo.a.modulocomun.DTO.filtros.ProductoBusquedaDTO;
+import grupo.a.modulocomun.DTO.filtros.ProductoResultadoDTO;
 import grupo.a.modulocomun.Entidades.Auxiliares.*;
 import grupo.a.modulocomun.Entidades.Producto;
 import grupo.a.modulocomun.Repositorios.CategoriaRepository;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -121,5 +124,18 @@ public class ImportacionCatalogoService {
         producto.setEsPerecedero(dto.isEsPerecedero());
         producto.setPrecio(dto.getPrecio());
         producto.setCategorias(new ArrayList<>());
+    }
+
+    public List<ProductoResultadoDTO> buscarProductos(ProductoBusquedaDTO filtro) {
+        return distribucionProductoRepository.buscarProductosFiltrados(
+                esVacio(filtro.getDescripcion()) ? null : filtro.getDescripcion(),
+                esVacio(filtro.getProveedor()) ? null : filtro.getProveedor(),
+                (filtro.getCategorias() == null || filtro.getCategorias().isEmpty()) ? null : filtro.getCategorias(),
+                filtro.getEsPerecedero()
+        );
+    }
+
+    private boolean esVacio(String valor) {
+        return valor == null || valor.trim().isEmpty();
     }
 }

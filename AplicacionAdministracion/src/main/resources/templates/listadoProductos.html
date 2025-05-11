@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Productos</title>
+</head>
+<style>
+    .btn { padding: 5px 10px; text-decoration: none; color: white; }
+    .btn-primary { background-color: #2196F3; border-radius: 4px; display: inline-block;
+    }
+</style>
+<body>
+<h1>Buscar productos</h1>
+<br>
+<div>
+    <a href="/productos" class="btn btn-primary">Volver a la Subida de Productos</a>
+</div>
+
+<form id="filtroForm">
+    <label>Descripción:</label>
+    <input type="text" id="descripcion"><br>
+
+    <label>Proveedor:</label>
+    <input type="text" id="proveedor"><br>
+
+    <label>Categorías (coma separadas):</label>
+    <input type="text" id="categorias"><br>
+
+    <label>¿Es perecedero?</label>
+    <select id="esPerecedero">
+        <option value="">-- Todos --</option>
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+    </select><br><br>
+
+    <button type="submit">Buscar</button>
+</form>
+
+<hr>
+
+<table border="1" id="resultados">
+    <thead>
+    <tr>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Categoría</th>
+        <th>Unidades</th>
+        <th>Proveedor</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    document.getElementById('filtroForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const descripcion = document.getElementById('descripcion').value;
+        const proveedor = document.getElementById('proveedor').value;
+        const categorias = document.getElementById('categorias').value
+            .split(',').map(c => c.trim()).filter(c => c);
+        const esPerecedero = document.getElementById('esPerecedero').value;
+        const payload = {
+            descripcion,
+            proveedor,
+            categorias,
+            esPerecedero: esPerecedero === "" ? null : (esPerecedero === "true")
+        };
+
+        fetch('/api/admin/buscar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.querySelector("#resultados tbody");
+                tbody.innerHTML = "";
+                data.forEach(p => {
+                    const row = `
+            <tr>
+              <td>${p.descripcion}</td>
+              <td>${p.precio}</td>
+              <td>${p.categoriaPrincipal}</td>
+              <td>${p.unidades}</td>
+              <td>${p.proveedor}</td>
+            </tr>
+          `;
+                    tbody.innerHTML += row;
+                });
+            });
+    });
+</script>
+</body>
+</html>

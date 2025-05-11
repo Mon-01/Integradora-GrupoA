@@ -167,4 +167,9 @@ public class controladorRESTAdmin {
         }
     }
 
+    @PostMapping("/buscar")
+    public List<ProductoResultadoDTO> buscar(@RequestBody ProductoBusquedaDTO filtros) {
+        return importacionCatalogoService.buscarProductos(filtros);
+    }
+
 }

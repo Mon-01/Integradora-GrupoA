@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Importación de Productos</title>
 </head>
+<style>
+    .btn { padding: 5px 10px; text-decoration: none; color: white; }
+    .btn-primary { background-color: #2196F3; border-radius: 4px; display: inline-block;
+    }
+</style>
 <body>
 <h1>Importar Catálogo de Productos (JSON)</h1>
 <form id="catalogoForm">
@@ -12,7 +17,12 @@
 </form>
 
 <div id="resultado"></div>
-
+<br>
+<br>
+<a href="/admin/inicio" class="btn btn-primary">Volver al listado de empleados</a>
+<br>
+<br>
+<a href="/listadoProductos" class="btn btn-primary">Ir a la Busqueda de Productos</a>
 <script>
     document.getElementById('catalogoForm').addEventListener('submit', function (e) {
         e.preventDefault();
