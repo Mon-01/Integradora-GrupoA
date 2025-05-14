@@ -19,16 +19,11 @@ public class LineaNomina {
 
     private String descripcion;
     private BigDecimal porcentaje;
-    private BigDecimal deducciones;
-    private BigDecimal devengos;
-    private BigDecimal importe;
+    private BigDecimal importeFijo;
+    private Boolean esDevengo; // true = devengo (suma), false = deducción (resta)
+    private BigDecimal importe; // Campo calculado
 
     @ManyToOne
-    @JoinColumn(name = "nomina_id",nullable = false)
+    @JoinColumn(name = "nomina_id", nullable = false)
     private Nomina nomina;
-
-    public LineaNomina(String descripcion,BigDecimal importe) {
-        this.importe = importe;
-        this.descripcion = descripcion;
-    }
 }

@@ -19,10 +19,17 @@ public interface NominaRepository extends JpaRepository<Nomina, Long> {
     List<Nomina> findByEmpleado_Id_Empleado(Long idEmpleado);
 
      */
-
+/*
 @Query("SELECT DISTINCT n FROM Nomina n " +
            "LEFT JOIN FETCH n.lineas " +
            "WHERE n.empleado.id_empleado = :empleadoId")
+    List<Nomina> findNominasConLineasByEmpleadoId(@Param("empleadoId") Long empleadoId);
+
+ */
+    @Query("SELECT DISTINCT n FROM Nomina n " +
+            "LEFT JOIN FETCH n.lineas " +
+            "WHERE n.empleado.id_empleado = :empleadoId " +
+            "ORDER BY n.fecha DESC")
     List<Nomina> findNominasConLineasByEmpleadoId(@Param("empleadoId") Long empleadoId);
 
     // Otra alternativa válida

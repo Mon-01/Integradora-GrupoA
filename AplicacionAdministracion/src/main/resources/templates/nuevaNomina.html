@@ -9,6 +9,11 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; }
         .error { color: red; font-size: 0.8em; }
+        .devengo { background-color: #e6ffe6; }
+        .deduccion { background-color: #ffe6e6; }
+        .tipo-calculado { display: flex; gap: 10px; }
+        .tipo-calculado select { flex: 1; }
+        .tipo-calculado input { flex: 2; }
     </style>
 </head>
 <body>
@@ -27,14 +32,13 @@
         </select>
     </div>
 
+
     <h3>Líneas</h3>
     <table id="lineas">
         <thead>
         <tr>
             <th>Concepto*</th>
-            <th>Porcentaje</th>
-            <th>Devengo</th>
-            <th>Deducción</th>
+            <th>Tipo y Cálculo*</th>
             <th>Importe (calculado)</th>
             <th>Acciones</th>
         </tr>
@@ -44,6 +48,10 @@
         </tbody>
     </table>
 
+    <div>
+        <strong>Total: </strong><span id="totalNomina">0.00 €</span>
+    </div>
+
     <button type="button" onclick="agregarLinea()">Añadir Línea</button>
     <button type="button" onclick="guardarNomina()">Guardar</button>
 </form>
@@ -51,4 +59,3 @@
 <script src="/js/CrearNuevaNomina.js"></script>
 </body>
 </html>
-

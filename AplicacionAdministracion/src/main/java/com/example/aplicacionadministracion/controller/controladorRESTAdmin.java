@@ -136,7 +136,7 @@ public class controladorRESTAdmin {
     @GetMapping("/nomina/{id}")
     public ResponseEntity<List<NominaDTO>> obtenerDetalleNomina(@PathVariable Long id) {
         List<NominaDTO> nominas = nominaService.obtenerNominasPorEmpleado(id);
-        return nominas != null ? ResponseEntity.ok(nominas) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(nominas);
     }
 
     // Añade este método al servicio NominaService

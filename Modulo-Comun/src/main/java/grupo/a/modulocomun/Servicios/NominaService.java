@@ -49,34 +49,43 @@ public class NominaService {
             throw new RuntimeException("La nómina debe contener al menos una línea");
         }
 
+        // Obtener salario base anual del empleado
+        BigDecimal salarioAnual = empleado.getSalarioAnual();
+
         for (LineaNominaDTO lineaDTO : nominaDTO.getLineas()) {
             if (lineaDTO.getConcepto() == null || lineaDTO.getConcepto().trim().isEmpty()) {
                 throw new RuntimeException("El concepto de la línea no puede estar vacío");
             }
 
+            if (lineaDTO.getEsDevengo() == null) {
+                throw new RuntimeException("Debe especificar si la línea es devengo o deducción");
+            }
+
             LineaNomina linea = new LineaNomina();
             linea.setDescripcion(lineaDTO.getConcepto());
+            linea.setEsDevengo(lineaDTO.getEsDevengo());
 
-            // Procesar porcentaje, devengos y deducciones
+            BigDecimal importe;
+
+            // Calcular importe según porcentaje o importe fijo
             if (lineaDTO.getPorcentaje() != null && !lineaDTO.getPorcentaje().isEmpty()) {
                 BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
                 linea.setPorcentaje(porcentaje);
-                // Calcular importe basado en porcentaje del salario mensual
-                BigDecimal salarioMensual = empleado.getSalarioAnual().divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
-                BigDecimal importe = salarioMensual.multiply(porcentaje).divide(BigDecimal.valueOf(100));
-                linea.setImporte(importe);
+                importe = salarioAnual.multiply(porcentaje)
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            } else if (lineaDTO.getImporteFijo() != null && !lineaDTO.getImporteFijo().isEmpty()) {
+                importe = new BigDecimal(lineaDTO.getImporteFijo());
+                linea.setImporteFijo(importe);
             } else {
-                // Si no hay porcentaje, usar devengos y deducciones
-                BigDecimal devengos = lineaDTO.getDevengo() != null && !lineaDTO.getDevengo().isEmpty() ?
-                        new BigDecimal(lineaDTO.getDevengo()) : BigDecimal.ZERO;
-                BigDecimal deducciones = lineaDTO.getDeduccion() != null && !lineaDTO.getDeduccion().isEmpty() ?
-                        new BigDecimal(lineaDTO.getDeduccion()) : BigDecimal.ZERO;
-
-                linea.setDevengos(devengos);
-                linea.setDeducciones(deducciones);
-                linea.setImporte(devengos.subtract(deducciones));
+                throw new RuntimeException("Debe especificar porcentaje o importe fijo");
             }
 
+            // Si es deducción, el importe será negativo
+            if (!lineaDTO.getEsDevengo()) {
+                importe = importe.negate();
+            }
+
+            linea.setImporte(importe);
             linea.setNomina(nomina);
             nomina.getLineas().add(linea);
         }
@@ -85,6 +94,7 @@ public class NominaService {
         Nomina nominaGuardada = nominaRepository.save(nomina);
         return convertirADTO(nominaGuardada);
     }
+
 
     public List<NominaDTO> obtenerNominasPorEmpleado(Long empleadoId) {
         return nominaRepository.findNominasConLineasByEmpleadoId(empleadoId).stream()
@@ -123,16 +133,22 @@ public class NominaService {
                     LineaNominaDTO lineaDTO = new LineaNominaDTO();
                     lineaDTO.setId(linea.getId());
                     lineaDTO.setConcepto(linea.getDescripcion());
-                    lineaDTO.setPorcentaje(linea.getPorcentaje() != null ? linea.getPorcentaje().toString() : null);
-                    lineaDTO.setDevengo(linea.getDevengos() != null ? linea.getDevengos().toString() : null);
-                    lineaDTO.setDeduccion(linea.getDeducciones() != null ? linea.getDeducciones().toString() : null);
-                    lineaDTO.setCantidad(linea.getImporte().toString());
+                    lineaDTO.setEsDevengo(linea.getEsDevengo());
+
+                    if (linea.getPorcentaje() != null) {
+                        lineaDTO.setPorcentaje(linea.getPorcentaje().toString());
+                    }
+                    if (linea.getImporteFijo() != null) {
+                        lineaDTO.setImporteFijo(linea.getImporteFijo().toString());
+                    }
+
+                    lineaDTO.setCantidad(linea.getImporte() != null ? linea.getImporte().toString() : "0.00");
                     return lineaDTO;
                 })
                 .collect(Collectors.toList());
         dto.setLineas(lineas);
 
-        // Calcular total
+        // Calcular total (suma de todos los importes, ya vienen con signo)
         BigDecimal total = nomina.getLineas().stream()
                 .map(LineaNomina::getImporte)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
