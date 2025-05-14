@@ -8,6 +8,7 @@
         input, select { width: 100%; padding: 8px; }
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; }
+        .error { color: red; font-size: 0.8em; }
     </style>
 </head>
 <body>
@@ -15,7 +16,7 @@
 <form id="nominaForm">
     <div class="form-group">
         <label>Fecha:</label>
-        <input type="date" id="fecha" name="fecha" required>
+        <input type="text" id="fecha" name="fecha" required>
     </div>
 
     <div class="form-group">
@@ -30,8 +31,11 @@
     <table id="lineas">
         <thead>
         <tr>
-            <th>Concepto</th>
-            <th>Importe</th>
+            <th>Concepto*</th>
+            <th>Porcentaje</th>
+            <th>Devengo</th>
+            <th>Deducción</th>
+            <th>Importe (calculado)</th>
             <th>Acciones</th>
         </tr>
         </thead>
@@ -45,7 +49,6 @@
 </form>
 
 <script src="/js/CrearNuevaNomina.js"></script>
-
 </body>
 </html>
 

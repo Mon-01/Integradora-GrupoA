@@ -19,12 +19,4 @@ public class NominaDTO {
     private List<LineaNominaDTO> lineas;
     private BigDecimal total;
 
-    public void calcularTotal() {
-        if (this.lineas != null) {
-            this.total = this.lineas.stream()
-                    .map(LineaNominaDTO::getCantidad)
-                    .filter(Objects::nonNull)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-        }
-    }
 }

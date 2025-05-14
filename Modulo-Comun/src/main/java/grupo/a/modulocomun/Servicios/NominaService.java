@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,13 +54,29 @@ public class NominaService {
                 throw new RuntimeException("El concepto de la línea no puede estar vacío");
             }
 
-            if (lineaDTO.getCantidad() == null || lineaDTO.getCantidad().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new RuntimeException("El importe debe ser mayor que cero");
-            }
-
             LineaNomina linea = new LineaNomina();
             linea.setDescripcion(lineaDTO.getConcepto());
-            linea.setImporte(lineaDTO.getCantidad());
+
+            // Procesar porcentaje, devengos y deducciones
+            if (lineaDTO.getPorcentaje() != null && !lineaDTO.getPorcentaje().isEmpty()) {
+                BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
+                linea.setPorcentaje(porcentaje);
+                // Calcular importe basado en porcentaje del salario mensual
+                BigDecimal salarioMensual = empleado.getSalarioAnual().divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
+                BigDecimal importe = salarioMensual.multiply(porcentaje).divide(BigDecimal.valueOf(100));
+                linea.setImporte(importe);
+            } else {
+                // Si no hay porcentaje, usar devengos y deducciones
+                BigDecimal devengos = lineaDTO.getDevengo() != null && !lineaDTO.getDevengo().isEmpty() ?
+                        new BigDecimal(lineaDTO.getDevengo()) : BigDecimal.ZERO;
+                BigDecimal deducciones = lineaDTO.getDeduccion() != null && !lineaDTO.getDeduccion().isEmpty() ?
+                        new BigDecimal(lineaDTO.getDeduccion()) : BigDecimal.ZERO;
+
+                linea.setDevengos(devengos);
+                linea.setDeducciones(deducciones);
+                linea.setImporte(devengos.subtract(deducciones));
+            }
+
             linea.setNomina(nomina);
             nomina.getLineas().add(linea);
         }
@@ -106,7 +123,10 @@ public class NominaService {
                     LineaNominaDTO lineaDTO = new LineaNominaDTO();
                     lineaDTO.setId(linea.getId());
                     lineaDTO.setConcepto(linea.getDescripcion());
-                    lineaDTO.setCantidad(linea.getImporte());
+                    lineaDTO.setPorcentaje(linea.getPorcentaje() != null ? linea.getPorcentaje().toString() : null);
+                    lineaDTO.setDevengo(linea.getDevengos() != null ? linea.getDevengos().toString() : null);
+                    lineaDTO.setDeduccion(linea.getDeducciones() != null ? linea.getDeducciones().toString() : null);
+                    lineaDTO.setCantidad(linea.getImporte().toString());
                     return lineaDTO;
                 })
                 .collect(Collectors.toList());
@@ -125,9 +145,6 @@ public class NominaService {
                 .map(nomina -> {
                     NominaDTO dto = convertirADTO(nomina);
                     // Asegurar que el total esté calculado
-                    if (dto.getTotal() == null) {
-                        dto.calcularTotal();
-                    }
                     return dto;
                 })
                 .collect(Collectors.toList());

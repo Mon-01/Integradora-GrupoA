@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function cargarEmpleados() {
-    fetch('/api/empleados') // Asegúrate de tener este endpoint
+    fetch('/api/empleados')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('empleadoId');
@@ -24,15 +24,71 @@ function agregarLinea() {
     const tbody = document.querySelector('#lineas tbody');
     const newRow = document.createElement('tr');
     newRow.innerHTML = `
-                <td><input type="text" name="concepto" required></td>
-                <td><input type="number" step="0.01" name="importe" required></td>
-                <td><button type="button" onclick="eliminarLinea(this)">Eliminar</button></td>
-            `;
+        <td><input type="text" name="concepto" required></td>
+        <td><input type="text" step="0.01" min="0" max="100" name="porcentaje" placeholder="%"></td>
+        <td><input type="text" step="0.01" min="0" name="devengo" placeholder="€"></td>
+        <td><input type="text" step="0.01" min="0" name="deduccion" placeholder="€"></td>
+        <td><span class="importe-calculado">0.00 €</span></td>
+        <td><button type="button" onclick="eliminarLinea(this)">Eliminar</button></td>
+    `;
     tbody.appendChild(newRow);
+
+    // Agregar event listeners para calcular automáticamente
+    const inputs = newRow.querySelectorAll('input[name="porcentaje"], input[name="devengo"], input[name="deduccion"]');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            calcularImporteLinea(newRow);
+        });
+    });
+}
+
+function calcularImporteLinea(row) {
+    const porcentaje = parseFloat(row.querySelector('input[name="porcentaje"]').value) || 0;
+    const devengo = parseFloat(row.querySelector('input[name="devengo"]').value) || 0;
+    const deduccion = parseFloat(row.querySelector('input[name="deduccion"]').value) || 0;
+
+    let importe = 0;
+
+    if (porcentaje > 0) {
+        // Necesitaríamos el salario del empleado para calcular esto
+        // Esto se hará mejor en el backend
+        importe = 0; // Se calculará en el servidor
+    } else {
+        importe = devengo - deduccion;
+    }
+
+    row.querySelector('.importe-calculado').textContent = importe.toFixed(2) + ' €';
 }
 
 function eliminarLinea(button) {
     button.closest('tr').remove();
+}
+
+function validarLineas() {
+    const lineasRows = document.querySelectorAll('#lineas tbody tr');
+    let valido = true;
+
+    lineasRows.forEach(row => {
+        const concepto = row.querySelector('input[name="concepto"]').value;
+        const porcentaje = row.querySelector('input[name="porcentaje"]').value;
+        const devengo = row.querySelector('input[name="devengo"]').value;
+        const deduccion = row.querySelector('input[name="deduccion"]').value;
+
+        if (!concepto) {
+            alert('El concepto es obligatorio en todas las líneas');
+            valido = false;
+            return;
+        }
+
+        // Al menos uno de los tres campos (porcentaje, devengo o deducción) debe tener valor
+        if (!porcentaje && !devengo && !deduccion) {
+            alert('Cada línea debe tener al menos un valor (porcentaje, devengo o deducción)');
+            valido = false;
+            return;
+        }
+    });
+
+    return valido;
 }
 
 function guardarNomina() {
@@ -49,35 +105,24 @@ function guardarNomina() {
         return;
     }
 
+    // Validar líneas
+    if (!validarLineas()) {
+        return;
+    }
+
     // Recoger las líneas
     const lineas = [];
     const lineasRows = document.querySelectorAll('#lineas tbody tr');
 
-    if (lineasRows.length === 0) {
-        alert('Debe añadir al menos una línea');
-        return;
-    }
-
-    let errorEnLineas = false;
     lineasRows.forEach(row => {
-        const concepto = row.querySelector('input[name="concepto"]').value;
-        const importe = row.querySelector('input[name="importe"]').value;
-
-        if (!concepto || !importe) {
-            errorEnLineas = true;
-            return;
-        }
-
-        lineas.push({
-            concepto: concepto,
-            cantidad: parseFloat(importe)
-        });
+        const linea = {
+            concepto: row.querySelector('input[name="concepto"]').value,
+            porcentaje: row.querySelector('input[name="porcentaje"]').value,
+            devengo: row.querySelector('input[name="devengo"]').value,
+            deduccion: row.querySelector('input[name="deduccion"]').value
+        };
+        lineas.push(linea);
     });
-
-    if (errorEnLineas) {
-        alert('Todos los campos de las líneas deben estar completos');
-        return;
-    }
 
     const nominaData = {
         fecha: fecha,
@@ -96,7 +141,9 @@ function guardarNomina() {
     })
         .then(response => {
             if (!response.ok) {
-                return response.text().then(text => { throw new Error(text) });
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Error al crear nómina');
+                });
             }
             return response.json();
         })
@@ -105,6 +152,7 @@ function guardarNomina() {
             window.location.href = '/listado';
         })
         .catch(error => {
+            console.error('Error:', error);
             alert('Error al crear nómina: ' + error.message);
         });
 }

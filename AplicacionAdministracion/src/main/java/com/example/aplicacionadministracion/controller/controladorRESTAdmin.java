@@ -22,13 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -109,7 +108,7 @@ public class controladorRESTAdmin {
     }
 
     @PostMapping("/nomina")
-    public ResponseEntity<?> crearNomina(@RequestBody NominaDTO nominaDTO) {
+    public ResponseEntity<?> crearNomina(@Validated @RequestBody NominaDTO nominaDTO, BindingResult result) {
         try {
             // Validación básica
             if (nominaDTO.getEmpleado() == null || nominaDTO.getEmpleado().getId_empleado() == null) {
@@ -118,6 +117,13 @@ public class controladorRESTAdmin {
 
             if (nominaDTO.getLineas() == null || nominaDTO.getLineas().isEmpty()) {
                 return ResponseEntity.badRequest().body("Debe haber al menos una línea en la nómina");
+            }
+
+            if (result.hasErrors()) {
+                Map<String, String> errores = new HashMap<>();
+                result.getFieldErrors().forEach(error ->
+                        errores.put(error.getField(), error.getDefaultMessage()));
+                return ResponseEntity.badRequest().body(errores);
             }
 
             NominaDTO nuevaNomina = nominaService.crearNomina(nominaDTO);

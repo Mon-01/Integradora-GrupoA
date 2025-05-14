@@ -18,6 +18,9 @@ public class LineaNomina {
     private Long id;
 
     private String descripcion;
+    private BigDecimal porcentaje;
+    private BigDecimal deducciones;
+    private BigDecimal devengos;
     private BigDecimal importe;
 
     @ManyToOne
