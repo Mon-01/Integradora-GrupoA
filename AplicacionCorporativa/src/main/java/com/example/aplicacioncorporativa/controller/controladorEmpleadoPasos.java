@@ -1,5 +1,6 @@
 package com.example.aplicacioncorporativa.controller;
 
+import grupo.a.modulocomun.Validaciones.Resumen;
 import grupo.a.modulocomun.Validaciones.paso1.Paso1;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
@@ -162,6 +163,7 @@ public class controladorEmpleadoPasos {
 
     @PostMapping("/resumen")
     public String guardarDatosEmpleado(HttpSession session) {
+
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
         Usuario emailUsuario = (Usuario) session.getAttribute("usuarioLogueado");
 

@@ -22,5 +22,5 @@ public class DatosBancariosDTO {
     private String numCuenta = "ES91 2100 0418 4502 0005 1332";
 
     @Valid
-    private TarjetaCreditoDTO tarjeta;
+    private TarjetaCreditoDTO tarjeta = new TarjetaCreditoDTO();
 }

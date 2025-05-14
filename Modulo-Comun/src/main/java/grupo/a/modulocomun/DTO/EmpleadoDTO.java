@@ -3,11 +3,14 @@ import grupo.a.modulocomun.DTO.Auxiliares.PersonaDTO;
 import grupo.a.modulocomun.DTO.Auxiliares.TarjetaCreditoDTO;
 import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
 import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
+import grupo.a.modulocomun.Validaciones.Resumen;
 import grupo.a.modulocomun.Validaciones.paso4.Paso4;
 import grupo.a.modulocomun.Validaciones.paso4.comisionValidation;
 import grupo.a.modulocomun.Validaciones.paso4.salarioValidation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +35,7 @@ public class EmpleadoDTO extends PersonaDTO {
     @comisionValidation(groups = Paso4.class)
     private String comisionAnual;
     @Valid
-    private DatosBancariosDTO datosBancarios;
+    private DatosBancariosDTO datosBancarios = new DatosBancariosDTO();
     private Long idDepartamento = 1L;
     private DepartamentoDTO departamento;
 
@@ -42,4 +45,5 @@ public class EmpleadoDTO extends PersonaDTO {
     private List<NominaDTO> nominas;
 
     private String imagenBase64;
+
 }

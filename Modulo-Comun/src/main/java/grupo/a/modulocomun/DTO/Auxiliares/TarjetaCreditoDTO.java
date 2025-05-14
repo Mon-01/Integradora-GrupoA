@@ -20,7 +20,8 @@ public class TarjetaCreditoDTO {
 
     @numeroValidation(groups = Paso4.class)
     private String numero = "4539 1488 0343 6467";
-    private Caducidad caducidad;
+    @Valid
+    private Caducidad caducidad = new Caducidad();
 
     @cvcValidation(groups = Paso4.class)
     private String cvc;

@@ -83,7 +83,12 @@
         </fieldset>
         <br>
     </fieldset>
-<a href="/paso4"><button>Volver</button></a>
+    <input type="checkbox" id="check" name="check">
+    <label for="check">Conforme con la información suministrada</label>
+    <div th:if="${enviado}">
+        <div th:each="error: ${#fields.errors('check')}" th:text="${error} " class="error"></div>
+    </div>
+    <a href="/paso4"><button>Volver</button></a>
 <a href="/resetearSesion"><button>Volver al principio</button></a>
 <button type="submit">Guardar Datos</button>
 </form>
@@ -92,6 +97,14 @@
     const form = document.getElementById('formulario');
 
     form.addEventListener('submit', function(event) {
+        var checkbox = document.getElementById('check');
+
+        // Si no está marcado, muestra un mensaje y no permite continuar
+        if (!checkbox.checked) {
+            alert("Debes marcar que estás conforme con la información suministrada.");
+            return; // Detiene la ejecución del código (no hace el submit del formulario)
+        }
+
         const confirmar = confirm("¿Estás seguro de que deseas enviar los datos del empleado?");
         if (!confirmar) {
             event.preventDefault(); // Cancela el envío si el usuario elige "Cancelar"

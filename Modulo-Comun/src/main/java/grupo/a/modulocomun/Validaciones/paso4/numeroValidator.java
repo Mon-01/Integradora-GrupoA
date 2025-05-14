@@ -14,6 +14,8 @@ public class numeroValidator implements ConstraintValidator<numeroValidation, St
             return false;
         }
 
+        valor = valor.replaceAll("\\s+", ""); // elimina todos los espacios
+
         if (!valor.matches("\\d{16}")) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("{numeroTarjeta.formato}")
