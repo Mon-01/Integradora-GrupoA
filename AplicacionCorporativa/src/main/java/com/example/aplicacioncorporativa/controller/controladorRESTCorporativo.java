@@ -13,7 +13,9 @@ import grupo.a.modulocomun.Servicios.NominaService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -175,6 +177,21 @@ public class controladorRESTCorporativo {
 
 
         return nominas != null ? ResponseEntity.ok(nominaDTOs) : ResponseEntity.status(404).body("No hay resultados");
+    }
+    @GetMapping("/nominas/generar-pdf/{empleadoId}")
+    public ResponseEntity<byte[]> generarPdfNomina(@PathVariable Long empleadoId) {
+        try {
+            byte[] pdfBytes = nominaService.generarUltimaNominaPdf(empleadoId);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "nomina.pdf");
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
 }

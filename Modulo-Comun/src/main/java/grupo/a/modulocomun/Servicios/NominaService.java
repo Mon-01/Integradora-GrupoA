@@ -1,5 +1,8 @@
 package grupo.a.modulocomun.Servicios;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.LineaNominaDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
@@ -10,9 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -177,6 +184,77 @@ public class NominaService {
 public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDate fecha) {
     return nominaRepository.filtroNomina(nombre, departamento, fecha);
 }
+
+
+
+    public byte[] generarUltimaNominaPdf(Long empleadoId) {
+        Empleado empleado = empleadoRepository.findById(empleadoId)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+
+        List<Nomina> nominas = empleado.getNominas();
+
+        if (nominas == null || nominas.isEmpty()) {
+            throw new RuntimeException("El empleado no tiene nóminas");
+        }
+
+        // Ordenar por fecha descendente
+        nominas.sort(Comparator.comparing(Nomina::getFecha).reversed());
+
+        return crearPdfNomina(empleado, nominas.get(0)); // Tomar la más reciente
+    }
+
+    private byte[] crearPdfNomina(Empleado empleado, Nomina nomina) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Document document = new Document();
+            PdfWriter.getInstance(document, out);
+
+            document.open();
+
+            // Encabezado
+            Paragraph header = new Paragraph("NÓMINA", new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD));
+            header.setAlignment(Element.ALIGN_CENTER);
+            document.add(header);
+
+            document.add(new Paragraph(" ")); // Espacio
+
+            // Información del empleado
+            document.add(new Paragraph("Empleado: " + empleado.getNombre() + " " + empleado.getApellido()));
+            document.add(new Paragraph("Fecha de nómina: " + nomina.getFecha()));
+            document.add(new Paragraph(" "));
+
+            // Tabla de líneas de nómina
+            PdfPTable table = new PdfPTable(3);
+            table.setWidthPercentage(100);
+
+            // Encabezados de tabla
+            table.addCell(new Phrase("Concepto", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+            table.addCell(new Phrase("Tipo", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+            table.addCell(new Phrase("Importe", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+
+            // Líneas de nómina
+            BigDecimal total = BigDecimal.ZERO;
+            for (LineaNomina linea : nomina.getLineas()) {
+                table.addCell(linea.getDescripcion());
+                table.addCell(linea.getEsDevengo() ? "Devengo" : "Deducción");
+                table.addCell(linea.getImporte().toString() + " €");
+                total = total.add(linea.getImporte());
+            }
+
+            document.add(table);
+            document.add(new Paragraph(" "));
+
+            // Total
+            Paragraph totalParagraph = new Paragraph("Total: " + total.toString() + " €",
+                    new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
+            totalParagraph.setAlignment(Element.ALIGN_RIGHT);
+            document.add(totalParagraph);
+
+            document.close();
+            return out.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al generar el PDF", e);
+        }
+    }
 
 //    public void cargarNominas() {
 //            List<Empleado> empleados = empleadoRepository.findAll();

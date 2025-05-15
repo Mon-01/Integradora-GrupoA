@@ -4,7 +4,21 @@
     <meta charset="UTF-8">
     <title>Área Personal</title>
     <link rel="stylesheet" href="/css/areaPersonal.css">
+    <!-- Añadir jQuery para simplificar AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+<style>
+    #pdfLoading {
+        margin: 15px 0;
+        text-align: center;
+        color: #555;
+    }
+
+    #pdfLoading img {
+        width: 30px;
+        height: 30px;
+    }
+</style>
 <body>
 <div th:replace="~{fragments/navPersonal :: navP}"></div>
 <div class="container">
@@ -20,16 +34,63 @@
         Vestibulum lectus turpis, laoreet vitae dignissim eu, laoreet nec nisl. Donec dapibus...</p>
 </div>
 
+<!-- Mostrar botón registrar solo si usuario.empleado es null -->
 <div th:if="${usuario.empleado == null}" style="text-align: center; margin-top: 20px;">
     <form action="/paso1" method="get">
         <button type="submit" class="boton-registro">Registrar Empleado</button>
     </form>
-<!--    <form th:action="@{/detalle/{id}(id=${empleado.id})}">-->
-<!--        <button type="submit" class="boton-registro">Ver detalle</button>-->
-<!--    </form>-->
-<!--    <form>-->
-<!--        <button type="submit" class="boton-registro">Ver nóminas</button>-->
-<!--    </form>-->
+</div>
+
+<!-- Mostrar contenido solo si usuario.empleado NO es null -->
+<div th:if="${usuario.empleado != null}" style="text-align: center; margin-top: 20px;">
+
+    <!-- Mostrar botón descargar nómina si no está vacío -->
+    <div th:if="${usuario.empleado != null and usuario.empleado.nominas != null and #lists.size(usuario.empleado.nominas) > 0}">
+        <button id="descargarNominaBtn" class="boton-registro">Descargar última nómina (PDF)</button>
+        <div id="pdfLoading" style="display: none;">
+            <p>Generando PDF, por favor espere...</p>
+        </div>
+    </div>
+
+    <!-- Form para ver detalle -->
+    <form th:action="@{/detalle/{id}(id=${usuario.empleado.id_empleado})}">
+        <button type="submit" class="boton-registro">Ver detalle</button>
+    </form>
+
+    <!-- Script solo se define empleadoId si existe usuario.empleado -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var empleadoId = [[${usuario.empleado.id_empleado}]];
+        $(document).ready(function() {
+            $('#descargarNominaBtn').click(function() {
+                $('#pdfLoading').show();
+
+                $.ajax({
+                    url: '/nominas/generar-pdf/' + empleadoId,
+                    method: 'GET',
+                    xhrFields: {
+                        responseType: 'blob' // Importante para datos binarios
+                    },
+                    success: function(data) {
+                        $('#pdfLoading').hide();
+
+                        const blob = new Blob([data], {type: 'application/pdf'});
+                        const link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = 'nomina_' + empleadoId + '_' + new Date().toISOString().split('T')[0] + '.pdf';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#pdfLoading').hide();
+                        alert('Error al generar el PDF: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+        /*]]>*/
+    </script>
 
 </div>
 
