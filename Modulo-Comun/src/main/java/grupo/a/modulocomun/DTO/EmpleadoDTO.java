@@ -4,6 +4,8 @@ import grupo.a.modulocomun.DTO.Auxiliares.TarjetaCreditoDTO;
 import grupo.a.modulocomun.Entidades.Auxiliares.Persona;
 import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
 import grupo.a.modulocomun.Validaciones.Resumen;
+import grupo.a.modulocomun.Validaciones.paso1.FotoValidation;
+import grupo.a.modulocomun.Validaciones.paso1.Paso1;
 import grupo.a.modulocomun.Validaciones.paso4.Paso4;
 import grupo.a.modulocomun.Validaciones.paso4.comisionValidation;
 import grupo.a.modulocomun.Validaciones.paso4.salarioValidation;
@@ -44,6 +46,7 @@ public class EmpleadoDTO extends PersonaDTO {
     private UsuarioDTO usuario;
     private List<NominaDTO> nominas;
 
+    @FotoValidation(groups = Paso1.class)
     private String imagenBase64;
 
 }
