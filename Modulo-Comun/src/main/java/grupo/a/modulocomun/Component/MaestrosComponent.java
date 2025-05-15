@@ -24,6 +24,5 @@ public class MaestrosComponent implements CommandLineRunner {
         serviceManager.getTipoTarjetaService().cargarTiposTarjeta();
         serviceManager.getTipoViaService().cargarTipoVia();
         serviceManager.getDepartamentoService().cargarDepartamentos();
-        //serviceManager.getNominaService().cargarNominas();
     }
 }
