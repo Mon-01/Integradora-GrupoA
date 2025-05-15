@@ -30,10 +30,6 @@ import java.util.stream.Collectors;
 @Service
 public class EmpleadoService {
 
-    /*
-    * añadir caducidad en insertar empleado para que se guarde en la bbdd
-    * */
-
     @Autowired
     private final EmpleadoRepository empleadoRepository;
 
@@ -52,55 +48,6 @@ public class EmpleadoService {
         this.departamentoService = departamentoService;
     }
 
-    public void validarMaestrosPaso1(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-        if (empleadoDTO.getGenero() == null) {
-            bindingResult.rejectValue("genero", "validation.notNull");
-        } else if (!repositoryManager.getGeneroRepository().existsById(empleadoDTO.getGenero())) {
-            bindingResult.rejectValue("genero", "valor.invalido");
-        }
-
-        if (!repositoryManager.getPaisRepository().existsById(empleadoDTO.getPaisNacimiento())) {
-            bindingResult.rejectValue("paisNacimiento", "valor.invalido");
-        }
-    }
-
-    public void validarMaestrosPaso2(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-        if (empleadoDTO.getTipoDocumento() == null) {
-            bindingResult.rejectValue("tipoDocumento", "validation.notNull");
-        } else if (!repositoryManager.getTipoDocumentoRepository().existsById(empleadoDTO.getTipoDocumento())) {
-            bindingResult.rejectValue("tipoDocumento", "valor.invalido");
-        }
-
-        if (!repositoryManager.getTipoViaRepository().existsById(empleadoDTO.getDireccion().getTipoVia())) {
-            bindingResult.rejectValue("direccion.tipoVia", "valor.invalido");
-        }
-    }
-
-    public void validarMaestrosPaso3(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-            if (!repositoryManager.getDepartamentoRepository().existsById(empleadoDTO.getIdDepartamento())) {
-            bindingResult.rejectValue("idDepartamento", "valor.invalido");
-        }
-
-        if (empleadoDTO.getEspecializaciones() == null || empleadoDTO.getEspecializaciones().isEmpty()) {
-            bindingResult.rejectValue("especializaciones", "validation.notNull");
-        } else if (
-                //usamos un stream para que devuelva el primer error de id que encuentre
-                empleadoDTO.getEspecializaciones().stream()
-            .anyMatch(id -> !repositoryManager.getEspecialidadesRepository().existsById(id))
-        ){
-            bindingResult.rejectValue("especializaciones", "valor.invalido");
-        }
-    }
-
-    public void validarMaestrosPaso4(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-            if (!repositoryManager.getEntidadBancariaRepository().existsById(empleadoDTO.getDatosBancarios().getEntidadBancaria())) {
-            bindingResult.rejectValue("datosBancarios.entidadBancaria", "valor.invalido");
-        }
-
-        if (!repositoryManager.getTipoTarjetaRepository().existsById(empleadoDTO.getDatosBancarios().getTarjeta().getTipo())) {
-            bindingResult.rejectValue("datosBancarios.tarjeta.tipo", "valor.invalido");
-        }
-    }
 
     @Transactional
     public void cargarEmpleado() {
@@ -161,6 +108,8 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(2L).orElseThrow(EntityNotFoundException::new)
         ));
 
+        empleado1.setFecha_alta(LocalDate.now());
+
         return empleado1;
     }
 
@@ -197,6 +146,8 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(4L).orElseThrow(EntityNotFoundException::new)
         ));
 
+        empleado2.setFecha_alta(LocalDate.now());
+
         return empleado2;
     }
 
@@ -231,6 +182,8 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(3L).orElseThrow(EntityNotFoundException::new),
                 repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
         ));
+
+        empleado3.setFecha_alta(LocalDate.now());
 
         return empleado3;
     }
@@ -267,6 +220,8 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
         ));
 
+        empleado4.setFecha_alta(LocalDate.now());
+
         return empleado4;
     }
 
@@ -296,6 +251,7 @@ public class EmpleadoService {
         asignarEspecialidades(empleado, empleadoDTO);
         asignarDepartamento(empleado, empleadoDTO);
         asignarTipoDocumento(empleado, empleadoDTO);
+        empleado.setFecha_alta(LocalDate.now());
 
         // Relacionar con el usuario
         empleado.setUsuario(usuario);
@@ -327,7 +283,7 @@ public class EmpleadoService {
         }else{
            empleado.setComisionAnual(new BigDecimal(empleadoDTO.getComisionAnual()));
         }
-        empleado.setImagenBase64(empleadoDTO.getImagenBase64());
+        empleado.setImagenBase64(empleadoDTO.getImagen());
     }
 
     private void asignarGenero(Empleado empleado, EmpleadoDTO empleadoDTO) {
@@ -445,6 +401,7 @@ public class EmpleadoService {
     public Optional<Empleado> obtenerEmpleadoPorCorreo(String correo) {
         return empleadoRepository.findByEmail(correo);
     }
+
     public String obtenerImagenBase64PorCorreo(String correo) {
         Optional<Empleado> empleadoOpt = obtenerEmpleadoPorCorreo(correo);
 
@@ -457,5 +414,52 @@ public class EmpleadoService {
         return null; // Devuelve null si no se encontró imagen
     }
 
-
 }
+
+//    public void validarMaestrosPaso1(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+//        if (empleadoDTO.getGenero() == null) {
+//            bindingResult.rejectValue("genero", "validation.notNull");
+//        } else if (!repositoryManager.getGeneroRepository().existsById(empleadoDTO.getGenero())) {
+//            bindingResult.rejectValue("genero", "valor.invalido");
+//        }
+//
+//        if (!repositoryManager.getPaisRepository().existsById(empleadoDTO.getPaisNacimiento())) {
+//            bindingResult.rejectValue("paisNacimiento", "valor.invalido");
+//        }
+//    }
+//    public void validarMaestrosPaso2(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+//        if (empleadoDTO.getTipoDocumento() == null) {
+//            bindingResult.rejectValue("tipoDocumento", "validation.notNull");
+//        } else if (!repositoryManager.getTipoDocumentoRepository().existsById(empleadoDTO.getTipoDocumento())) {
+//            bindingResult.rejectValue("tipoDocumento", "valor.invalido");
+//        }
+//
+//        if (!repositoryManager.getTipoViaRepository().existsById(empleadoDTO.getDireccion().getTipoVia())) {
+//            bindingResult.rejectValue("direccion.tipoVia", "valor.invalido");
+//        }
+//    }
+
+//    public void validarMaestrosPaso3(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+//            if (!repositoryManager.getDepartamentoRepository().existsById(empleadoDTO.getIdDepartamento())) {
+//            bindingResult.rejectValue("idDepartamento", "valor.invalido");
+//        }
+//
+//        if (empleadoDTO.getEspecializaciones() == null || empleadoDTO.getEspecializaciones().isEmpty()) {
+//            bindingResult.rejectValue("especializaciones", "validation.notNull");
+//        } else if (
+//                //usamos un stream para que devuelva el primer error de id que encuentre
+//                empleadoDTO.getEspecializaciones().stream()
+//            .anyMatch(id -> !repositoryManager.getEspecialidadesRepository().existsById(id))
+//        ){
+//            bindingResult.rejectValue("especializaciones", "valor.invalido");
+//        }
+//    }
+//    public void validarMaestrosPaso4(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+//            if (!repositoryManager.getEntidadBancariaRepository().existsById(empleadoDTO.getDatosBancarios().getEntidadBancaria())) {
+//            bindingResult.rejectValue("datosBancarios.entidadBancaria", "valor.invalido");
+//        }
+//
+//        if (!repositoryManager.getTipoTarjetaRepository().existsById(empleadoDTO.getDatosBancarios().getTarjeta().getTipo())) {
+//            bindingResult.rejectValue("datosBancarios.tarjeta.tipo", "valor.invalido");
+//        }
+//    }

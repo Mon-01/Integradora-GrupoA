@@ -23,7 +23,7 @@
         <p for="comentarios">Comentarios: <span th:text="${empleadoForm.getComentarios()}"></span></p>
         <p>Imagen de perfil:</p>
         <br>
-        <img th:src="'data:image/png;base64,' + ${empleadoForm.imagenBase64}"
+        <img th:src="'data:image/png;base64,' + ${empleadoForm.imagen}"
              alt="Imagen del empleado"
              style="max-width: 200px;"/>
         <br>
