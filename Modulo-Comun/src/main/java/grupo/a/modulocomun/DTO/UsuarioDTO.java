@@ -14,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UsuarioDTO {
     private UUID id_usuario;
+    
     private String email;
     private String clave;
     private String confirmarClave;

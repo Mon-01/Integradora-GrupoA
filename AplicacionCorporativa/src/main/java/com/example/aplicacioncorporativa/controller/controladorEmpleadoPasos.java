@@ -1,10 +1,12 @@
 package com.example.aplicacioncorporativa.controller;
 
+import grupo.a.modulocomun.Validaciones.Resumen;
 import grupo.a.modulocomun.Validaciones.paso1.Paso1;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Servicios.ServiceManager;
 import grupo.a.modulocomun.Validaciones.paso2.Paso2;
+import grupo.a.modulocomun.Validaciones.paso3.paso3;
 import grupo.a.modulocomun.Validaciones.paso4.Paso4;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -39,7 +41,7 @@ public class controladorEmpleadoPasos {
                                 @Validated(Paso1.class) @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
                                 BindingResult bindingResult) {
 
-        serviceManager.getEmpleadoService().validarMaestrosPaso1(datosEmpleado, bindingResult);
+        //serviceManager.getEmpleadoService().validarMaestrosPaso1(datosEmpleado, bindingResult);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", bindingResult);
@@ -69,7 +71,7 @@ public class controladorEmpleadoPasos {
             HttpSession sesion,
             Model model) {
 
-        serviceManager.getEmpleadoService().validarMaestrosPaso2(datosEmpleado, bindingResult);
+//        serviceManager.getEmpleadoService().validarMaestrosPaso2(datosEmpleado, bindingResult);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("enviado", true);
@@ -93,10 +95,10 @@ public class controladorEmpleadoPasos {
 
     @PostMapping("/paso3")
     public String procesarPaso3(HttpSession sesion, Model model,
-                                @Validated @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
+                                @Validated(paso3.class) @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
                                 BindingResult bindingResult) {
 
-        serviceManager.getEmpleadoService().validarMaestrosPaso3(datosEmpleado, bindingResult);
+//        serviceManager.getEmpleadoService().validarMaestrosPaso3(datosEmpleado, bindingResult);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
@@ -127,7 +129,7 @@ public class controladorEmpleadoPasos {
             HttpSession sesion,
             Model model) {
 
-        serviceManager.getEmpleadoService().validarMaestrosPaso4(datosEmpleado, bindingResult);
+//        serviceManager.getEmpleadoService().validarMaestrosPaso4(datosEmpleado, bindingResult);
 
         if (bindingResult.hasErrors()) {
             System.out.println(bindingResult.getAllErrors());
@@ -162,6 +164,7 @@ public class controladorEmpleadoPasos {
 
     @PostMapping("/resumen")
     public String guardarDatosEmpleado(HttpSession session) {
+
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
         Usuario emailUsuario = (Usuario) session.getAttribute("usuarioLogueado");
 

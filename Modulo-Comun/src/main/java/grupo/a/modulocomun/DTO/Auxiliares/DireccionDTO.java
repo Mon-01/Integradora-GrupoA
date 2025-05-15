@@ -2,6 +2,7 @@ package grupo.a.modulocomun.DTO.Auxiliares;
 
 import grupo.a.modulocomun.Entidades.Maestros.TipoVia;
 import grupo.a.modulocomun.Validaciones.paso2.Paso2;
+import grupo.a.modulocomun.Validaciones.paso2.TipoViaValidation;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class DireccionDTO {
 
     @NotNull(message = "Seleccione un tipo de vía", groups = Paso2.class)
+    @TipoViaValidation(groups = Paso2.class)
     private Long tipoVia = 1L;
 
     @NotBlank(message = "El nombre de la vía es obligatorio", groups = Paso2.class)

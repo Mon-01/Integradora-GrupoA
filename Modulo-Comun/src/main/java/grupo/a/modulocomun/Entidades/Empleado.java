@@ -51,8 +51,6 @@ public class Empleado extends Persona {
     @JsonIgnoreProperties("empleado") // Evita recursión
     private List<Nomina> nominas = new ArrayList<>();
 
-
-
     //Relaciones
     @OneToOne
     @JoinColumn(name = "id_usuario",foreignKey = @ForeignKey(name = "FK_empleado_usuario_id_usuario"))
