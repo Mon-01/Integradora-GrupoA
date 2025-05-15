@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Nómina</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Editar Nómina</h1>
+
+    <form th:action="@{/admin/nomina/guardar}" th:object="${nomina}" method="post">
+
+        <div class="container mt-4">
+
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID Nómina</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="nomina : ${nomina}">
+                        <td th:text="${nomina.id}"></td>
+                        <td>
+                            <input type="text" th:value="${#temporals.format(nomina.fecha, 'dd/MM/yyyy')}" />
+                        </td>
+                        <td>
+                            <input type="text" th:value="${#numbers.formatDecimal(nomina.total, 1, 'POINT', 2, 'POINT')} + ' €'"/>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" type="button"
+                                    th:attr="onclick='toggleLineas(' + ${nomina.id} + ')'" >
+                                Ver líneas
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:each="nomina : ${nomina}" th:attr="id='lineas-' + ${nomina.id}" style="display:none;">
+                        <td colspan="4">
+                            <div class="lineas-nomina">
+                                <h4>Líneas de nómina:</h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Concepto</th>
+                                        <th>Tipo</th>
+                                        <th>Valor</th>
+                                        <th>Importe</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="linea : ${nomina.lineas}"
+                                        th:class="${linea.esDevengo} ? 'devengo' : 'deduccion'">
+                                        <td>
+                                            <input type="text" th:value="${linea.concepto}">
+                                        </td>
+                                        <td th:text="${linea.esDevengo} ? 'Devengo' : 'Deducción'"></td>
+                                        <td>
+                                            <span th:if="${linea.porcentaje}" th:text="${linea.porcentaje + '%'}"></span>
+                                            <span th:if="${linea.importeFijo}" th:text="${linea.importeFijo + '€'}"></span>
+                                        </td>
+                                        <td>
+                                            <input type="text" th:value="${#numbers.formatDecimal(linea.cantidad, 1, 'POINT', 2, 'POINT')} + ' €'"/>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        <a th:href="@{/listado}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+<script>
+    function toggleLineas(nominaId) {
+        const fila = document.getElementById('lineas-' + nominaId);
+        if (fila.style.display === 'none') {
+            fila.style.display = 'table-row';
+        } else {
+            fila.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>

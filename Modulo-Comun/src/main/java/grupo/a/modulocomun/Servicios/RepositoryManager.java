@@ -1,8 +1,10 @@
 package grupo.a.modulocomun.Servicios;
 
+import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.DepartamentoRepository;
 import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
 import grupo.a.modulocomun.Repositorios.Maestros.*;
+import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,4 +24,5 @@ public class RepositoryManager {
     private final EntidadBancariaRepository entidadBancariaRepository;
     private final UsuarioRepository usuarioRepository;
     private final EmpleadoRepository empleadoRepository;
+    private final NominaRepository nominaRepository;
 }

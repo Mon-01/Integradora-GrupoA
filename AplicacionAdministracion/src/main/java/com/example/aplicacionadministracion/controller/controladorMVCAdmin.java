@@ -5,9 +5,11 @@ import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
 import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
+import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import grupo.a.modulocomun.Servicios.NominaService;
+import grupo.a.modulocomun.Servicios.RepositoryManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +26,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller // Indica que esta clase es un controlador de Spring MVC que gestionará peticiones HTTP.
 public class controladorMVCAdmin {
@@ -40,6 +41,8 @@ public class controladorMVCAdmin {
 
     // Servicio para acceder a datos y lógica de empleados.
     @Autowired private EmpleadoService empleadoService;
+    @Autowired
+    private RepositoryManager repositoryManager;
 
     // Metodo GET que muestra el formulario de login de administrador.
     @GetMapping("/admin/login")
@@ -89,7 +92,7 @@ public class controladorMVCAdmin {
     @GetMapping("/admin/detalle/{id}")
     public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
         model.addAttribute("empleadoId", id); // Pasa el ID del empleado a la vista.
-        return "/detalles/DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
+        return "DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
     }
 
     // Muestra una lista de todas las nóminas disponibles.
@@ -97,7 +100,7 @@ public class controladorMVCAdmin {
     public String listar(Model model, Map map) {
 
         model.addAttribute("nominas", nominaService.obtenerTodasNominas()); // ← Aquí pasas los DTO, no las entidades
-        return "listadoNominas"; // Muestra la vista con la lista de nóminas.
+        return "/nominas/listadoNominas"; // Muestra la vista con la lista de nóminas.
     }
 
     // Muestra un formulario para crear una nueva nómina.
@@ -107,7 +110,7 @@ public class controladorMVCAdmin {
         dto.setFecha(LocalDate.now()); // Asigna la fecha actual como predeterminada.
         model.addAttribute("nomina", dto); // Pasa el objeto nómina a la vista.
         model.addAttribute("empleados", empleadoService.obtenerTodosEmpleados()); // Lista de empleados para seleccionar uno.
-        return "nuevaNomina"; // Renderiza la vista "nuevaNomina.html".
+        return "/nominas/nuevaNomina"; // Renderiza la vista "nuevaNomina.html".
     }
     @GetMapping("/productos")
     public String product(){
@@ -123,7 +126,7 @@ public class controladorMVCAdmin {
     @GetMapping("/admin/nomina/{empleadoId}")
     public String mostrarDetalleNomina(@PathVariable Long empleadoId, Model model) {
         model.addAttribute("empleadoId", empleadoId); // Pasa el ID del empleado a la vista.
-        return "/detalles/detalle-nomina"; // Retorna la vista "detalle-nomina.html".
+        return "/nominas/detalle-nomina"; // Retorna la vista "detalle-nomina.html".
     }
 
     //botón para cerrar la sesión
@@ -149,6 +152,22 @@ public class controladorMVCAdmin {
         //y redirigimos al login
         return "redirect:/admin/login";
     }
+
+    @GetMapping("/admin/nomina/editar/{empleadoId}")
+    public String editarNomina(@PathVariable Long empleadoId,
+                               @RequestParam(name = "modo", required = false) String modo,
+                               Model model) {
+        //le pasa al modelo la nómina que queremos editar
+        model.addAttribute("nomina", nominaService.obtenerNomina(empleadoId));
+        return "/nominas/editarNomina";
+    }
+
+    @PostMapping("/admin/nomina/guardar")
+    public String guardarNomina(@ModelAttribute Nomina nomina) {
+        repositoryManager.getNominaRepository().save(nomina);
+        return "redirect:/admin/nominas";
+    }
+
 }
 
 
