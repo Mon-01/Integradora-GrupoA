@@ -10,10 +10,12 @@ import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import grupo.a.modulocomun.Servicios.NominaService;
 import grupo.a.modulocomun.Servicios.RepositoryManager;
+import grupo.a.modulocomun.Servicios.ServiceManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.modelmapper.ModelMapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,10 @@ public class controladorMVCAdmin {
     @Autowired private EmpleadoService empleadoService;
     @Autowired
     private RepositoryManager repositoryManager;
+    @Autowired
+    private ServiceManager serviceManager;
+    @Autowired
+    private ModelMapper modelMapper;
 
     // Metodo GET que muestra el formulario de login de administrador.
     @GetMapping("/admin/login")
@@ -163,8 +169,11 @@ public class controladorMVCAdmin {
     }
 
     @PostMapping("/admin/nomina/guardar")
-    public String guardarNomina(@ModelAttribute Nomina nomina) {
-        repositoryManager.getNominaRepository().save(nomina);
+    public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
+        NominaDTO nominaAnterior = serviceManager.getNominaService().obtenerNomina(nominaDTO.getId());
+        nominaAnterior = nominaDTO;
+
+        repositoryManager.getNominaRepository().save(modelMapper.map(nominaAnterior, Nomina.class));
         return "redirect:/admin/nominas";
     }
 

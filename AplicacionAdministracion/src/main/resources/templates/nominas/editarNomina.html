@@ -13,52 +13,66 @@
 
         <div class="container mt-4">
 
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>ID Nómina</th>
-                        <th>Fecha</th>
-                        <th>Total</th>
-                        <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="nomina : ${nomina}">
-                        <td th:text="${nomina.id}"></td>
-                        <td>
-                            <input type="text" th:value="${#temporals.format(nomina.fecha, 'dd/MM/yyyy')}" />
-                        </td>
-                        <td>
-                            <span th:text="${#numbers.formatDecimal(nomina.total, 1, 'POINT', 2, 'POINT')} + ' €'"></span>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary" type="button"
-                                    th:attr="onclick='toggleLineas(' + ${nomina.id} + ')'" >
-                                Ver líneas
-                            </button>
-                        </td>
-                    </tr>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID Nómina</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="nomina : ${nomina}">
+                    <td th:text="${nomina.id}"></td>
+                    <td>
+                        <input type="text" th:value="${#temporals.format(nomina.fecha, 'dd/MM/yyyy')}" />
+                    </td>
+                    <td>
+                        <span th:text="${#numbers.formatDecimal(nomina.total, 1, 'POINT', 2, 'POINT')} + ' €'"></span>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" type="button"
+                                th:attr="onclick='toggleLineas(' + ${nomina.id} + ')'" >
+                            Ver líneas
+                        </button>
+                    </td>
+                </tr>
 
-                    <tr th:each="nomina : ${nomina}" th:attr="id='lineas-' + ${nomina.id}" style="display:none;">
-                        <td colspan="4">
-                            <div class="lineas-nomina">
-                                <h4>Líneas de nómina:</h4>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>Concepto</th>
-                                        <th>Tipo</th>
-                                        <th>Valor</th>
-                                        <th>Importe</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="linea : ${nomina.lineas}"
-                                        th:class="${linea.esDevengo} ? 'devengo' : 'deduccion'">
-                                        
+                <tr th:each="nomina : ${nomina}" th:attr="id='lineas-' + ${nomina.id}" style="display:none;">
+                    <td colspan="4">
+                        <div class="lineas-nomina">
+                            <h4>Líneas de nómina:</h4>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    <th>Importe</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="linea : ${nomina.lineas}" th:class="${linea.esDevengo} ? 'devengo' : 'deduccion'">
+
+                                    <!-- Si es Salario Base, solo lectura -->
+                                    <th:block th:if="${linea.concepto == 'Salario Base'}">
+                                        <td><span th:text="${linea.concepto}"></span></td>
+                                        <td><span th:text="${linea.esDevengo ? 'Devengo' : 'Deducción'}"></span></td>
+                                    <!--     se usa || para que se muestre el espacio entre la letra y el valor del porcentaje-->
                                         <td>
-                                            <input type="text" th:value="${linea.concepto}">
+                                            <span th:if="${linea.porcentaje != null}" th:text="|Porcentaje: ${linea.porcentaje} %|"></span>
+                                            <span th:if="${linea.importeFijo != null}" th:text="|Importe Fijo: ${linea.importeFijo} €|"></span>
                                         </td>
+
+                                        <td>
+                                            <span th:text="${#numbers.formatDecimal(linea.cantidad, 1, 'POINT', 2, 'POINT')} + ' €'"></span>
+                                        </td>
+                                    </th:block>
+
+                                    <!-- Si NO es Salario Base, campos editables -->
+                                    <th:block th:unless="${linea.concepto == 'Salario Base'}">
+                                        <td><input type="text" name="concepto" th:value="${linea.concepto}" /></td>
                                         <td>
                                             <select name="esDevengo">
                                                 <option th:value="true" th:selected="${linea.esDevengo}">Devengo</option>
@@ -66,26 +80,34 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <input th:if="${linea.porcentaje}" th:value="${linea.porcentaje + '%'}"></input>
-                                            <input th:if="${linea.importeFijo}" th:value="${linea.importeFijo + '€'}"></input>
+                                            <select name="tipoValor">
+                                                <option th:value="1" th:selected="${linea.porcentaje != null}">Porcentaje</option>
+                                                <option th:value="2" th:selected="${linea.importeFijo != null}">Importe</option>
+                                            </select>
+                                            <input type="text"
+                                                   name="valor"
+                                                   th:value="${linea.porcentaje != null ? linea.porcentaje + ' %' : linea.importeFijo + ' €'}" />
                                         </td>
                                         <td>
                                             <span th:text="${#numbers.formatDecimal(linea.cantidad, 1, 'POINT', 2, 'POINT')} + ' €'"></span>
                                         </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                                    </th:block>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
         <button type="submit" class="btn btn-success">Guardar Cambios</button>
         <a th:href="@{/listado}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
+
 <script>
     function toggleLineas(nominaId) {
         const fila = document.getElementById('lineas-' + nominaId);
