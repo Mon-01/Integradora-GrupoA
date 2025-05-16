@@ -275,10 +275,10 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
                 // Crear líneas de nómina (ajusta los importes y las descripciones según sea necesario)
                 LineaNomina salarioBaseLinea = new LineaNomina();
                 salarioBaseLinea.setDescripcion("Salario Base");
-                salarioBaseLinea.setPorcentaje(new BigDecimal("100"));
+                salarioBaseLinea.setPorcentaje(new BigDecimal("22"));
                 salarioBaseLinea.setEsDevengo(true);
 
-                BigDecimal importeSalario = salarioBase.multiply(new BigDecimal("100"))
+                BigDecimal importeSalario = salarioBase.multiply(new BigDecimal("22"))
                         .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
                 salarioBaseLinea.setImporte(importeSalario);
                 salarioBaseLinea.setNomina(nomina);
@@ -286,21 +286,21 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
 
                 LineaNomina bonificacion = new LineaNomina();
                 bonificacion.setDescripcion("bonificacion por horas extra");
-                bonificacion.setPorcentaje(new BigDecimal("300.00"));
+                bonificacion.setPorcentaje(new BigDecimal("12"));
                 bonificacion.setEsDevengo(true);
 
-                BigDecimal importeBonificacion = salarioBase.multiply(new BigDecimal("300.00"))
-                        .divide(BigDecimal.valueOf(300), 2, RoundingMode.HALF_UP);
+                BigDecimal importeBonificacion = salarioBase.multiply(new BigDecimal("12.00"))
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
                 bonificacion.setImporte(importeBonificacion);
                 bonificacion.setNomina(nomina);
                 nomina.agregarLinea(bonificacion);
 
                 LineaNomina devoluciones = new LineaNomina();
                 devoluciones.setDescripcion("Devolución");
-                devoluciones.setPorcentaje(new BigDecimal("30"));
+                devoluciones.setPorcentaje(new BigDecimal("8"));
                 devoluciones.setEsDevengo(false);
 
-                BigDecimal importeDevolucion = salarioBase.multiply(new BigDecimal("30"))
+                BigDecimal importeDevolucion = salarioBase.multiply(new BigDecimal("8"))
                         .divide(BigDecimal.valueOf(30), 2, RoundingMode.HALF_UP);
                 devoluciones.setImporte(importeDevolucion);
                 devoluciones.setNomina(nomina);

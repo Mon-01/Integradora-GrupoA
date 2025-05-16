@@ -29,7 +29,7 @@
                             <input type="text" th:value="${#temporals.format(nomina.fecha, 'dd/MM/yyyy')}" />
                         </td>
                         <td>
-                            <input type="text" th:value="${#numbers.formatDecimal(nomina.total, 1, 'POINT', 2, 'POINT')} + ' €'"/>
+                            <span th:text="${#numbers.formatDecimal(nomina.total, 1, 'POINT', 2, 'POINT')} + ' €'"></span>
                         </td>
                         <td>
                             <button class="btn btn-primary" type="button"
@@ -38,6 +38,7 @@
                             </button>
                         </td>
                     </tr>
+
                     <tr th:each="nomina : ${nomina}" th:attr="id='lineas-' + ${nomina.id}" style="display:none;">
                         <td colspan="4">
                             <div class="lineas-nomina">
@@ -54,16 +55,22 @@
                                     <tbody>
                                     <tr th:each="linea : ${nomina.lineas}"
                                         th:class="${linea.esDevengo} ? 'devengo' : 'deduccion'">
+                                        
                                         <td>
                                             <input type="text" th:value="${linea.concepto}">
                                         </td>
-                                        <td th:text="${linea.esDevengo} ? 'Devengo' : 'Deducción'"></td>
                                         <td>
-                                            <span th:if="${linea.porcentaje}" th:text="${linea.porcentaje + '%'}"></span>
-                                            <span th:if="${linea.importeFijo}" th:text="${linea.importeFijo + '€'}"></span>
+                                            <select name="esDevengo">
+                                                <option th:value="true" th:selected="${linea.esDevengo}">Devengo</option>
+                                                <option th:value="false" th:selected="${!linea.esDevengo}">Deducción</option>
+                                            </select>
                                         </td>
                                         <td>
-                                            <input type="text" th:value="${#numbers.formatDecimal(linea.cantidad, 1, 'POINT', 2, 'POINT')} + ' €'"/>
+                                            <input th:if="${linea.porcentaje}" th:value="${linea.porcentaje + '%'}"></input>
+                                            <input th:if="${linea.importeFijo}" th:value="${linea.importeFijo + '€'}"></input>
+                                        </td>
+                                        <td>
+                                            <span th:text="${#numbers.formatDecimal(linea.cantidad, 1, 'POINT', 2, 'POINT')} + ' €'"></span>
                                         </td>
                                     </tr>
                                     </tbody>
