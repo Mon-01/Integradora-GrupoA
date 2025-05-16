@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import org.slf4j.Logger;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,35 +56,37 @@ public class controladorMVCAdmin {
     // Muestra la pantalla de inicio del panel administrador, con filtros para buscar empleados.
     @GetMapping("/admin/inicio")
     public String mostrarInicioAdmin(
-            @RequestParam(required = false) String nombre, // Filtro opcional por nombre.
-            @RequestParam(required = false) String departamento, // Filtro opcional por departamento.
-            @RequestParam(required = false, defaultValue = "0") Long salario, // Filtro opcional por salario mínimo.
-            Model model, HttpSession session) { // Model para pasar datos a la vista, HttpSession para controlar sesión.
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) List<String> departamentos,
+            @RequestParam(required = false) BigDecimal salarioMin,
+            @RequestParam(required = false) BigDecimal salarioMax,
+            Model model, HttpSession session) {
 
-        // Recupera del session el DTO del administrador logueado.
         UsuarioAdministradorDTO dto = (UsuarioAdministradorDTO) session.getAttribute("adminLogueado");
-
-        // Si no hay sesión iniciada, redirige al login.
         if (dto == null) return "redirect:/admin/login";
+        List<Empleado> empleados = empleadoService.buscarFiltrados(nombre, departamentos, salarioMin, salarioMax);
+        List<String> todosDepartamentos = empleadoService.obtenerNombresDepartamentos();
 
-        // Llama al servicio para obtener empleados según los filtros proporcionados.
-        List<Empleado> empleados = adminService.buscarFiltrados(nombre, departamento, salario);
+        model.addAttribute("nombre", nombre != null ? nombre : "");
+        model.addAttribute("departamentosSeleccionados", departamentos != null ? departamentos : Collections.emptyList());
+        model.addAttribute("todosDepartamentos", todosDepartamentos);
+        model.addAttribute("salarioMin", salarioMin);
+        model.addAttribute("salarioMax", salarioMax);
+        model.addAttribute("adminEmail", dto.getEmail());
+        model.addAttribute("empleados", empleados);
 
-        // Logs de depuración: muestra cantidad de empleados encontrados y sus datos.
-        logger.info("Número de empleados encontrados: {}", empleados.size());
-        empleados.forEach(e -> logger.info("Empleado: {} {}, Depto: {}, Salario: {}",
-                e.getNombre(), e.getApellido(),
-                e.getDepartamento() != null ? e.getDepartamento().getNombre_dept() : "N/A",
-                e.getSalarioAnual()));
-
-        // Añade atributos al modelo que se usarán en la vista HTML.
-        model.addAttribute("nombre", nombre != null ? nombre : ""); // Para mantener el filtro seleccionado.
-        model.addAttribute("departamento", departamento != null ? departamento : "");
-        model.addAttribute("salario", salario);
-        model.addAttribute("adminEmail", dto.getEmail()); // Mostrar el email del admin logueado.
-        model.addAttribute("empleados", empleados); // Lista de empleados filtrados.
-
-        return "inicio-admin"; // Retorna la vista HTML principal del administrador.
+        return "inicio-admin";
+    }
+    // Método auxiliar para conversión segura
+    private BigDecimal convertirStringABigDecimal(String valor) {
+        if (valor == null || valor.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return new BigDecimal(valor.replace(",", "."));  // Soporta tanto "." como "," como separador decimal
+        } catch (NumberFormatException e) {
+            return null;  // Si el formato es inválido, se ignora el filtro
+        }
     }
 
     // Muestra el detalle de un empleado a través de su ID.

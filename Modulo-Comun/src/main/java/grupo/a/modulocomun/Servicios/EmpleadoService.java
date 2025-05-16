@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -455,6 +456,89 @@ public class EmpleadoService {
             }
         }
         return null; // Devuelve null si no se encontró imagen
+    }
+    public List<String> obtenerNombresDepartamentos() {
+        return repositoryManager.getDepartamentoRepository().findDistinctNombresDepartamento();
+    }
+/*
+    public List<Empleado> buscarFiltrados(String nombre, List<String> nombresDepartamentos, BigDecimal salarioMin, BigDecimal salarioMax) {
+        // Convertir nombres de departamentos a minúsculas para búsqueda case-insensitive
+        List<String> nombresLower = nombresDepartamentos != null ?
+                nombresDepartamentos.stream()
+                        .map(String::toLowerCase)
+                        .collect(Collectors.toList()) :
+                null;
+/*
+        // Usar el método con @Query
+        return empleadoRepository.buscarFiltradosAvanzado(
+                nombre,
+                nombresLower,
+                salarioMin != null ? salarioMin : BigDecimal.ZERO,
+                salarioMax != null ? salarioMax : BigDecimal.ZERO);
+
+ */
+
+        // O alternativamente podrías usar el query method:
+     //    return empleadoRepository.findByNombreContainingIgnoreCaseAndDepartamentoNombredeptInAndSalarioAnualBetween(
+     //       nombre, nombresLower, salarioMin, salarioMax);
+   // }
+
+
+    public List<Empleado> buscarFiltrados(String nombre, List<String> departamentos, BigDecimal salarioMin, BigDecimal salarioMax) {
+        // 1. Si no hay filtros, devolver todos
+        if ((nombre == null || nombre.trim().isEmpty()) &&
+                (departamentos == null || departamentos.isEmpty()) &&
+                salarioMin == null && salarioMax == null) {
+            return empleadoRepository.findAll();
+        }
+
+        // 2. Convertir departamentos a minúsculas (si aplica)
+        List<String> departamentosLower = departamentos != null && !departamentos.isEmpty() ?
+                departamentos.stream()
+                        .map(String::toLowerCase)
+                        .collect(Collectors.toList()) :
+                null;
+
+        // 3. Definir rangos de salario (si aplica)
+        BigDecimal minSalario = salarioMin != null ? salarioMin : BigDecimal.ZERO;
+        BigDecimal maxSalario = salarioMax != null ? salarioMax : new BigDecimal("999999999.99");
+
+        // 4. Casos de filtrado combinado
+        if (nombre != null && !nombre.trim().isEmpty()) {
+            if (departamentosLower != null && !departamentosLower.isEmpty()) {
+                if (salarioMin != null || salarioMax != null) {
+                    // Filtro: nombre + departamento + salario
+                    return empleadoRepository.findByNombreContainingIgnoreCaseAndDepartamentoNombredeptInAndSalarioAnualBetween(
+                            nombre, departamentosLower, minSalario, maxSalario);
+                } else {
+                    // Filtro: nombre + departamento
+                    return empleadoRepository.findByNombreContainingIgnoreCaseAndDepartamentoNombredeptIn(
+                            nombre, departamentosLower);
+                }
+            } else if (salarioMin != null || salarioMax != null) {
+                // Filtro: nombre + salario
+                return empleadoRepository.findByNombreContainingIgnoreCaseAndSalarioAnualBetween(
+                        nombre, minSalario, maxSalario);
+            } else {
+                // Filtro: solo nombre
+                return empleadoRepository.findByNombreContainingIgnoreCase(nombre);
+            }
+        } else if (departamentosLower != null && !departamentosLower.isEmpty()) {
+            if (salarioMin != null || salarioMax != null) {
+                // Filtro: departamento + salario
+                return empleadoRepository.findByDepartamentoNombredeptInAndSalarioAnualBetween(
+                        departamentosLower, minSalario, maxSalario);
+            } else {
+                // Filtro: solo departamento
+                return empleadoRepository.findByDepartamentoNombredeptIn(departamentosLower);
+            }
+        } else if (salarioMin != null || salarioMax != null) {
+            // Filtro: solo salario
+            return empleadoRepository.findBySalarioAnualBetween(minSalario, maxSalario);
+        }
+
+        // Si no se cumple ningún caso (no debería llegar aquí)
+        return empleadoRepository.findAll();
     }
 
 

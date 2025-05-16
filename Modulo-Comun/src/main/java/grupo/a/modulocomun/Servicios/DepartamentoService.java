@@ -18,7 +18,7 @@ public class DepartamentoService {
 
     public String obtenerNombrePorId(Long id){
         return departamentoRepository.findById(id)
-                .map(Departamento::getNombre_dept)
+                .map(Departamento::getNombredept)
                 .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado el departamento con id: " +id));
     }
 
@@ -45,7 +45,7 @@ public class DepartamentoService {
     public DepartamentoDTO convertirDTO(Departamento departamento) {
         return new DepartamentoDTO(
                 departamento.getId_dept(),
-                departamento.getNombre_dept(),
+                departamento.getNombredept(),
                 departamento.getCod(),
                 departamento.getLoc(),
                 departamento.getPresupuesto()

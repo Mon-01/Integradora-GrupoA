@@ -50,22 +50,6 @@ public class UsuarioAdministradorService {
         return empRepository.findAll(Sort.by("nombre"));
     }
 
-    public List<Empleado> buscarFiltrados(String nombre, String departamento, Long salarioMinimo) {
-        BigDecimal salarioMin = salarioMinimo != null ? new BigDecimal(salarioMinimo) : BigDecimal.ZERO;
-
-        // Si no hay filtros, devolver todos ordenados
-        if ((nombre == null || nombre.trim().isEmpty()) &&
-                (departamento == null || departamento.trim().isEmpty()) &&
-                salarioMin.equals(BigDecimal.ZERO)) {
-            return obtenerTodosEmpleados();
-        }
-
-        return empRepository.buscarFiltrados(
-                nombre != null ? nombre.trim() : "",
-                departamento != null ? departamento.trim() : "",
-                salarioMin
-        );
-    }
 
     public UsuarioAdministrador guardarDesdeDTO(UsuarioAdministradorDTO dto) {
         UsuarioAdministrador admin = new UsuarioAdministrador();

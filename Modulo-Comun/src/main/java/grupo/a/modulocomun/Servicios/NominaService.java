@@ -120,7 +120,7 @@ public class NominaService {
         filtrado.setSalario(total);
 
         if(nomina.getEmpleado() != null && nomina.getEmpleado().getDepartamento() != null){
-            filtrado.setDepartamento(nomina.getEmpleado().getDepartamento().getNombre_dept());
+            filtrado.setDepartamento(nomina.getEmpleado().getDepartamento().getNombredept());
         }else {
             filtrado.setDepartamento("Sin departamento");
         }

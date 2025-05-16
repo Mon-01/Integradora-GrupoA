@@ -48,7 +48,7 @@ public interface NominaRepository extends JpaRepository<Nomina, Long> {
 @Query("SELECT DISTINCT n FROM Nomina n " +
         "JOIN n.empleado e " +
         "WHERE (COALESCE(:nombre, '') = '' OR LOWER(e.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))) " +
-        "AND (COALESCE(:departamento, '') = '' OR LOWER(e.departamento.nombre_dept) LIKE LOWER(CONCAT('%', :departamento, '%'))) " +
+        "AND (COALESCE(:departamento, '') = '' OR LOWER(e.departamento.nombredept) LIKE LOWER(CONCAT('%', :departamento, '%'))) " +
         "AND (:fecha IS NULL OR n.fecha = :fecha)")
 List<Nomina> filtroNomina(@Param("nombre") String nombre,
                           @Param("departamento") String departamento,

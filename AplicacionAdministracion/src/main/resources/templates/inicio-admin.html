@@ -6,6 +6,44 @@
     <link rel="stylesheet" href="/estilos/InicioAdminEstilos.css">
 
 </head>
+<style>
+    /* Estilos para los filtros */
+    .filtros-container {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+        align-items: flex-end;
+    }
+
+    .filtro-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .select-multiple {
+        min-width: 200px;
+    }
+
+    .rango-salario {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-buscar {
+        padding: 0.5rem 1rem;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-buscar:hover {
+        background-color: #45a049;
+    }
+</style>
 <body>
 <!--<div th:replace="~{fragments/navPersonal :: navP}"></div>-->
 
@@ -31,10 +69,42 @@
 
     <!-- Filtros de búsqueda -->
     <form id="filtroForm" method="get" th:action="@{/admin/inicio}">
-        <input type="text" name="nombre" placeholder="Nombre" th:value="${nombre}" onblur="this.form.submit()">
-        <input type="text" name="departamento" placeholder="Departamento" th:value="${departamento}" onblur="this.form.submit()">
-        <input type="number" name="salario" placeholder="Salario mínimo" th:value="${salario}" onblur="this.form.submit()">
-        <button type="submit">Buscar</button>
+        <div class="filtros-container">
+            <!-- Filtro por nombre -->
+            <div class="filtro-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre"
+                       th:value="${nombre}" placeholder="Buscar por nombre">
+            </div>
+
+            <!-- Filtro por departamento (select múltiple) -->
+            <div class="filtro-group">
+                <label for="departamentos">Departamento:</label>
+                <select id="departamentos" name="departamentos" multiple="multiple"
+                        class="select-multiple" size="3">
+                    <option th:each="depto : ${todosDepartamentos}"
+                            th:value="${depto}"
+                            th:text="${depto}"
+                            th:selected="${departamentosSeleccionados.contains(depto)}">
+                    </option>
+                </select>
+                <small>Mantén Ctrl (Windows) o Command (Mac) presionado para seleccionar múltiples</small>
+            </div>
+
+            <!-- Filtro por rango de salario -->
+            <div class="filtro-group">
+                <label>Rango salarial:</label>
+                <div class="rango-salario">
+                    <input type="text" name="salarioMin"
+                           th:value="${salarioMin}" placeholder="Mínimo" step="0.01" min="0">
+                    <span>a</span>
+                    <input type="text" name="salarioMax"
+                           th:value="${salarioMax}" placeholder="Máximo" step="0.01" min="0">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-buscar">Buscar</button>
+        </div>
     </form>
 
     <div>
@@ -63,7 +133,7 @@
                 <td th:text="${emp.nombre}">Nombre</td>
                 <td th:text="${emp.apellido}">Apellidos</td>
                 <td th:text="${emp.email}">Email</td>
-                <td th:text="${emp.departamento != null ? emp.departamento.nombre_dept : 'Sin asignar'}">Depto</td>
+                <td th:text="${emp.departamento != null ? emp.departamento.nombredept : 'Sin asignar'}">Depto</td>
                 <td th:text="${emp.salarioAnual}">Salario</td>
             </tr>
             </tbody>
