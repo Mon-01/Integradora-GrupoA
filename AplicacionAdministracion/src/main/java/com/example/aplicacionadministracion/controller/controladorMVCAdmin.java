@@ -1,3 +1,4 @@
+//PCUELLAR ESTUVO AQUI
 package com.example.aplicacionadministracion.controller;
 
 // Importación de clases necesarias para el controlador.
@@ -103,7 +104,17 @@ public class controladorMVCAdmin {
         model.addAttribute("nominas", nominaService.obtenerTodasNominas()); // ← Aquí pasas los DTO, no las entidades
         return "listadoNominas"; // Muestra la vista con la lista de nóminas.
     }
+    @GetMapping("/nueva")
+    public String nueva() {
+        // Redirigir siempre a la vista en Apache
+        return "redirect:http://vista1.nomina.com:80/";
+    }
+    @GetMapping("/apacher2")
+    public String apache2(){
+        return "redirect:http://vista2.administrativa.com:80/";
 
+    }
+/*
     // Muestra un formulario para crear una nueva nómina.
     @GetMapping("/nueva")
     public String nueva(Model model) {
@@ -111,8 +122,22 @@ public class controladorMVCAdmin {
         dto.setFecha(LocalDate.now()); // Asigna la fecha actual como predeterminada.
         model.addAttribute("nomina", dto); // Pasa el objeto nómina a la vista.
         model.addAttribute("empleados", empleadoService.obtenerTodosEmpleados()); // Lista de empleados para seleccionar uno.
-        return "nuevaNomina"; // Renderiza la vista "nuevaNomina.html".
+        return "nuevaNomina";// Renderiza la vista "nuevaNomina.html".
+      //  return "redirect:http://vista1.tudominio.com/";
     }
+    @GetMapping("/apacher")
+    public String apache(){
+         return "redirect:http://vista1.nomina.com:80/";
+
+    }
+
+    @GetMapping("/apacher3")
+    public String apache3(){
+        return "redirect:http://vista3.corporativa.com:80/";
+
+    }
+
+ */
     @GetMapping("/productos")
     public String product(){
         return "producto";
@@ -154,5 +179,3 @@ public class controladorMVCAdmin {
         return "redirect:/admin/login";
     }
 }
-
-
