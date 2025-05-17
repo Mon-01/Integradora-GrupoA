@@ -28,5 +28,7 @@ public class LineaNominaDTO {
     @NotNull(message = "Debe especificar si es devengo o deducción")
     private Boolean esDevengo; // true para devengo (suma), false para deducción (resta)
 
+    private Integer tipoValor;  //1-> porcentaje 2-> importe fijo
+
     private String cantidad; // Este campo será calculado automáticamente
 }

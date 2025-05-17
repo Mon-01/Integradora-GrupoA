@@ -68,20 +68,22 @@
                 </select>
             </td>
             <td>
-                <select name="tipoValor">
-                    <option th:value="1" th:selected="${linea.porcentaje != null}">Porcentaje</option>
-                    <option th:value="2" th:selected="${linea.importeFijo != null}">Importe</option>
+                <select th:id="'tipoValor_' + ${stat.index}" th:name="'lineas[' + ${stat.index} + '].tipoValor'">
+                    <option value="1" th:selected="${linea.porcentaje != null}">Porcentaje</option>
+                    <option value="2" th:selected="${linea.importeFijo != null}">Importe</option>
                 </select>
 
-                <div th:if="${linea.porcentaje != null}">
-                    <input type="text" th:name="'lineas[' + ${stat.index} + '].porcentaje'"
-                           th:value="${linea.porcentaje}" pattern="^\d{1,3}(\.\d{1,2})?$"> %
+                <div th:id="'porcentajeDiv_' + ${stat.index}" th:style="${linea.porcentaje != null} ? 'display:block;' : 'display:none;'">
+                    <input th:id="'porcentajeInput_' + ${stat.index}" type="text" th:name="'lineas[' + ${stat.index} + '].porcentaje'"
+                           th:value="${#numbers.formatDecimal(linea.porcentaje, 1, 2)}" /> %
                 </div>
-                <div th:if="${linea.importeFijo != null}">
-                    <input type="text" th:name="'lineas[' + ${stat.index} + '].importeFijo'"
-                           th:value="${linea.importeFijo}" pattern="^\d{1,10}(\.\d{1,2})?$"> €
+
+                <div th:id="'importeDiv_' + ${stat.index}" th:style="${linea.importeFijo != null} ? 'display:block;' : 'display:none;'">
+                    <input th:id="'importeInput_' + ${stat.index}" type="text" th:name="'lineas[' + ${stat.index} + '].importeFijo'"
+                           th:value="${#numbers.formatDecimal(linea.importeFijo, 1, 2)}" /> €
                 </div>
             </td>
+
             <td>
                 <span th:text="${linea.cantidad} + ' €'"></span>
             </td>
@@ -92,7 +94,35 @@
 </table>
 <button type="submit" class="btn btn-primary">Guardar cambios</button>
 </form>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('select[id^="tipoValor_"]').forEach(select => {
+            const index = select.id.split('_')[1];
 
+            const porcentajeDiv = document.getElementById(`porcentajeDiv_${index}`);
+            const importeDiv = document.getElementById(`importeDiv_${index}`);
+            const porcentajeInput = document.getElementById(`porcentajeInput_${index}`);
+            const importeInput = document.getElementById(`importeInput_${index}`);
+
+            const updateInputs = () => {
+                if (select.value === '1') {
+                    porcentajeDiv.style.display = 'block';
+                    importeDiv.style.display = 'none';
+                    porcentajeInput.name = `porcentaje_${index}`;
+                    importeInput.name = ''; // Para que no se envíe
+                } else {
+                    porcentajeDiv.style.display = 'none';
+                    importeDiv.style.display = 'block';
+                    importeInput.name = `importe_${index}`;
+                    porcentajeInput.name = ''; // Para que no se envíe
+                }
+            };
+
+            updateInputs(); // Set inicial
+            select.addEventListener('change', updateInputs);
+        });
+    });
+</script>
 </body>
 </html>
 

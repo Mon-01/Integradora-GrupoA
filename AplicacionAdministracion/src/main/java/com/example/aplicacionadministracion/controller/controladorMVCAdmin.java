@@ -3,11 +3,13 @@ package com.example.aplicacionadministracion.controller;
 // Importación de clases necesarias para el controlador.
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
+import grupo.a.modulocomun.DTO.LineaNominaDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 
+import grupo.a.modulocomun.Repositorios.LineaNominaRepository;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import grupo.a.modulocomun.Servicios.NominaService;
@@ -28,10 +30,7 @@ import org.slf4j.Logger;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller // Indica que esta clase es un controlador de Spring MVC que gestionará peticiones HTTP.
@@ -52,6 +51,8 @@ public class controladorMVCAdmin {
     private RepositoryManager repositoryManager;
     @Autowired
     private ServiceManager serviceManager;
+    @Autowired
+    private LineaNominaRepository lineaNominaRepository;
 
     // Metodo GET que muestra el formulario de login de administrador.
     @GetMapping("/admin/login")
@@ -214,33 +215,137 @@ public class controladorMVCAdmin {
                         linea.getCantidad() == null
         );
 
-        nominaDTO.getLineas().forEach(lineaDTO -> {
-            LineaNomina linea = new LineaNomina();
-            BigDecimal importe;
-            // Mapeo manual seguro
-            linea.setDescripcion(lineaDTO.getConcepto());
-            linea.setEsDevengo(lineaDTO.getEsDevengo());
+        nominaAnterior.getLineas().removeIf(linea ->
+                !"Salario Base".equalsIgnoreCase(linea.getDescripcion()));
 
-            // Manejo de valores numéricos con protección null
-            linea.setPorcentaje(lineaDTO.getPorcentaje() != null ?
-                    new BigDecimal(lineaDTO.getPorcentaje()) : BigDecimal.ZERO);
-            linea.setImporteFijo(lineaDTO.getImporteFijo() != null ?
-                    new BigDecimal(lineaDTO.getImporteFijo()) : BigDecimal.ZERO);
+        List<LineaNomina> lineasActualizadas = nominaDTO.getLineas().stream().map(lineaDTO -> {
+            //diferenciamos entre línea a actualizar y línea a insertar
+            if (lineaDTO.getId() != null) {
+                //al no ser null tiene id y la podemos actualizar
+                Optional<LineaNomina> lineaExistenteOptional = nominaAnterior.getLineas().stream()
+                        .filter(ln -> lineaDTO.getId().equals(ln.getId()))
+                        .findFirst();
+
+                if (lineaExistenteOptional.isPresent()) { // Añadida comprobación
+                    LineaNomina lineaExistente = lineaExistenteOptional.get();
+                    // Actualiza la línea existente
+                    lineaExistente.setDescripcion(lineaDTO.getConcepto());
+                    lineaExistente.setEsDevengo(lineaDTO.getEsDevengo());
+
+                    //actualizamos el porcentaje o importe poniendo el contrario a cero
+                    if (lineaDTO.getTipoValor() == 1) {
+                        lineaExistente.setImporteFijo(BigDecimal.ZERO);
+                        lineaExistente.setPorcentaje(lineaDTO.getPorcentaje() != null ? new BigDecimal(lineaDTO.getPorcentaje()) : BigDecimal.ZERO);
+                    } else {
+                        lineaExistente.setPorcentaje(BigDecimal.ZERO);
+                        lineaExistente.setImporteFijo(lineaDTO.getImporteFijo() != null ? new BigDecimal(lineaDTO.getImporteFijo()) : BigDecimal.ZERO);
+                    }
+                    BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
+                    lineaExistente.setImporte(nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(), porcentaje));
+                    return lineaExistente;
+                } // else añadido para el caso de que no exista la línea con ese ID.
+                else {
+                    return null; // Devolvemos null para filtrar luego.
+                }
+
+            } else {
+                LineaNomina lineaNueva = new LineaNomina();
+                lineaNueva.setDescripcion(lineaDTO.getConcepto());
+                lineaNueva.setEsDevengo(lineaDTO.getEsDevengo());
+
+                if (lineaDTO.getTipoValor() == 1) {
+                    lineaNueva.setImporteFijo(BigDecimal.ZERO);
+                    lineaNueva.setPorcentaje(lineaDTO.getPorcentaje() != null ?  new BigDecimal(lineaDTO.getPorcentaje()) : BigDecimal.ZERO);
+                } else {
+                    lineaNueva.setPorcentaje(BigDecimal.ZERO);
+                    lineaNueva.setImporteFijo(lineaDTO.getImporteFijo() != null ?  new BigDecimal(lineaDTO.getImporteFijo()) : BigDecimal.ZERO);
+                }
+                lineaNueva.setImporte(nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(), lineaNueva.getPorcentaje()));
+                lineaNueva.setNomina(nominaAnterior);
+                return lineaNueva;
+            }
+
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+//        nominaDTO.getLineas().stream().map(lineaDTO -> {
+//            //diferenciamos entre líne a actualizar y línea a insertar
+//            if (lineaDTO.getId() != null) {
+//                //al no ser null tiene id y la podemos actualizar
+//                Optional<LineaNomina> lineaExistenteOptional = nominaAnterior.getLineas().stream()
+//                        .filter(ln -> lineaDTO.getId().equals(ln.getId()))
+//                        .findFirst();
+//
+//                    LineaNomina lineaExistente = lineaExistenteOptional.get();
+//                    // Actualiza la línea existente
+//                    lineaExistente.setDescripcion(lineaDTO.getConcepto());
+//                    lineaExistente.setEsDevengo(lineaDTO.getEsDevengo());
+//
+//                    //actualizamos el porcentaje o importe poniendo el contrario a cero
+//                if(lineaExistenteOptional.get().getPorcentaje() != BigDecimal.ZERO) {
+//                    lineaExistente.setImporteFijo(BigDecimal.ZERO);
+//                    BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
+//                    lineaExistente.setPorcentaje(porcentaje);
+//                    lineaExistente.setImporte(nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(),porcentaje));
+//                }else{
+//                    lineaExistente.setPorcentaje(BigDecimal.ZERO);
+//                    BigDecimal importeFijo = new BigDecimal(lineaDTO.getImporteFijo());
+//                    lineaExistente.setImporteFijo(importeFijo);
+//                    lineaExistente.setImporte(importeFijo);
+//                }
+//                return lineaExistente;
+//            } else {
+//                LineaNomina lineaNueva = new LineaNomina();
+//                lineaNueva.setId(lineaDTO.getId());
+//                lineaNueva.setDescripcion(lineaDTO.getConcepto());
+//                if(lineaExistenteOptional.get().getPorcentaje() != BigDecimal.ZERO) {
+//                    lineaExistente.setImporteFijo(BigDecimal.ZERO);
+//                    BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
+//                    lineaExistente.setPorcentaje(porcentaje);
+//                    lineaExistente.setImporte(nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(),porcentaje));
+//                }else{
+//                    lineaExistente.setPorcentaje(BigDecimal.ZERO);
+//                    BigDecimal importeFijo = new BigDecimal(lineaDTO.getImporteFijo());
+//                    lineaExistente.setImporteFijo(importeFijo);
+//                    lineaExistente.setImporte(importeFijo);
+//                }
+//            }
+//
+//                return lineaActualizada;
+//
+//
+//        }).collect(Collectors.toList());
+
+//                .forEach(lineaDTO -> {
+//            LineaNomina linea = new LineaNomina();
+//            BigDecimal importe;
+//            // Mapeo manual seguro
+//            linea.setDescripcion(lineaDTO.getConcepto());
+//            linea.setEsDevengo(lineaDTO.getEsDevengo());
+//
+//            if (lineaDTO.getTipoValor() != null && lineaDTO.getTipoValor() == 1) {
+//                // actualiza la línea a porcentaje y anula el importe fijo si lo hubiera
+//                linea.setPorcentaje(lineaDTO.getPorcentaje() != null ?
+//                        new BigDecimal(lineaDTO.getPorcentaje()) : BigDecimal.ZERO);
+//                linea.setImporteFijo(BigDecimal.ZERO);
+//            } else {
+//                // actualiza la línea a importe fijo y anula el porcentaje si lo hubiera
+//                linea.setImporteFijo(lineaDTO.getImporteFijo() != null ?
+//                        new BigDecimal(lineaDTO.getImporteFijo()) : BigDecimal.ZERO);
+//                linea.setPorcentaje(BigDecimal.ZERO);
+//            }
 
             //dependiendo si la línea tiene porcentaje o importeFijo se calcula de una manera u otra
-            if(linea.getPorcentaje() != BigDecimal.ZERO) {
-                importe = nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(),linea.getPorcentaje());
-            }else{
-                importe = linea.getImporteFijo();
-            }
-            linea.setImporte(importe);
 
-            linea.setNomina(nominaAnterior);
-            nominaAnterior.getLineas().add(linea);
-        });
 
+//            linea.setNomina(nominaAnterior);
+//            nominaAnterior.getLineas().add(linea);
+//        });
+
+        nominaAnterior.setLineas(lineasActualizadas);
         repositoryManager.getNominaRepository().save(nominaAnterior);
         return "redirect:/listado";
+//        repositoryManager.getNominaRepository().save(nominaAnterior);
+//        return "redirect:/listado";
     }
 
 }
