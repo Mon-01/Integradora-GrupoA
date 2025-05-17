@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import org.slf4j.Logger;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -162,34 +163,68 @@ public class controladorMVCAdmin {
 
     @GetMapping("/editar/{id}")
     public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
-        // Obtener la nómina por ID
+
         Nomina nomina = nominaService.obtenerNomina(id);
-
         NominaDTO dto = nominaService.convertirADTO(nomina);
-
         model.addAttribute("nomina", dto);
 
-        return "/nominas/editarNomina"; // Nombre de la plantilla Thymeleaf
+        return "/nominas/editarNomina";
     }
 
-//    @GetMapping("/admin/nomina/editar/{nominaId}")
-//    public String editarNomina(@PathVariable Long nominaId,
-//                               @RequestParam(name = "modo", required = false) String modo,
-//                               Model model) {
-//        Nomina nomina = nominaService.obtenerNomina(nominaId);
-//        NominaDTO nominaDTO = nominaService.convertirADTO(nomina);
-//        //le pasa al modelo la nómina que queremos editar
-//        model.addAttribute("nomina", nominaDTO);
-//        return "/nominas/editarNomina";
-//    }
-//
-//    @PostMapping("/admin/nomina/guardar")
-//    public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
-//        Nomina nominaAnterior = nominaService.obtenerNomina(nominaDTO.getId());
-//        modelMapper.map(nominaDTO, nominaAnterior);
-//        repositoryManager.getNominaRepository().save(nominaAnterior);
-//        return "redirect:/admin/nominas";
-//    }
+    @PostMapping("/nomina/guardar")
+    public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
+        Nomina nominaAnterior = nominaService.obtenerNomina(nominaDTO.getId());
+        //eliminamos líneas antigüas excepto el salario base
+        nominaAnterior.getLineas().removeIf(linea ->
+                !"Salario Base".equalsIgnoreCase(linea.getDescripcion()));
+
+        //eliminamos las líneas nulas que puedan dar conflictos
+        nominaDTO.getLineas().removeIf(linea ->
+                (linea.getConcepto() == null || linea.getConcepto().trim().isEmpty()) &&
+                        linea.getPorcentaje() == null &&
+                        linea.getImporteFijo() == null &&
+                        linea.getCantidad() == null
+        );
+
+        nominaDTO.getLineas().forEach(lineaDTO -> {
+            LineaNomina linea = new LineaNomina();
+            BigDecimal importe;
+            // Mapeo manual seguro
+            linea.setDescripcion(lineaDTO.getConcepto());
+            linea.setEsDevengo(lineaDTO.getEsDevengo());
+
+            // Manejo de valores numéricos con protección null
+            linea.setPorcentaje(lineaDTO.getPorcentaje() != null ?
+                    new BigDecimal(lineaDTO.getPorcentaje()) : BigDecimal.ZERO);
+            linea.setImporteFijo(lineaDTO.getImporteFijo() != null ?
+                    new BigDecimal(lineaDTO.getImporteFijo()) : BigDecimal.ZERO);
+
+            //dependiendo si la línea tiene porcentaje o importeFijo se calcula de una manera u otra
+            if(linea.getPorcentaje() != BigDecimal.ZERO) {
+                importe = nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(),linea.getPorcentaje());
+            }else{
+                importe = linea.getImporteFijo();
+            }
+            linea.setImporte(importe);
+
+            linea.setNomina(nominaAnterior);
+            nominaAnterior.getLineas().add(linea);
+        });
+
+//        nominaAnterior.
+//        //añadimos las líneas actualizadas
+//        nominaDTO.getLineas().forEach(lineaDTO -> {
+//            //pasamos cada línea de lineaDTO a línea entidad
+//            LineaNomina linea = modelMapper.map(lineaDTO, LineaNomina.class);
+//            //añadimos la nómina a la línea
+//            linea.setNomina(nominaAnterior);
+//            //añadimos las líneas a la nómina
+//            nominaAnterior.getLineas().add(linea);
+//        });
+
+        repositoryManager.getNominaRepository().save(nominaAnterior);
+        return "redirect:/listado";
+    }
 
 //    @GetMapping("/admin/nomina/editar/{nominaId}")
 //    public String editarNomina(@PathVariable Long nominaId,

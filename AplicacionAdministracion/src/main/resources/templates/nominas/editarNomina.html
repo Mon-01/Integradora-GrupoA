@@ -11,9 +11,7 @@
         th { background-color: #f2f2f2; }
         .btn { padding: 5px 10px; text-decoration: none; color: white; margin: 2px; }
         .btn-primary { background-color: #2196F3; border-radius: 4px; }
-        .btn-danger { background: red; border-radius: 4px; }
-        .btn-success { background: green; border-radius: 4px; }
-        .form-group { margin-bottom: 15px; }
+        .btn-danger { background-color: red; border-radius: 4px; }
         label { display: inline-block; width: 150px; }
     </style>
 </head>
@@ -30,15 +28,16 @@
 </div>
 
 <h2>Líneas de Nómina</h2>
+<form th:action="@{/nomina/guardar}" method="post">
+    <input type="hidden" name="id" th:value="${nomina.id}"/>
 
-<table>
+    <table>
     <thead>
     <tr>
         <th>Concepto</th>
         <th>Cantidad</th>
         <th>Tipo</th>
         <th>Valor</th>
-        <th>Acciones</th>
     </tr>
     </thead>
     <tbody>
@@ -64,7 +63,8 @@
             <td>
                 <select th:name="'lineas[' + ${stat.index} + '].esDevengo'">
                     <option value="true" th:selected="${linea.esDevengo}">Devengo</option>
-                    <option value="false" th:selected="${!linea.esDevengo}">Deducción</option>
+                        <!--    si es null lo pone en false   -->
+                    <option value="false" th:selected="${linea.esDevengo ?: false}">Deducción</option>
                 </select>
             </td>
             <td>
@@ -87,68 +87,11 @@
             </td>
         </th:block>
 
-        <td>
-            <button class="btn btn-danger eliminar-linea" th:data-id="${linea.id}">
-                <i class="fas fa-trash"></i> Eliminar
-            </button>
-        </td>
     </tr>
     </tbody>
 </table>
-
-                    <!--<h2>Añadir Nueva Línea</h2>-->
-<!--<form th:action="@{'/admin/nomina/' + ${nomina.id} + '/linea/nueva'}" th:object="${nuevaLinea}" method="post">-->
-<!--    <input type="hidden" th:field="*{nomina.id}" th:value="${nomina.id}">-->
-
-<!--    <div class="form-group">-->
-<!--        <label for="concepto">Concepto:</label>-->
-<!--        <input type="text" id="concepto" th:field="*{concepto}" required>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--        <label for="cantidad">Cantidad:</label>-->
-<!--        <input type="number" id="cantidad" th:field="*{cantidad}" step="0.01" required>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--        <label for="tipo">Tipo:</label>-->
-<!--        <select id="tipo" th:field="*{tipo}" required>-->
-<!--            <option value="INGRESO">Ingreso</option>-->
-<!--            <option value="DESCUENTO">Descuento</option>-->
-<!--        </select>-->
-<!--    </div>-->
-
-<!--    <div class="form-group">-->
-<!--        <label for="valor">Valor:</label>-->
-<!--        <input type="number" id="valor" th:field="*{valor}" step="0.01" required>-->
-<!--    </div>-->
-
-<!--    <button type="submit" class="btn btn-success">-->
-<!--        <i class="fas fa-plus"></i> Añadir Línea-->
-<!--    </button>-->
-<!--</form>-->
-
-<!-- Script para eliminar líneas -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.eliminar-linea').click(function() {
-            if(confirm('¿Estás seguro de que deseas eliminar esta línea?')) {
-                const lineaId = $(this).data('id');
-                $.ajax({
-                    url: '/admin/nomina/linea/eliminar/' + lineaId,
-                    type: 'DELETE',
-                    success: function() {
-                        location.reload();
-                    },
-                    error: function() {
-                        alert('Error al eliminar la línea');
-                    }
-                });
-            }
-        });
-    });
-</script>
+<button type="submit" class="btn btn-primary">Guardar cambios</button>
+</form>
 
 </body>
 </html>

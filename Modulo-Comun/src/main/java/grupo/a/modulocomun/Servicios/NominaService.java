@@ -301,7 +301,7 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
                 devoluciones.setEsDevengo(false);
 
                 BigDecimal importeDevolucion = salarioBase.multiply(new BigDecimal("8"))
-                        .divide(BigDecimal.valueOf(30), 2, RoundingMode.HALF_UP);
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
                 devoluciones.setImporte(importeDevolucion);
                 devoluciones.setNomina(nomina);
                 nomina.agregarLinea(devoluciones);
@@ -311,5 +311,10 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
 
             nominaRepository.saveAll(nominas);
         System.out.println("nominas guardadas, supuestamente");
+    }
+
+    public BigDecimal calcularImportePorcentaje(BigDecimal salarioBase, BigDecimal porcentaje) {
+        return salarioBase.multiply(new BigDecimal(porcentaje.doubleValue()))
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
 }
