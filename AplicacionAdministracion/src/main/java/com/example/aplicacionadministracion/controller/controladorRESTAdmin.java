@@ -178,4 +178,12 @@ public class controladorRESTAdmin {
         return importacionCatalogoService.buscarProductos(filtros);
     }
 
+    // Nuevo endpoint para servir datos a Apache
+    @GetMapping("/empleados")
+    public List<EmpleadoDTO> obtenerTodosEmpleadosParaApache() {
+        return empleadoService.obtenerTodosEmpleados().stream()
+                .map(this::convertirEmpleadoADTO)
+                .collect(Collectors.toList());
+    }
+
 }

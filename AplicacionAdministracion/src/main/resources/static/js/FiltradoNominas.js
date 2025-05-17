@@ -50,9 +50,4 @@ function actualizarTabla(nominas) {
         `;
         tbody.appendChild(row);
     });
-
-    // Reasignar eventos a los botones de eliminar
-    $('.eliminar-btn').off('click').click(function() {
-        // Tu código existente para eliminar
-    });
 }

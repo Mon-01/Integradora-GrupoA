@@ -1,4 +1,5 @@
 // Cargar empleados al iniciar la página
+/*
 document.addEventListener('DOMContentLoaded', function() {
     cargarEmpleados();
 });
@@ -19,6 +20,8 @@ function cargarEmpleados() {
             console.error('Error al cargar empleados:', error);
         });
 }
+
+ */
 // Cargar empleados al iniciar la página
 document.addEventListener('DOMContentLoaded', function() {
     cargarEmpleados();

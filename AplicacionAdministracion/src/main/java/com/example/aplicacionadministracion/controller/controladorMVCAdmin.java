@@ -7,6 +7,7 @@ import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
+
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
 import grupo.a.modulocomun.Servicios.NominaService;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller // Indica que esta clase es un controlador de Spring MVC que gestionará peticiones HTTP.
 public class controladorMVCAdmin {
@@ -103,7 +105,7 @@ public class controladorMVCAdmin {
     @GetMapping("/admin/detalle/{id}")
     public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
         model.addAttribute("empleadoId", id); // Pasa el ID del empleado a la vista.
-        return "DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
+        return "/detalles/DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
     }
 
     // Muestra una lista de todas las nóminas disponibles.
@@ -111,9 +113,14 @@ public class controladorMVCAdmin {
     public String listar(Model model, Map map) {
 
         model.addAttribute("nominas", nominaService.obtenerTodasNominas()); // ← Aquí pasas los DTO, no las entidades
-        return "/nominas/listadoNominas"; // Muestra la vista con la lista de nóminas.
+        return "listadoNominas"; // Muestra la vista con la lista de nóminas.
     }
-
+    @GetMapping("/nueva")
+    public String nueva() {
+        // Redirigir siempre a la vista en Apache
+        return "redirect:http://vista1.nomina.com:80/";
+    }
+    /*
     // Muestra un formulario para crear una nueva nómina.
     @GetMapping("/nueva")
     public String nueva(Model model) {
@@ -121,8 +128,28 @@ public class controladorMVCAdmin {
         dto.setFecha(LocalDate.now()); // Asigna la fecha actual como predeterminada.
         model.addAttribute("nomina", dto); // Pasa el objeto nómina a la vista.
         model.addAttribute("empleados", empleadoService.obtenerTodosEmpleados()); // Lista de empleados para seleccionar uno.
-        return "/nominas/nuevaNomina"; // Renderiza la vista "nuevaNomina.html".
+        return "nuevaNomina";// Renderiza la vista "nuevaNomina.html".
+      //  return "redirect:http://vista1.tudominio.com/";
     }
+
+     */
+    @GetMapping("/apacher2")
+    public String apache2() {
+        return "redirect:http://vista2.administrativa.com:80/";
+    }
+
+
+
+    // Muestra un formulario para crear una nueva nómina.
+
+
+    @GetMapping("/apacher3")
+    public String apache3(){
+        return "redirect:http://vista3.corporativa.com:80/";
+
+    }
+
+
     @GetMapping("/productos")
     public String product(){
         return "producto";
