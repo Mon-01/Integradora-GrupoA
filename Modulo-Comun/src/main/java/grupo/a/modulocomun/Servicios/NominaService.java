@@ -111,10 +111,10 @@ public class NominaService {
         return convertirADTO(nominaGuardada);
     }
 
-    public NominaDTO obtenerNomina(Long id) {
+    public Nomina obtenerNomina(Long id) {
         Nomina nomina = nominaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Nómina no encontrada con id: " + id));
-        return this.convertirADTO(nomina);
+        return nomina;
     }
 
     public List<NominaDTO> obtenerNominasPorEmpleado(Long empleadoId) {

@@ -5,6 +5,7 @@ import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
 import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
+import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
@@ -159,23 +160,54 @@ public class controladorMVCAdmin {
         return "redirect:/admin/login";
     }
 
-    @GetMapping("/admin/nomina/editar/{empleadoId}")
-    public String editarNomina(@PathVariable Long empleadoId,
-                               @RequestParam(name = "modo", required = false) String modo,
-                               Model model) {
-        //le pasa al modelo la nómina que queremos editar
-        model.addAttribute("nomina", nominaService.obtenerNomina(empleadoId));
-        return "/nominas/editarNomina";
+    @GetMapping("/editar/{id}")
+    public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
+        // Obtener la nómina por ID
+        Nomina nomina = nominaService.obtenerNomina(id);
+
+        NominaDTO dto = nominaService.convertirADTO(nomina);
+
+        model.addAttribute("nomina", dto);
+
+        return "/nominas/editarNomina"; // Nombre de la plantilla Thymeleaf
     }
 
-    @PostMapping("/admin/nomina/guardar")
-    public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
-        NominaDTO nominaAnterior = serviceManager.getNominaService().obtenerNomina(nominaDTO.getId());
-        nominaAnterior = nominaDTO;
+//    @GetMapping("/admin/nomina/editar/{nominaId}")
+//    public String editarNomina(@PathVariable Long nominaId,
+//                               @RequestParam(name = "modo", required = false) String modo,
+//                               Model model) {
+//        Nomina nomina = nominaService.obtenerNomina(nominaId);
+//        NominaDTO nominaDTO = nominaService.convertirADTO(nomina);
+//        //le pasa al modelo la nómina que queremos editar
+//        model.addAttribute("nomina", nominaDTO);
+//        return "/nominas/editarNomina";
+//    }
+//
+//    @PostMapping("/admin/nomina/guardar")
+//    public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
+//        Nomina nominaAnterior = nominaService.obtenerNomina(nominaDTO.getId());
+//        modelMapper.map(nominaDTO, nominaAnterior);
+//        repositoryManager.getNominaRepository().save(nominaAnterior);
+//        return "redirect:/admin/nominas";
+//    }
 
-        repositoryManager.getNominaRepository().save(modelMapper.map(nominaAnterior, Nomina.class));
-        return "redirect:/admin/nominas";
-    }
+//    @GetMapping("/admin/nomina/editar/{nominaId}")
+//    public String editarNomina(@PathVariable Long nominaId,
+//                               @RequestParam(name = "modo", required = false) String modo,
+//                               Model model) {
+//        //le pasa al modelo la nómina que queremos editar
+//        model.addAttribute("nomina", nominaService.obtenerNomina(nominaId));
+//        return "/nominas/editarNomina";
+//    }
+//
+//    @PostMapping("/admin/nomina/guardar")
+//    public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
+//        NominaDTO nominaAnterior = serviceManager.getNominaService().obtenerNomina(nominaDTO.getId());
+//        nominaAnterior = nominaDTO;
+//
+//        repositoryManager.getNominaRepository().save(modelMapper.map(nominaAnterior, Nomina.class));
+//        return "redirect:/admin/nominas";
+//    }
 
 }
 
