@@ -5,7 +5,7 @@ document.getElementById('imagenFile').addEventListener('change', function () {
     if (file) {
         const reader = new FileReader();
         reader.onloadend = function () {
-            document.getElementById('imagen').value = reader.result; 
+            document.getElementById('imagen').value = reader.result;
         };
         reader.readAsDataURL(file);
     }
