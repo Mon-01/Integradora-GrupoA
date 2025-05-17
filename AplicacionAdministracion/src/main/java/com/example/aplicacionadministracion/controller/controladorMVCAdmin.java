@@ -211,38 +211,9 @@ public class controladorMVCAdmin {
             nominaAnterior.getLineas().add(linea);
         });
 
-//        nominaAnterior.
-//        //añadimos las líneas actualizadas
-//        nominaDTO.getLineas().forEach(lineaDTO -> {
-//            //pasamos cada línea de lineaDTO a línea entidad
-//            LineaNomina linea = modelMapper.map(lineaDTO, LineaNomina.class);
-//            //añadimos la nómina a la línea
-//            linea.setNomina(nominaAnterior);
-//            //añadimos las líneas a la nómina
-//            nominaAnterior.getLineas().add(linea);
-//        });
-
         repositoryManager.getNominaRepository().save(nominaAnterior);
         return "redirect:/listado";
     }
-
-//    @GetMapping("/admin/nomina/editar/{nominaId}")
-//    public String editarNomina(@PathVariable Long nominaId,
-//                               @RequestParam(name = "modo", required = false) String modo,
-//                               Model model) {
-//        //le pasa al modelo la nómina que queremos editar
-//        model.addAttribute("nomina", nominaService.obtenerNomina(nominaId));
-//        return "/nominas/editarNomina";
-//    }
-//
-//    @PostMapping("/admin/nomina/guardar")
-//    public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
-//        NominaDTO nominaAnterior = serviceManager.getNominaService().obtenerNomina(nominaDTO.getId());
-//        nominaAnterior = nominaDTO;
-//
-//        repositoryManager.getNominaRepository().save(modelMapper.map(nominaAnterior, Nomina.class));
-//        return "redirect:/admin/nominas";
-//    }
 
 }
 
