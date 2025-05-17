@@ -26,4 +26,12 @@ public class LineaNomina {
     @ManyToOne
     @JoinColumn(name = "nomina_id", nullable = false)
     private Nomina nomina;
+
+    public LineaNomina(String descripcion, BigDecimal porcentaje, Boolean esDevengo) {
+        this.descripcion = descripcion;
+        this.porcentaje = porcentaje;
+        this.esDevengo = esDevengo;
+    }
+
+
 }

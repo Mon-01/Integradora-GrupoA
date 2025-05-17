@@ -67,3 +67,19 @@ th, td {
     top: 0;
     z-index: 1000;
 }
+
+.btn {
+    padding: 5px 10px;
+    text-decoration: none;
+    color: white; }
+
+.btn-primary {
+    background-color: #2196F3;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.btn-listados{
+    display: flex;
+    gap: 20px;
+}

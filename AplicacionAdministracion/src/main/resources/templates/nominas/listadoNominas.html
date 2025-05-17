@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Listado de Nóminas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <style>
     table { width: 100%; border-collapse: collapse; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -10,7 +12,7 @@
     .btn { padding: 5px 10px; text-decoration: none; color: white; }
     .btn-primary { background-color: #2196F3; border-radius: 4px; display: inline-block;
     }
-    .btn-danger { background: red; }
+    .btn-danger { background: red; border-radius: 4px;}
   </style>
   <!-- Añadir jQuery para AJAX -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -26,7 +28,7 @@
 <form id="filtroForm">
   <input type="text" id="nombre" placeholder="Nombre" >
   <input type="text" id="departamento" placeholder="Departamento" >
-  <input type="date" id="fecha" placeholder="Fecha de emisión" >
+  <input type="text" id="fecha" placeholder="Fecha de emisión" >
   <button type="submit">Buscar</button>
 </form>
 
@@ -52,7 +54,14 @@
       € <span th:text="${#numbers.formatDecimal(totalValue, 1, 2)}">0.00</span>
     </td>
     <td>
-      <button th:data-id="${nomina.id}" class="btn btn-danger eliminar-btn">Eliminar</button>
+      <button th:data-id="${nomina.id}" class="btn btn-danger eliminar-btn">
+        <i class="fas fa-trash"></i> Eliminar
+      </button>
+      <button th:onclick="'window.location.href=\'/editar/' + ${nomina.id} + '\';'"
+              class="btn btn-primary">
+        <i class="fas fa-pen-to-square"></i> Editar
+      </button>
+
     </td>
   </tr>
   </tbody>

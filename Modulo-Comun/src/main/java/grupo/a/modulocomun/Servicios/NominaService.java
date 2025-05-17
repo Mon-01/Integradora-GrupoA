@@ -9,6 +9,8 @@ import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.DTO.filtros.filtrosNominasDTO;
 import grupo.a.modulocomun.Entidades.*;
 import grupo.a.modulocomun.Repositorios.*;
+import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,9 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
 @Service
 @Transactional
 public class NominaService {
@@ -29,13 +33,18 @@ public class NominaService {
     private final NominaRepository nominaRepository;
     private final EmpleadoRepository empleadoRepository;
     private final EmpleadoService empleadoService;
+    private final RepositoryManager repositoryManager;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public NominaService(NominaRepository nominaRepository, EmpleadoRepository empleadoRepository, EmpleadoService empleadoService) {
+    public NominaService(NominaRepository nominaRepository, EmpleadoRepository empleadoRepository, EmpleadoService empleadoService, RepositoryManager repositoryManager, ModelMapper modelMapper) {
         this.nominaRepository = nominaRepository;
         this.empleadoRepository = empleadoRepository;
         this.empleadoService = empleadoService;
+        this.repositoryManager = repositoryManager;
+        this.modelMapper = modelMapper;
     }
+
     public void eliminarNomina(Long id) {
         // Esto eliminará en cascada las líneas de nómina debido a la configuración CascadeType.ALL
         nominaRepository.deleteById(id);
@@ -102,6 +111,11 @@ public class NominaService {
         return convertirADTO(nominaGuardada);
     }
 
+    public Nomina obtenerNomina(Long id) {
+        Nomina nomina = nominaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Nómina no encontrada con id: " + id));
+        return nomina;
+    }
 
     public List<NominaDTO> obtenerNominasPorEmpleado(Long empleadoId) {
         return nominaRepository.findNominasConLineasByEmpleadoId(empleadoId).stream()
@@ -158,6 +172,7 @@ public class NominaService {
         // Calcular total (suma de todos los importes, ya vienen con signo)
         BigDecimal total = nomina.getLineas().stream()
                 .map(LineaNomina::getImporte)
+//                .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         dto.setTotal(total);
 
@@ -172,15 +187,7 @@ public class NominaService {
                 })
                 .collect(Collectors.toList());
     }
-/*
-    public List<Nomina> filtrarPorNomina(String nombre,LocalDate fecha){
-        if( (nombre == null || nombre.trim().isEmpty())){
-            return nominaRepository.findAll(Sort.by("empleado.nombre"));
-        }
-        return nominaRepository.filtroNomina(nombre);
-    }
 
- */
 public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDate fecha) {
     return nominaRepository.filtroNomina(nombre, departamento, fecha);
 }
@@ -256,27 +263,58 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
         }
     }
 
-//    public void cargarNominas() {
-//            List<Empleado> empleados = empleadoRepository.findAll();
-//            List<Nomina> nominas = empleados.stream().map(empleado -> {
-//                Nomina nomina = new Nomina();
-//                nomina.setFecha(LocalDate.now());
-//                nomina.setEmpleado(empleado);
-//
-//                // Crear líneas de nómina (ajusta los importes y las descripciones según sea necesario)
-//                LineaNomina linea1 = new LineaNomina("Salario Base", new BigDecimal("1500.00"));
-//                LineaNomina linea2 = new LineaNomina("Bonificación", new BigDecimal("300.00"));
-//                LineaNomina linea3 = new LineaNomina("Horas Extra", new BigDecimal("200.00"));
-//
-//                // Asociar las líneas de nómina con la nómina
-//                nomina.agregarLinea(linea1);
-//                nomina.agregarLinea(linea2);
-//                nomina.agregarLinea(linea3);
-//
-//                return nomina;
-//            }).collect(Collectors.toList());
-//
-//            nominaRepository.saveAll(nominas);
-//        System.out.println("nominas guardadas, supuestamente");
-//    }
+    public void cargarNominas() {
+            List<Empleado> empleados = empleadoRepository.findAll();
+            List<Nomina> nominas = empleados.stream().map(empleado -> {
+                BigDecimal salarioBase = empleado.getSalarioAnual();
+
+                Nomina nomina = new Nomina();
+                nomina.setFecha(LocalDate.now());
+                nomina.setEmpleado(empleado);
+
+                // Crear líneas de nómina (ajusta los importes y las descripciones según sea necesario)
+                LineaNomina salarioBaseLinea = new LineaNomina();
+                salarioBaseLinea.setDescripcion("Salario Base");
+                salarioBaseLinea.setPorcentaje(new BigDecimal("22"));
+                salarioBaseLinea.setEsDevengo(true);
+
+                BigDecimal importeSalario = salarioBase.multiply(new BigDecimal("22"))
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                salarioBaseLinea.setImporte(importeSalario);
+                salarioBaseLinea.setNomina(nomina);
+                nomina.agregarLinea(salarioBaseLinea);
+
+                LineaNomina bonificacion = new LineaNomina();
+                bonificacion.setDescripcion("bonificacion por horas extra");
+                bonificacion.setPorcentaje(new BigDecimal("12"));
+                bonificacion.setEsDevengo(true);
+
+                BigDecimal importeBonificacion = salarioBase.multiply(new BigDecimal("12.00"))
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                bonificacion.setImporte(importeBonificacion);
+                bonificacion.setNomina(nomina);
+                nomina.agregarLinea(bonificacion);
+
+                LineaNomina devoluciones = new LineaNomina();
+                devoluciones.setDescripcion("Devolución");
+                devoluciones.setPorcentaje(new BigDecimal("8"));
+                devoluciones.setEsDevengo(false);
+
+                BigDecimal importeDevolucion = salarioBase.multiply(new BigDecimal("8"))
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                devoluciones.setImporte(importeDevolucion);
+                devoluciones.setNomina(nomina);
+                nomina.agregarLinea(devoluciones);
+
+                return nomina;
+            }).collect(Collectors.toList());
+
+            nominaRepository.saveAll(nominas);
+        System.out.println("nominas guardadas, supuestamente");
+    }
+
+    public BigDecimal calcularImportePorcentaje(BigDecimal salarioBase, BigDecimal porcentaje) {
+        return salarioBase.multiply(new BigDecimal(porcentaje.doubleValue()))
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+    }
 }

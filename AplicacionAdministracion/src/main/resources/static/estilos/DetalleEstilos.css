@@ -36,4 +36,10 @@ th {
     background-color: #ffeeee;
 }
 
-.btn-primary { background-color: #2196F3; border-radius: 4px; display: inline-block;}
+
+
+.btn-primary {
+    background-color: #2196F3;
+    border-radius: 4px;
+    display: inline-block;
+}
