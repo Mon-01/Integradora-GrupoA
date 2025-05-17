@@ -16,7 +16,7 @@
 <a href="/paso3"><button>Paso 3</button></a>
 <a href="/paso4"><button>Paso 4</button></a>
 <a href="/resumen"><button>Resumen</button></a>
-<form id="formulario" method="post" th:action="@{/paso1}" th:object="${datos}">
+<form id="formulario" method="post" enctype="multipart/form-data" th:action="@{/paso1}" th:object="${datos}">
     <fieldset>
         <legend>Datos Personales</legend>
         <label for="nombre">Nombre</label>
@@ -66,11 +66,18 @@
         <br><br>
         <label for="comentarios">Comentarios</label>
         <textarea id="comentarios" th:field="*{comentarios}" rows="4" cols="50" ></textarea>
+        <br>
+        <label for="imagen">Imagen de perfil</label>
+        <input type="file" id="imagenFile" name="imagenFile" accept=".jpg,image/jpeg" />
+        <div th:each="error: ${#fields.errors('imagen')}" th:text="${error} " class="error"></div>
+
+        <!--input que realmente almacena la imagen para la base de datos-->
+        <input type="hidden" id="imagen" name="imagen">
     </fieldset>
     <button type="button" onclick="blanquear()" ><span th:text="#{boton.vaciar}"/></button>
     <button type="submit">Grabar Informarción - Pasar al paso 2: Datos de contacto</button>
 </form>
-<script src="/js/funciones.js" defer></script>
-
+<script src="/js/botonesRegistroPasos.js" defer></script>
+<script src="/js/CambiarFormatoImg.js"></script>
 </body>
 </html>

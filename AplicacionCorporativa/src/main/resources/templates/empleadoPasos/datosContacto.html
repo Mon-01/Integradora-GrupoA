@@ -39,6 +39,9 @@
         <div th:if="${enviado}">
             <div th:each="err : ${#fields.errors('documento')}" th:text="${err}" class="error"></div>
         </div>
+        <div th:if="${#fields.hasGlobalErrors()}">
+                    <div th:each="err : ${#fields.globalErrors()}" th:text="${err}" class="error"></div>
+        </div>
 
         <!-- Prefijo -->
         <label for="prefijo">Prefijo</label>
@@ -131,7 +134,7 @@
     <button type="button" onclick="blanquear()" ><span th:text="#{boton.vaciar}"/></button>
     <button type="submit">Grabar Información y continuar al paso 3</button>
 </form>
-<script src="/js/funciones.js" defer></script>
+<script src="/js/botonesRegistroPasos.js" defer></script>
 
 </body>
 </html>

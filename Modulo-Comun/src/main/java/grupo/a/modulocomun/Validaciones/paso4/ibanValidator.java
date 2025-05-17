@@ -3,18 +3,32 @@ package grupo.a.modulocomun.Validaciones.paso4;
 import grupo.a.modulocomun.DTO.DatosBancariosDTO;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
+import grupo.a.modulocomun.Entidades.Maestros.EntidadBancaria;
+import grupo.a.modulocomun.Repositorios.Maestros.EntidadBancariaRepository;
 import grupo.a.modulocomun.Servicios.Maestros.EntidadBancariaService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
 
 public class ibanValidator implements ConstraintValidator<ibanValidation, DatosBancariosDTO> {
 
     @Autowired
     EntidadBancariaService entidadBancariaService;
 
+    @Autowired
+    EntidadBancariaRepository entidadBancariaRepository;
+
     @Override
     public boolean isValid(DatosBancariosDTO value, ConstraintValidatorContext context) {
+
+        Long entidadId = value.getEntidadBancaria();
+        Optional<EntidadBancaria> entidadOpt = entidadBancariaRepository.findById(entidadId);
+
+        if (entidadId == null || entidadOpt.isEmpty()) {
+            return true; // No valida IBAN si entidad no está presente
+        }
 
         String iban = value.getNumCuenta();
 

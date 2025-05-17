@@ -2,6 +2,7 @@ package grupo.a.modulocomun.DTO;
 
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UsuarioDTO {
     private UUID id_usuario;
+    
     private String email;
     private String clave;
     private String confirmarClave;

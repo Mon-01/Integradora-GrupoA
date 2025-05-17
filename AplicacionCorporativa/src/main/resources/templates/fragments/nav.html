@@ -1,14 +1,31 @@
-<!-- fragments/navbar.html --> <nav th:fragment="navbar" class="navbar" > <div class="navbar-container">
-    <!-- Logo --> <div class="navbar-brand">
-    <img th:src="@{/img/OP.jpg}"  height="50px" width="50px" alt="logo" class="logo">
-    <span>MonArNa SL</span> </div> <!-- Menú --> <ul class="navbar-menu">
-    <li><a href="/static">Inicio</a></li> <li><a href="/servicios">Administración</a></li>  </ul> <!-- Cerrar sesión (simple) -->
-    <div class="navbar-logout"> <form th:action="@{/logout}" method="get">
-        <button  type="submit">Cerrar sesión</button>
-    </form> </div> </div> <style> .navbar { background-color: #d32f2f; color: white; padding: 1rem; font-family: Arial, sans-serif; }
-.navbar-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
-.navbar-brand { display: flex; align-items: center; gap: 10px; font-weight: bold; } .logo { height: 40px; }
-.navbar-menu { display: flex; list-style: none;gap: 20px; margin: 0; padding: 0; }
-.navbar-menu a { color: white; text-decoration: none; padding: 5px 0; } .navbar-menu a:hover { text-decoration: underline; }
-.navbar-logout button { background: none; border: 1px solid white; color: white; padding: 5px 10px; cursor: pointer; }
-.navbar-logout button:hover { background: rgba(255,255,255,0.1); } </style> </nav>
+<!-- fragments/navbar.html -->
+<nav th:fragment="navbar" class="navbar" >
+    <style>
+        .navbar { background-color: #d32f2f; color: white; padding: 1rem; font-family: Arial, sans-serif; }
+        .navbar-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+        .navbar-brand { display: flex; align-items: center; gap: 10px; font-weight: bold; } .logo { height: 40px; }
+        .navbar-menu { display: flex; list-style: none;gap: 20px; margin: 0; padding: 0; }
+        .navbar-menu a { color: white; text-decoration: none; padding: 5px 0; } .navbar-menu a:hover { text-decoration: underline; }
+        .navbar-logout button { background: none; border: 1px solid white; color: white; padding: 5px 10px; cursor: pointer; }
+        .navbar-logout button:hover { background: rgba(255,255,255,0.1); }
+    </style>
+
+    <div class="navbar-container">
+    <!-- Logo -->
+        <div class="navbar-brand">
+            <img th:src="@{/img/OP.jpg}"  height="50px" width="50px" alt="logo" class="logo">
+            <span>MonArNa SL</span>
+        </div>
+        <!-- Menú -->
+        <ul class="navbar-menu">
+            <li><a href="/start">Inicio</a></li>
+            <li><a href="/admin/login">Administración</a></li>
+        </ul>
+        <!-- Cerrar sesión (simple) -->
+            <div class="navbar-logout">
+                <form th:action="@{/logout}" method="get">
+                    <button  type="submit">Cerrar sesión</button>
+                </form>
+            </div>
+    </div>
+</nav>

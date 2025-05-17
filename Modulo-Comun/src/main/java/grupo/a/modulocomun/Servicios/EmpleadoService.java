@@ -1,6 +1,7 @@
 package grupo.a.modulocomun.Servicios;
 
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
+import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Auxiliares.Direccion;
 import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
 import grupo.a.modulocomun.Entidades.DatosBancarios;
@@ -11,22 +12,24 @@ import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class EmpleadoService {
-
-    /*
-    * añadir caducidad en insertar empleado para que se guarde en la bbdd
-    * */
 
     @Autowired
     private final EmpleadoRepository empleadoRepository;
@@ -35,70 +38,42 @@ public class EmpleadoService {
     private final UsuarioRepository usuarioRepository;
 
     @Autowired
+    private final DepartamentoService departamentoService;
+
+    @Autowired
     private RepositoryManager repositoryManager;
 
-    public EmpleadoService(EmpleadoRepository empleadoRepository, UsuarioRepository usuarioRepository) {
+    public EmpleadoService(EmpleadoRepository empleadoRepository, UsuarioRepository usuarioRepository, DepartamentoService departamentoService) {
         this.empleadoRepository = empleadoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.departamentoService = departamentoService;
     }
 
-    public void validarMaestrosPaso1(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-        if (empleadoDTO.getGenero() == null) {
-            bindingResult.rejectValue("genero", "validation.notNull");
-        } else if (!repositoryManager.getGeneroRepository().existsById(empleadoDTO.getGenero())) {
-            bindingResult.rejectValue("genero", "valor.invalido");
-        }
 
-        if (!repositoryManager.getPaisRepository().existsById(empleadoDTO.getPaisNacimiento())) {
-            bindingResult.rejectValue("paisNacimiento", "valor.invalido");
-        }
-    }
+    @Transactional
+    public void cargarEmpleado() {
+        // Primero asegurarnos que los departamentos existen
+        departamentoService.cargarDepartamentos();
 
-    public void validarMaestrosPaso2(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-        if (empleadoDTO.getTipoDocumento() == null) {
-            bindingResult.rejectValue("tipoDocumento", "validation.notNull");
-        } else if (!repositoryManager.getTipoDocumentoRepository().existsById(empleadoDTO.getTipoDocumento())) {
-            bindingResult.rejectValue("tipoDocumento", "valor.invalido");
-        }
+        // Crear empleados asignando departamentos específicos
+        Empleado emp1 = insertarEmpleado1();
+        emp1.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Administración")
+                .orElseThrow(() -> new EntityNotFoundException("Departamento Administración no encontrado")));
 
-        if (!repositoryManager.getTipoViaRepository().existsById(empleadoDTO.getDireccion().getTipoVia())) {
-            bindingResult.rejectValue("direccion.tipoVia", "valor.invalido");
-        }
-    }
+        Empleado emp2 = insertarEmpleado2();
+        emp2.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Tecnología")
+                .orElseThrow(() -> new EntityNotFoundException("Departamento Tecnología no encontrado")));
 
-    public void validarMaestrosPaso3(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-            if (!repositoryManager.getDepartamentoRepository().existsById(empleadoDTO.getIdDepartamento())) {
-            bindingResult.rejectValue("idDepartamento", "valor.invalido");
-        }
+        Empleado emp3 = insertarEmpleado3();
+        emp3.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Tecnología")
+                .orElseThrow(() -> new EntityNotFoundException("Departamento Tecnología no encontrado")));
 
-        if (empleadoDTO.getEspecializaciones() == null || empleadoDTO.getEspecializaciones().isEmpty()) {
-            bindingResult.rejectValue("especializaciones", "validation.notNull");
-        } else if (
-                //usamos un stream para que devuelva el primer error de id que encuentre
-                empleadoDTO.getEspecializaciones().stream()
-            .anyMatch(id -> !repositoryManager.getEspecialidadesRepository().existsById(id))
-        ){
-            bindingResult.rejectValue("especializaciones", "valor.invalido");
-        }
-    }
+        Empleado emp4 = insertarEmpleado4();
+        emp4.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Recursos Humanos")
+                .orElseThrow(() -> new EntityNotFoundException("Departamento Recursos Humanos no encontrado")));
 
-    public void validarMaestrosPaso4(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
-            if (!repositoryManager.getEntidadBancariaRepository().existsById(empleadoDTO.getDatosBancarios().getEntidadBancaria())) {
-            bindingResult.rejectValue("datosBancarios.entidadBancaria", "valor.invalido");
-        }
-
-        if (!repositoryManager.getTipoTarjetaRepository().existsById(empleadoDTO.getDatosBancarios().getTarjeta().getTipo())) {
-            bindingResult.rejectValue("datosBancarios.tarjeta.tipo", "valor.invalido");
-        }
-    }
-
-    public void cargarEmpleado(){
-
-        empleadoRepository.save(insertarEmpleado1());
-        empleadoRepository.save(insertarEmpleado2());
-        empleadoRepository.save(insertarEmpleado3());
-        empleadoRepository.save(insertarEmpleado4());
-
+        // Guardar todos los empleados
+        empleadoRepository.saveAll(List.of(emp1, emp2, emp3, emp4));
     }
 
     //insertar datos empleados
@@ -133,6 +108,8 @@ public class EmpleadoService {
         empleado1.setEspecializaciones(List.of(
                 repositoryManager.getEspecialidadesRepository().findById(2L).orElseThrow(EntityNotFoundException::new)
         ));
+
+        empleado1.setFecha_alta(LocalDate.now());
 
         return empleado1;
     }
@@ -170,6 +147,8 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(4L).orElseThrow(EntityNotFoundException::new)
         ));
 
+        empleado2.setFecha_alta(LocalDate.now());
+
         return empleado2;
     }
 
@@ -204,6 +183,8 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(3L).orElseThrow(EntityNotFoundException::new),
                 repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
         ));
+
+        empleado3.setFecha_alta(LocalDate.now());
 
         return empleado3;
     }
@@ -240,6 +221,8 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
         ));
 
+        empleado4.setFecha_alta(LocalDate.now());
+
         return empleado4;
     }
 
@@ -253,7 +236,6 @@ public class EmpleadoService {
         if (usuarioOptional.isEmpty()) {
             throw new EntityNotFoundException("Usuario no encontrado con email: " + emailUsuario);
         }
-
         Usuario usuario = usuarioOptional.get();
 
         // Crear y configurar el empleado
@@ -270,6 +252,7 @@ public class EmpleadoService {
         asignarEspecialidades(empleado, empleadoDTO);
         asignarDepartamento(empleado, empleadoDTO);
         asignarTipoDocumento(empleado, empleadoDTO);
+        empleado.setFecha_alta(LocalDate.now());
 
         // Relacionar con el usuario
         empleado.setUsuario(usuario);
@@ -283,7 +266,6 @@ public class EmpleadoService {
     }
 
     //asignaciones para guardar el empleado en la bbdd
-
     private void asignarCamposSimples(Empleado empleado, EmpleadoDTO empleadoDTO) {
 
         empleado.setNombre(empleadoDTO.getNombre());
@@ -297,7 +279,12 @@ public class EmpleadoService {
         empleado.setEmail(empleadoDTO.getEmail());
         empleado.setComentarios(empleadoDTO.getComentarios());
         empleado.setSalarioAnual(new BigDecimal(empleadoDTO.getSalarioAnual()));
-        empleado.setComisionAnual(new BigDecimal(empleadoDTO.getComisionAnual()));
+        if(empleadoDTO.getComisionAnual().isEmpty()){
+            empleado.setComisionAnual(BigDecimal.ZERO);
+        }else{
+           empleado.setComisionAnual(new BigDecimal(empleadoDTO.getComisionAnual()));
+        }
+        empleado.setImagenBase64(empleadoDTO.getImagen());
     }
 
     private void asignarGenero(Empleado empleado, EmpleadoDTO empleadoDTO) {
@@ -377,4 +364,186 @@ public class EmpleadoService {
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de documento no encontrado"));
         empleado.setTipoDocumento(tipoDocumento);
     }
+    public List<Empleado> obtenerTodosEmpleados() {
+        return empleadoRepository.findAll();
+    }
+
+    public EmpleadoDTO convertirEmpleadoADTO(Empleado empleado) {
+        EmpleadoDTO dto = new EmpleadoDTO();
+        dto.setId_empleado(empleado.getId_empleado());
+        dto.setNombre(empleado.getNombre());
+        dto.setApellido(empleado.getApellido());
+        dto.setEmail(empleado.getEmail());
+        dto.setTelefono(empleado.getPrefijoTel() + " " + empleado.getTelefono());
+        dto.setFechaNacimiento(empleado.getFecha_nacimiento());
+        dto.setSalarioAnual(empleado.getSalarioAnual().toString());
+        dto.setComisionAnual(empleado.getComisionAnual().toString());
+        dto.setComentarios(empleado.getComentarios());
+
+        // Datos del departamento
+        if(empleado.getDepartamento() != null) {
+            dto.setIdDepartamento(empleado.getDepartamento().getId_dept());
+            dto.setDepartamento(departamentoService.convertirDTO(empleado.getDepartamento()));
+        }
+
+        // Datos del usuario si existe
+        if(empleado.getUsuario() != null) {
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.setId_usuario(empleado.getUsuario().getId_usuario());
+            usuarioDTO.setEmail(empleado.getUsuario().getEmail());
+            usuarioDTO.setBloqueado(empleado.getUsuario().isBloqueado());
+            usuarioDTO.setMotivoBloqueo(empleado.getUsuario().getMotivoBloqueo());
+            dto.setUsuario(usuarioDTO);
+        }
+
+        return dto;
+    }
+
+    public Optional<Empleado> obtenerEmpleadoPorCorreo(String correo) {
+        return empleadoRepository.findByEmail(correo);
+    }
+
+    public String obtenerImagenBase64PorCorreo(String correo) {
+        Optional<Empleado> empleadoOpt = obtenerEmpleadoPorCorreo(correo);
+
+        if (empleadoOpt.isPresent()) {
+            Empleado empleado = empleadoOpt.get();
+            if (empleado.getImagenBase64() != null && !empleado.getImagenBase64().isEmpty()) {
+                return empleado.getImagenBase64(); // Devuelve la imagen en base64
+            }
+        }
+        return null; // Devuelve null si no se encontró imagen
+    }
+    public List<String> obtenerNombresDepartamentos() {
+        return repositoryManager.getDepartamentoRepository().findDistinctNombresDepartamento();
+    }
+/*
+    public List<Empleado> buscarFiltrados(String nombre, List<String> nombresDepartamentos, BigDecimal salarioMin, BigDecimal salarioMax) {
+        // Convertir nombres de departamentos a minúsculas para búsqueda case-insensitive
+        List<String> nombresLower = nombresDepartamentos != null ?
+                nombresDepartamentos.stream()
+                        .map(String::toLowerCase)
+                        .collect(Collectors.toList()) :
+                null;
+/*
+        // Usar el método con @Query
+        return empleadoRepository.buscarFiltradosAvanzado(
+                nombre,
+                nombresLower,
+                salarioMin != null ? salarioMin : BigDecimal.ZERO,
+                salarioMax != null ? salarioMax : BigDecimal.ZERO);
+
+ */
+
+        // O alternativamente podrías usar el query method:
+     //    return empleadoRepository.findByNombreContainingIgnoreCaseAndDepartamentoNombredeptInAndSalarioAnualBetween(
+     //       nombre, nombresLower, salarioMin, salarioMax);
+   // }
+
+
+    public List<Empleado> buscarFiltrados(String nombre, List<String> departamentos, BigDecimal salarioMin, BigDecimal salarioMax) {
+        // 1. Si no hay filtros, devolver todos
+        if ((nombre == null || nombre.trim().isEmpty()) &&
+                (departamentos == null || departamentos.isEmpty()) &&
+                salarioMin == null && salarioMax == null) {
+            return empleadoRepository.findAll();
+        }
+
+        // 2. Convertir departamentos a minúsculas (si aplica)
+        List<String> departamentosLower = departamentos != null && !departamentos.isEmpty() ?
+                departamentos.stream()
+                        .map(String::toLowerCase)
+                        .collect(Collectors.toList()) :
+                null;
+
+        // 3. Definir rangos de salario (si aplica)
+        BigDecimal minSalario = salarioMin != null ? salarioMin : BigDecimal.ZERO;
+        BigDecimal maxSalario = salarioMax != null ? salarioMax : new BigDecimal("999999999.99");
+
+        // 4. Casos de filtrado combinado
+        if (nombre != null && !nombre.trim().isEmpty()) {
+            if (departamentosLower != null && !departamentosLower.isEmpty()) {
+                if (salarioMin != null || salarioMax != null) {
+                    // Filtro: nombre + departamento + salario
+                    return empleadoRepository.findByNombreContainingIgnoreCaseAndDepartamentoNombredeptInAndSalarioAnualBetween(
+                            nombre, departamentosLower, minSalario, maxSalario);
+                } else {
+                    // Filtro: nombre + departamento
+                    return empleadoRepository.findByNombreContainingIgnoreCaseAndDepartamentoNombredeptIn(
+                            nombre, departamentosLower);
+                }
+            } else if (salarioMin != null || salarioMax != null) {
+                // Filtro: nombre + salario
+                return empleadoRepository.findByNombreContainingIgnoreCaseAndSalarioAnualBetween(
+                        nombre, minSalario, maxSalario);
+            } else {
+                // Filtro: solo nombre
+                return empleadoRepository.findByNombreContainingIgnoreCase(nombre);
+            }
+        } else if (departamentosLower != null && !departamentosLower.isEmpty()) {
+            if (salarioMin != null || salarioMax != null) {
+                // Filtro: departamento + salario
+                return empleadoRepository.findByDepartamentoNombredeptInAndSalarioAnualBetween(
+                        departamentosLower, minSalario, maxSalario);
+            } else {
+                // Filtro: solo departamento
+                return empleadoRepository.findByDepartamentoNombredeptIn(departamentosLower);
+            }
+        } else if (salarioMin != null || salarioMax != null) {
+            // Filtro: solo salario
+            return empleadoRepository.findBySalarioAnualBetween(minSalario, maxSalario);
+        }
+
+        // Si no se cumple ningún caso (no debería llegar aquí)
+        return empleadoRepository.findAll();
+    }
+
 }
+
+//    public void validarMaestrosPaso1(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+//        if (empleadoDTO.getGenero() == null) {
+//            bindingResult.rejectValue("genero", "validation.notNull");
+//        } else if (!repositoryManager.getGeneroRepository().existsById(empleadoDTO.getGenero())) {
+//            bindingResult.rejectValue("genero", "valor.invalido");
+//        }
+//
+//        if (!repositoryManager.getPaisRepository().existsById(empleadoDTO.getPaisNacimiento())) {
+//            bindingResult.rejectValue("paisNacimiento", "valor.invalido");
+//        }
+//    }
+//    public void validarMaestrosPaso2(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+//        if (empleadoDTO.getTipoDocumento() == null) {
+//            bindingResult.rejectValue("tipoDocumento", "validation.notNull");
+//        } else if (!repositoryManager.getTipoDocumentoRepository().existsById(empleadoDTO.getTipoDocumento())) {
+//            bindingResult.rejectValue("tipoDocumento", "valor.invalido");
+//        }
+//
+//        if (!repositoryManager.getTipoViaRepository().existsById(empleadoDTO.getDireccion().getTipoVia())) {
+//            bindingResult.rejectValue("direccion.tipoVia", "valor.invalido");
+//        }
+//    }
+
+//    public void validarMaestrosPaso3(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+//            if (!repositoryManager.getDepartamentoRepository().existsById(empleadoDTO.getIdDepartamento())) {
+//            bindingResult.rejectValue("idDepartamento", "valor.invalido");
+//        }
+//
+//        if (empleadoDTO.getEspecializaciones() == null || empleadoDTO.getEspecializaciones().isEmpty()) {
+//            bindingResult.rejectValue("especializaciones", "validation.notNull");
+//        } else if (
+//                //usamos un stream para que devuelva el primer error de id que encuentre
+//                empleadoDTO.getEspecializaciones().stream()
+//            .anyMatch(id -> !repositoryManager.getEspecialidadesRepository().existsById(id))
+//        ){
+//            bindingResult.rejectValue("especializaciones", "valor.invalido");
+//        }
+//    }
+//    public void validarMaestrosPaso4(EmpleadoDTO empleadoDTO, BindingResult bindingResult) {
+//            if (!repositoryManager.getEntidadBancariaRepository().existsById(empleadoDTO.getDatosBancarios().getEntidadBancaria())) {
+//            bindingResult.rejectValue("datosBancarios.entidadBancaria", "valor.invalido");
+//        }
+//
+//        if (!repositoryManager.getTipoTarjetaRepository().existsById(empleadoDTO.getDatosBancarios().getTarjeta().getTipo())) {
+//            bindingResult.rejectValue("datosBancarios.tarjeta.tipo", "valor.invalido");
+//        }
+//    }

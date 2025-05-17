@@ -1,7 +1,11 @@
 package grupo.a.modulocomun.Servicios;
 
+import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.DepartamentoRepository;
+import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
 import grupo.a.modulocomun.Repositorios.Maestros.*;
+import grupo.a.modulocomun.Repositorios.NominaRepository;
+import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,4 +22,7 @@ public class RepositoryManager {
     private final TipoDocumentoRepository tipoDocumentoRepository;
     private final EspecialidadesRepository especialidadesRepository;
     private final EntidadBancariaRepository entidadBancariaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final EmpleadoRepository empleadoRepository;
+    private final NominaRepository nominaRepository;
 }

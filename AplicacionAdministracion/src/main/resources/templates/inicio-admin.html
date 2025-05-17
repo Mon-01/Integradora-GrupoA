@@ -3,57 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Administración - Lista de Empleados</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    <link rel="stylesheet" href="/estilos/InicioAdminEstilos.css">
 
-        .contenedor-principal {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 40px;
-        }
-
-        h2, h3 {
-            text-align: center;
-        }
-
-        form#filtroForm {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        form#filtroForm input, form#filtroForm button {
-            padding: 6px 10px;
-            font-size: 14px;
-        }
-
-        .tabla-contenedor {
-            width: 80%;
-            display: flex;
-            justify-content: center;
-        }
-
-        table {
-            border: 1px solid #ccc;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-    </style>
 </head>
+<style>
+    /* Estilos para los filtros */
+    .filtros-container {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+        align-items: flex-end;
+    }
+
+    .filtro-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .select-multiple {
+        min-width: 200px;
+    }
+
+    .rango-salario {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-buscar {
+        padding: 0.5rem 1rem;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-buscar:hover {
+        background-color: #45a049;
+    }
+</style>
 <body>
+<!--<div th:replace="~{fragments/navPersonal :: navP}"></div>-->
+
+<!-- Barra superior de navegación -->
+<div class="barra-superior">
+
+    <div style="font-size: 1.2rem;">
+        Zona Administración
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <span th:text="${adminEmail}" style="color: #ccc;"></span>
+        <form th:action="@{/logout}" method="post" style="margin: 0;">
+            <button type="submit" class="btn-logout">Cerrar sesión</button>
+        </form>
+    </div>
+</div>
+
 
 <div class="contenedor-principal">
     <h2>Bienvenido, <span th:text="${adminEmail}"></span></h2>
@@ -61,11 +69,49 @@
 
     <!-- Filtros de búsqueda -->
     <form id="filtroForm" method="get" th:action="@{/admin/inicio}">
-        <input type="text" name="nombre" placeholder="Nombre" th:value="${nombre}" onblur="this.form.submit()">
-        <input type="text" name="departamento" placeholder="Departamento" th:value="${departamento}" onblur="this.form.submit()">
-        <input type="number" name="salario" placeholder="Salario mínimo" th:value="${salario}" onblur="this.form.submit()">
-        <button type="submit">Buscar</button>
+        <div class="filtros-container">
+            <!-- Filtro por nombre -->
+            <div class="filtro-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre"
+                       th:value="${nombre}" placeholder="Buscar por nombre">
+            </div>
+
+            <!-- Filtro por departamento (select múltiple) -->
+            <div class="filtro-group">
+                <label for="departamentos">Departamento:</label>
+                <select id="departamentos" name="departamentos" multiple="multiple"
+                        class="select-multiple" size="3">
+                    <option th:each="depto : ${todosDepartamentos}"
+                            th:value="${depto}"
+                            th:text="${depto}"
+                            th:selected="${departamentosSeleccionados.contains(depto)}">
+                    </option>
+                </select>
+                <small>Mantén Ctrl (Windows) o Command (Mac) presionado para seleccionar múltiples</small>
+            </div>
+
+            <!-- Filtro por rango de salario -->
+            <div class="filtro-group">
+                <label>Rango salarial:</label>
+                <div class="rango-salario">
+                    <input type="text" name="salarioMin"
+                           th:value="${salarioMin}" placeholder="Mínimo" step="0.01" min="0">
+                    <span>a</span>
+                    <input type="text" name="salarioMax"
+                           th:value="${salarioMax}" placeholder="Máximo" step="0.01" min="0">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-buscar">Buscar</button>
+        </div>
     </form>
+
+    <div class="btn-listados">
+        <a href="/listado" class="btn btn-primary">Ver Listado de Nóminas</a>
+        <a href="/productos" class="btn btn-primary">Subida de Productos</a>
+        <br><br>
+    </div>
 
     <div class="tabla-contenedor">
         <table>
@@ -85,13 +131,45 @@
                 <td th:text="${emp.nombre}">Nombre</td>
                 <td th:text="${emp.apellido}">Apellidos</td>
                 <td th:text="${emp.email}">Email</td>
-                <td th:text="${emp.departamento != null ? emp.departamento.nombre_dept : 'Sin asignar'}">Depto</td>
+                <td th:text="${emp.departamento != null ? emp.departamento.nombredept : 'Sin asignar'}">Depto</td>
                 <td th:text="${emp.salarioAnual}">Salario</td>
             </tr>
             </tbody>
         </table>
     </div>
-</div>
 
+</div>
+<script src="/static/js/DesconexionAutomatica.js">
+
+    //desconexión automática
+    let timeout;
+    //definimos el tiempo de inactividad
+    const INACTIVITY_LIMIT = 5 * 1000 * 60;
+
+    //cada vez que se ejecuta uno de los eventos del array
+    ['click', 'mousemove', 'keypress'].forEach(event => {
+        //llamamos a resetTimer
+        document.addEventListener(event, resetTimer);
+    });
+
+    resetTimer();
+
+    function resetTimer() {
+        //cancelamos el temporizador anterior
+        clearTimeout(timeout);
+        //ejecuta logout si no hay actividad en el tiempo predefinido
+        timeout = setTimeout(logout, INACTIVITY_LIMIT);
+    }
+
+    function logout() {
+        //con fetch hacemos una petición al getMapping logout
+        fetch('/logout', { method: 'GET' })
+            //con el then redirigimos al usuario al login
+            .then(() => {
+                alert("Su sesión ha expirado, se le redirigirá al login");
+                window.location.href = '/login';
+            });
+    }
+</script>
 </body>
 </html>
