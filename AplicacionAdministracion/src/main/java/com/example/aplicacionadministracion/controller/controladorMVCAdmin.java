@@ -17,7 +17,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.modelmapper.ModelMapper;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,8 +52,6 @@ public class controladorMVCAdmin {
     private RepositoryManager repositoryManager;
     @Autowired
     private ServiceManager serviceManager;
-    @Autowired
-    private ModelMapper modelMapper;
 
     // Metodo GET que muestra el formulario de login de administrador.
     @GetMapping("/admin/login")
@@ -105,7 +103,7 @@ public class controladorMVCAdmin {
     @GetMapping("/admin/detalle/{id}")
     public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
         model.addAttribute("empleadoId", id); // Pasa el ID del empleado a la vista.
-        return "/detalles/DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
+        return "/DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
     }
 
     // Muestra una lista de todas las nóminas disponibles.
@@ -113,7 +111,7 @@ public class controladorMVCAdmin {
     public String listar(Model model, Map map) {
 
         model.addAttribute("nominas", nominaService.obtenerTodasNominas()); // ← Aquí pasas los DTO, no las entidades
-        return "listadoNominas"; // Muestra la vista con la lista de nóminas.
+        return "nominas/listadoNominas"; // Muestra la vista con la lista de nóminas.
     }
     @GetMapping("/nueva")
     public String nueva() {
