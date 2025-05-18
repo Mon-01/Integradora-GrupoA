@@ -37,7 +37,7 @@ public class controladorMVCCorporativo {
     @GetMapping("/reg")
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("usuarioDTO", new UsuarioDTO());
-        return "corporativo/registro.html";
+        return "corporativo/registro";
     }
     @GetMapping("/login")
     public String mostrarFormularioEmail(Model model) {
