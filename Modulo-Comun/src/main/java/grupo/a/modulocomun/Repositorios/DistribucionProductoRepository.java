@@ -3,6 +3,7 @@ package grupo.a.modulocomun.Repositorios;
 import grupo.a.modulocomun.DTO.filtros.ProductoResultadoDTO;
 import grupo.a.modulocomun.Entidades.Auxiliares.DistribucionProducto;
 import grupo.a.modulocomun.Entidades.Auxiliares.DistribucionProductoId;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +16,7 @@ public interface DistribucionProductoRepository extends JpaRepository<Distribuci
 
     @Query("""
         SELECT new grupo.a.modulocomun.DTO.filtros.ProductoResultadoDTO(
+            p.id_producto,
             p.descripcion,
             d.precio,
             (SELECT c.nombre FROM p.categorias c ORDER BY c.id ASC LIMIT 1),
@@ -37,4 +39,7 @@ public interface DistribucionProductoRepository extends JpaRepository<Distribuci
             @Param("categorias") List<String> categorias,
             @Param("esPerecedero") Boolean esPerecedero
     );
+
+    @Transactional
+    void deleteById_ProductoId(Long productoId);
 }

@@ -13,10 +13,7 @@ import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
-import grupo.a.modulocomun.Servicios.DepartamentoService;
-import grupo.a.modulocomun.Servicios.EmpleadoService;
-import grupo.a.modulocomun.Servicios.ImportacionCatalogoService;
-import grupo.a.modulocomun.Servicios.NominaService;
+import grupo.a.modulocomun.Servicios.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +38,7 @@ public class controladorRESTAdmin {
     @Autowired private NominaService nominaService;
     @Autowired private NominaRepository nominaRepository;
     @Autowired private DepartamentoService departamentoService;
+    @Autowired private ProductoService productoService;
 
     @Autowired
     public controladorRESTAdmin(UsuarioAdministradorService service) {
@@ -186,4 +184,14 @@ public class controladorRESTAdmin {
                 .collect(Collectors.toList());
     }
 
+    @DeleteMapping("/del/producto/{id}")
+    public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
+        try {
+            productoService.eliminarProducto(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al eliminar el producto: " + e.getMessage());
+        }
+    }
 }

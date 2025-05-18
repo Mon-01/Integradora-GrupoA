@@ -19,4 +19,12 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     void saveDistribucion(DistribucionProducto distribucionProducto);
 
      */
+
+//    // Método para eliminar un producto por su ID
+//    @Transactional
+//    void deleteById(Long id);
+//
+//    // Método para eliminar múltiples productos por sus IDs
+//    @Transactional
+//    void deleteAllByIdInBatch(Iterable<Long> ids);
 }

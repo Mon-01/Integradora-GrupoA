@@ -16,6 +16,7 @@ import java.util.List;
         @JsonSubTypes.Type(value = ProductoMuebleDTO.class, name = "MUEBLE")
 })
 public abstract class ProductoDTO {
+    private Long id_producto;
     private String tipoProducto;
     private String descripcion;
     private String marca;

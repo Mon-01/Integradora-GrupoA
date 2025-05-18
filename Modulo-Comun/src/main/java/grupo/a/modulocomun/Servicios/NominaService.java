@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+//o todos o ninguno
 @Transactional
 public class NominaService {
 
