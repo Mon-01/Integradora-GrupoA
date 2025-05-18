@@ -3,6 +3,7 @@ package com.example.aplicacionadministracion.controller;
 
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
+import com.example.aplicacioncorporativa.Servicios.UsuarioService;
 import grupo.a.modulocomun.DTO.Auxiliares.CatalogoProductosDTO;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.LineaNominaDTO;
@@ -39,6 +40,10 @@ public class controladorRESTAdmin {
     @Autowired private NominaRepository nominaRepository;
     @Autowired private DepartamentoService departamentoService;
     @Autowired private ProductoService productoService;
+    @Autowired
+    private ServiceManager serviceManager;
+    @Autowired private UsuarioAdministradorService usuarioAdministradorService;
+    @Autowired private UsuarioService usuarioService;
 
     @Autowired
     public controladorRESTAdmin(UsuarioAdministradorService service) {
@@ -205,4 +210,26 @@ public class controladorRESTAdmin {
                     .body("Error al eliminar el producto: " + e.getMessage());
         }
     }
+
+    @GetMapping("/api/admin/isblock/{id}")
+    public ResponseEntity<?> comprobarBloqueo(@PathVariable UUID id) {
+        if(!usuarioAdministradorService.isBloqueado(usuarioService.findById(id))){
+            return ResponseEntity.ok().build();
+        }else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+    @PostMapping("/api/admin/bloquear")
+    public ResponseEntity<?> bloquear(@RequestBody BloqueoRequest req) {
+        bloqueoService.bloquearUsuario(req.getIdEmpleado(), req.getMotivo(), req.getDiasBloqueo());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/admin/desbloquear/{id}")
+    public ResponseEntity<?> desbloquear(@PathVariable Long id) {
+        bloqueoService.desbloquearUsuario(id);
+        return ResponseEntity.ok().build();
+    }
+
 }

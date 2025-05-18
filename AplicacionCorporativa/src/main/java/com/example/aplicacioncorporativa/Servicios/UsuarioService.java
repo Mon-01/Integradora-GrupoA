@@ -107,5 +107,8 @@ public class UsuarioService {
         return passwordEncoder.matches(claveSinEncriptar, usuario.getClave());
     }
 
+    public Usuario findById(UUID id) {
+        return usuarioRepository.findById(id).orElseThrow();
+    }
 
 }
