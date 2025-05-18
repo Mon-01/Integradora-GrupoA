@@ -1,21 +1,49 @@
+//para eliminar productos con el botón
+$(document).ready(function() {
+    $('.eliminar-btn').on('click', function () {
+        const id = $(this).data('id');
+        const row = $(this).closest('tr');
+
+        if (confirm('¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.')) {
+            $.ajax({
+                url: '/api/admin/del/producto/' + id,
+                type: 'DELETE',
+                success: function (result) {
+                    row.fadeOut(400, function () {
+                        row.remove();
+                    });
+                    alert('Producto eliminado correctamente');
+                },
+                error: function (xhr) {
+                    alert('Error al eliminar el producto: ' + xhr.responseText);
+                }
+            });
+        }
+    })
+});
+
+
+//para eliminar productos masivamente
 $(document).ready(function() {
     const tablaResultados = $('#resultados tbody');
     const seleccionarProductosEliminarBtn = $('#seleccionarProductosEliminar');
     const eliminarProductosSeleccionadosBtn = $('#eliminarProductosSeleccionados');
     let modoSeleccionMultiple = false;
 
-    // Event listener para el botón "Seleccionar productos a eliminar"
+    // añadimos evento al botón seleccionar para eliminar
     seleccionarProductosEliminarBtn.on('click', function() {
         modoSeleccionMultiple = !modoSeleccionMultiple;
 
         if (modoSeleccionMultiple) {
-            // Mostrar el botón "Eliminar productos seleccionados"
+            // al pulsar el botón se mostrará el de eliminar
             eliminarProductosSeleccionadosBtn.show();
 
-            // Modificar la tabla para mostrar checkboxes
+            // y se reemplazaran los botones eliminar y editar por checkbox
             tablaResultados.find('tr').each(function() {
+                //cogemos los id de cada producto del botón eliminar
                 const idProducto = $(this).find('.eliminar-btn').data('id');
                 $(this).find('.acciones-celda').html(`
+                    <!--le asignamos el id del producto al valor del checkbox-->
                     <input type="checkbox" class="producto-checkbox" data-id="${idProducto}">
                 `);
             });
@@ -34,7 +62,7 @@ $(document).ready(function() {
             });
             seleccionarProductosEliminarBtn.text('Seleccionar productos a eliminar');
 
-            // Re-enlazar los eventos de eliminar individuales (importante!)
+            // volvemos a poner los eventos cómo estaban antes para que funcionen los botones individuales
             $('.eliminar-btn').on('click', function() {
                 const id = $(this).data('id');
                 const row = $(this).closest('tr');
@@ -60,20 +88,24 @@ $(document).ready(function() {
 
     // Event listener para el botón "Eliminar productos seleccionados"
     eliminarProductosSeleccionadosBtn.on('click', function() {
+        //creamos array para almacenar ids
         const productosSeleccionados = [];
+        //filtramos los checkbos que estén seleccionados
         tablaResultados.find('.producto-checkbox:checked').each(function() {
+            //y obtenemos el data-id de cada checkbox para añadirlo al array
             productosSeleccionados.push($(this).data('id'));
         });
 
         if (productosSeleccionados.length > 0) {
             if (confirm('¿Está seguro de que desea eliminar los productos seleccionados? Esta acción no se puede deshacer.')) {
                 $.ajax({
-                    url: '/api/admin/eliminar-multiples',
+                    url: '/api/admin/eliminarVarios/productos',
                     type: 'DELETE',
                     contentType: 'application/json',
+                    //pasamos el array a json para que lo reciba el controlador
                     data: JSON.stringify(productosSeleccionados),
                     success: function(result) {
-                        // Eliminar las filas de la tabla
+                        // Eliminar las filas de la tabla en la vista
                         productosSeleccionados.forEach(id => {
                             tablaResultados.find(`.producto-checkbox[data-id="${id}"]`).closest('tr').remove();
                         });

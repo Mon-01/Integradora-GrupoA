@@ -22,6 +22,7 @@ public class ProductoService {
     }
 
     public void eliminarProductos(List<Long> ids) {
+        distribucionProductoRepository.deleteByProducto_Ids(ids);
         productoRepository.deleteAllByIdInBatch(ids);
     }
 }

@@ -194,4 +194,15 @@ public class controladorRESTAdmin {
                     .body("Error al eliminar el producto: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/eliminarVarios/productos")
+    public ResponseEntity<?> eliminarVariosProductos(@RequestBody List<Long> id) {
+        try {
+            productoService.eliminarProductos(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al eliminar el producto: " + e.getMessage());
+        }
+    }
 }
