@@ -16,9 +16,6 @@
 <body>
 <h1>Buscar productos</h1>
 <br>
-<div>
-    <a href="/productos" class="btn btn-primary">Volver a la Subida de Productos</a>
-</div>
 
 <form id="filtroForm">
     <label>Descripción:</label>
@@ -39,6 +36,12 @@
 
     <button type="submit" class="btn btn-primary">Buscar</button>
 </form>
+<br><br>
+<div>
+    <a href="/productos" class="btn btn-primary">Volver a la Subida de Productos</a>
+    <button id="seleccionarProductosEliminar" class="btn btn-primary">Seleccionar productos a eliminar</button>
+    <button id="eliminarProductosSeleccionados" class="btn btn-danger" style="display: none;">Eliminar productos seleccionados</button>
+</div>
 
 <hr>
 
@@ -89,7 +92,7 @@
                           <td>${p.categoriaPrincipal}</td>
                           <td>${p.unidades}</td>
                           <td>${p.proveedor}</td>
-                          <td>
+                          <td class="acciones-celda">
                             <button class="btn btn-danger eliminar-btn" data-id="${p.id_producto}">Eliminar</button>
                             <button class="btn btn-primary editar-btn" data-id="${p.id_producto}">Editar</button>
                           </td>
@@ -103,5 +106,6 @@
 
 </script>
 <script src="/js/EliminarProducto.js"></script>
+<script src="/js/EliminarVariosProductos.js"></script>
 </body>
 </html>
