@@ -203,149 +203,19 @@ public class controladorMVCAdmin {
     @PostMapping("/nomina/guardar")
     public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
         Nomina nominaAnterior = nominaService.obtenerNomina(nominaDTO.getId());
-        //eliminamos líneas antigüas excepto el salario base
-        nominaAnterior.getLineas().removeIf(linea ->
-                !"Salario Base".equalsIgnoreCase(linea.getDescripcion()));
+        //obtenemos las líneas modificadas
+        List<LineaNominaDTO> lineasNuevas = nominaDTO.getLineas().stream()
+                //las filtramos para evitar el salario base
+                .filter(linea -> linea.getConcepto() != null && !"salario base".equalsIgnoreCase(linea.getConcepto()))
+                .collect(Collectors.toList());
 
-        //eliminamos las líneas nulas que puedan dar conflictos
-        nominaDTO.getLineas().removeIf(linea ->
-                (linea.getConcepto() == null || linea.getConcepto().trim().isEmpty()) &&
-                        linea.getPorcentaje() == null &&
-                        linea.getImporteFijo() == null &&
-                        linea.getCantidad() == null
-        );
+        List<LineaNomina> lineasAntiguas = nominaAnterior.getLineas();
 
-        nominaAnterior.getLineas().removeIf(linea ->
-                !"Salario Base".equalsIgnoreCase(linea.getDescripcion()));
-
-        List<LineaNomina> lineasActualizadas = nominaDTO.getLineas().stream().map(lineaDTO -> {
-            //diferenciamos entre línea a actualizar y línea a insertar
-            if (lineaDTO.getId() != null) {
-                //al no ser null tiene id y la podemos actualizar
-                Optional<LineaNomina> lineaExistenteOptional = nominaAnterior.getLineas().stream()
-                        .filter(ln -> lineaDTO.getId().equals(ln.getId()))
-                        .findFirst();
-
-                if (lineaExistenteOptional.isPresent()) { // Añadida comprobación
-                    LineaNomina lineaExistente = lineaExistenteOptional.get();
-                    // Actualiza la línea existente
-                    lineaExistente.setDescripcion(lineaDTO.getConcepto());
-                    lineaExistente.setEsDevengo(lineaDTO.getEsDevengo());
-
-                    //actualizamos el porcentaje o importe poniendo el contrario a cero
-                    if (lineaDTO.getTipoValor() == 1) {
-                        lineaExistente.setImporteFijo(BigDecimal.ZERO);
-                        lineaExistente.setPorcentaje(lineaDTO.getPorcentaje() != null ? new BigDecimal(lineaDTO.getPorcentaje()) : BigDecimal.ZERO);
-                    } else {
-                        lineaExistente.setPorcentaje(BigDecimal.ZERO);
-                        lineaExistente.setImporteFijo(lineaDTO.getImporteFijo() != null ? new BigDecimal(lineaDTO.getImporteFijo()) : BigDecimal.ZERO);
-                    }
-                    BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
-                    lineaExistente.setImporte(nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(), porcentaje));
-                    return lineaExistente;
-                } // else añadido para el caso de que no exista la línea con ese ID.
-                else {
-                    return null; // Devolvemos null para filtrar luego.
-                }
-
-            } else {
-                LineaNomina lineaNueva = new LineaNomina();
-                lineaNueva.setDescripcion(lineaDTO.getConcepto());
-                lineaNueva.setEsDevengo(lineaDTO.getEsDevengo());
-
-                if (lineaDTO.getTipoValor() == 1) {
-                    lineaNueva.setImporteFijo(BigDecimal.ZERO);
-                    lineaNueva.setPorcentaje(lineaDTO.getPorcentaje() != null ?  new BigDecimal(lineaDTO.getPorcentaje()) : BigDecimal.ZERO);
-                } else {
-                    lineaNueva.setPorcentaje(BigDecimal.ZERO);
-                    lineaNueva.setImporteFijo(lineaDTO.getImporteFijo() != null ?  new BigDecimal(lineaDTO.getImporteFijo()) : BigDecimal.ZERO);
-                }
-                lineaNueva.setImporte(nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(), lineaNueva.getPorcentaje()));
-                lineaNueva.setNomina(nominaAnterior);
-                return lineaNueva;
-            }
-
-        }).filter(Objects::nonNull).collect(Collectors.toList());
-
-//        nominaDTO.getLineas().stream().map(lineaDTO -> {
-//            //diferenciamos entre líne a actualizar y línea a insertar
-//            if (lineaDTO.getId() != null) {
-//                //al no ser null tiene id y la podemos actualizar
-//                Optional<LineaNomina> lineaExistenteOptional = nominaAnterior.getLineas().stream()
-//                        .filter(ln -> lineaDTO.getId().equals(ln.getId()))
-//                        .findFirst();
-//
-//                    LineaNomina lineaExistente = lineaExistenteOptional.get();
-//                    // Actualiza la línea existente
-//                    lineaExistente.setDescripcion(lineaDTO.getConcepto());
-//                    lineaExistente.setEsDevengo(lineaDTO.getEsDevengo());
-//
-//                    //actualizamos el porcentaje o importe poniendo el contrario a cero
-//                if(lineaExistenteOptional.get().getPorcentaje() != BigDecimal.ZERO) {
-//                    lineaExistente.setImporteFijo(BigDecimal.ZERO);
-//                    BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
-//                    lineaExistente.setPorcentaje(porcentaje);
-//                    lineaExistente.setImporte(nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(),porcentaje));
-//                }else{
-//                    lineaExistente.setPorcentaje(BigDecimal.ZERO);
-//                    BigDecimal importeFijo = new BigDecimal(lineaDTO.getImporteFijo());
-//                    lineaExistente.setImporteFijo(importeFijo);
-//                    lineaExistente.setImporte(importeFijo);
-//                }
-//                return lineaExistente;
-//            } else {
-//                LineaNomina lineaNueva = new LineaNomina();
-//                lineaNueva.setId(lineaDTO.getId());
-//                lineaNueva.setDescripcion(lineaDTO.getConcepto());
-//                if(lineaExistenteOptional.get().getPorcentaje() != BigDecimal.ZERO) {
-//                    lineaExistente.setImporteFijo(BigDecimal.ZERO);
-//                    BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
-//                    lineaExistente.setPorcentaje(porcentaje);
-//                    lineaExistente.setImporte(nominaService.calcularImportePorcentaje(nominaAnterior.getEmpleado().getSalarioAnual(),porcentaje));
-//                }else{
-//                    lineaExistente.setPorcentaje(BigDecimal.ZERO);
-//                    BigDecimal importeFijo = new BigDecimal(lineaDTO.getImporteFijo());
-//                    lineaExistente.setImporteFijo(importeFijo);
-//                    lineaExistente.setImporte(importeFijo);
-//                }
-//            }
-//
-//                return lineaActualizada;
-//
-//
-//        }).collect(Collectors.toList());
-
-//                .forEach(lineaDTO -> {
-//            LineaNomina linea = new LineaNomina();
-//            BigDecimal importe;
-//            // Mapeo manual seguro
-//            linea.setDescripcion(lineaDTO.getConcepto());
-//            linea.setEsDevengo(lineaDTO.getEsDevengo());
-//
-//            if (lineaDTO.getTipoValor() != null && lineaDTO.getTipoValor() == 1) {
-//                // actualiza la línea a porcentaje y anula el importe fijo si lo hubiera
-//                linea.setPorcentaje(lineaDTO.getPorcentaje() != null ?
-//                        new BigDecimal(lineaDTO.getPorcentaje()) : BigDecimal.ZERO);
-//                linea.setImporteFijo(BigDecimal.ZERO);
-//            } else {
-//                // actualiza la línea a importe fijo y anula el porcentaje si lo hubiera
-//                linea.setImporteFijo(lineaDTO.getImporteFijo() != null ?
-//                        new BigDecimal(lineaDTO.getImporteFijo()) : BigDecimal.ZERO);
-//                linea.setPorcentaje(BigDecimal.ZERO);
-//            }
-
-            //dependiendo si la línea tiene porcentaje o importeFijo se calcula de una manera u otra
-
-
-//            linea.setNomina(nominaAnterior);
-//            nominaAnterior.getLineas().add(linea);
-//        });
+        List<LineaNomina> lineasActualizadas = nominaService.modificarLineas(lineasAntiguas, lineasNuevas);
 
         nominaAnterior.setLineas(lineasActualizadas);
         repositoryManager.getNominaRepository().save(nominaAnterior);
         return "redirect:/listado";
-//        repositoryManager.getNominaRepository().save(nominaAnterior);
-//        return "redirect:/listado";
     }
 
 }

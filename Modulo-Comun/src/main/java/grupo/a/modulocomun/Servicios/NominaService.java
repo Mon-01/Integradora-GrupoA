@@ -21,9 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -317,4 +316,72 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
         return salarioBase.multiply(new BigDecimal(porcentaje.doubleValue()))
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
+
+    public List<LineaNomina> modificarLineas(List<LineaNomina> lineasAntiguas, List<LineaNominaDTO> lineasNuevas) {
+        //actualizar líneas ya existentes
+        lineasNuevas.stream().filter(linea -> linea.getId() != null)
+                .forEach(linea -> {
+                    //al tener id y encontrar el id entre las líneas antiguas,localizamos la línea y la actualizamos
+                    lineasAntiguas.stream().filter(antigua -> antigua.getId().equals(linea.getId()))
+                            //la primera que encuentra que coincidan los id
+                            .findFirst().ifPresent(antigua -> {
+                               antigua.setDescripcion(linea.getConcepto());
+                               antigua.setEsDevengo(linea.getEsDevengo());
+                               //si se ha modificado a porcentaje
+                               if(linea.getTipoValor() == 1){
+                                   //ponemos importe a 0
+                                   antigua.setImporteFijo(BigDecimal.ZERO);
+                                   //seteamos nuevo porcentaje
+                                   BigDecimal porcentaje = linea.getPorcentaje() != null ? new BigDecimal(linea.getPorcentaje()) : BigDecimal.ZERO;
+                                   antigua.setPorcentaje(porcentaje);
+                                   //calculamos el importe
+                                   antigua.setImporte(calcularImportePorcentaje(antigua.getNomina().getEmpleado().getSalarioAnual(),porcentaje));
+                               }else{
+                                   //ponemos porcentaje a 0
+                                   antigua.setPorcentaje(BigDecimal.ZERO);
+                                   //seteamos nuevo importe fijo
+                                   BigDecimal importeFijo = linea.getImporteFijo() != null ?  new BigDecimal(linea.getImporteFijo()) : BigDecimal.ZERO;
+                                   antigua.setImporteFijo(importeFijo);
+                                   //ponemos el nuevo importe
+                                   antigua.setImporte(importeFijo);
+                                }
+                            });
+                });
+
+        //crear las nuevas líneas metidas
+        List<LineaNomina> nuevasLineas = new ArrayList<>();
+        lineasNuevas.stream().filter(linea -> linea.getId() == null)
+                .forEach(linea -> {
+                    LineaNomina nuevaLinea = new LineaNomina();
+                    nuevaLinea.setDescripcion(linea.getConcepto());
+                    nuevaLinea.setEsDevengo(linea.getEsDevengo());
+                    if(linea.getTipoValor() == 1){
+                        //ponemos importe a 0
+                        nuevaLinea.setImporteFijo(BigDecimal.ZERO);
+                        //seteamos nuevo porcentaje
+                        BigDecimal porcentaje = linea.getPorcentaje() != null ? new BigDecimal(linea.getPorcentaje()) : BigDecimal.ZERO;
+                        nuevaLinea.setPorcentaje(porcentaje);
+                        //calculamos el importe
+                        nuevaLinea.setImporte(calcularImportePorcentaje(nuevaLinea.getNomina().getEmpleado().getSalarioAnual(),porcentaje));
+                    }else{
+                        //ponemos porcentaje a 0
+                        nuevaLinea.setPorcentaje(BigDecimal.ZERO);
+                        //seteamos nuevo importe fijo
+                        BigDecimal importeFijo = linea.getImporteFijo() != null ?  new BigDecimal(linea.getImporteFijo()) : BigDecimal.ZERO;
+                        nuevaLinea.setImporteFijo(importeFijo);
+                        //ponemos el nuevo importe
+                        nuevaLinea.setImporte(importeFijo);
+                    }
+                    //al ser líneas de la misma nómina, da igual coger la primera que la última al ser el mismo
+                    //y como solo hemos filtrado el salario base del dto la lista de entidades siempre va a tener mínimo 1 línea
+                    nuevaLinea.setNomina(lineasAntiguas.getFirst().getNomina());
+                    nuevasLineas.add(nuevaLinea);
+                });
+
+        //eliminación de líneas
+//        List<LineaNomina> lineasActualizadas = new ArrayList<>(lineasAntiguas);
+//        lineasActualizadas.addAll(nuevasLineas);
+        return lineasAntiguas;
+    }
+
 }
