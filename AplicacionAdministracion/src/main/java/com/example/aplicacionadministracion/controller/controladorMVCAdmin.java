@@ -52,11 +52,17 @@ public class controladorMVCAdmin {
     private RepositoryManager repositoryManager;
     @Autowired
     private ServiceManager serviceManager;
-
+/*
     // Metodo GET que muestra el formulario de login de administrador.
     @GetMapping("/admin/login")
     public String mostrarLoginAdmin() {
         return "login-admin"; // Retorna la vista "login-admin.html" ubicada en /templates/.
+    }
+
+ */
+    @GetMapping("/admin/login")
+    public String mostrarLoginAdmin() {
+        return "redirect:http://vista2.administrativa.com:80/"; // Retorna la vista "login-admin.html" ubicada en /templates/.
     }
 
     // Inyección del servicio que maneja lógica de administradores (ej: autenticación, filtrado).
@@ -66,14 +72,15 @@ public class controladorMVCAdmin {
     // Muestra la pantalla de inicio del panel administrador, con filtros para buscar empleados.
     @GetMapping("/admin/inicio")
     public String mostrarInicioAdmin(
+            @RequestParam(required = false) String token,
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) List<String> departamentos,
             @RequestParam(required = false) BigDecimal salarioMin,
             @RequestParam(required = false) BigDecimal salarioMax,
             Model model, HttpSession session) {
 
-        UsuarioAdministradorDTO dto = (UsuarioAdministradorDTO) session.getAttribute("adminLogueado");
-        if (dto == null) return "redirect:/admin/login";
+    //   UsuarioAdministradorDTO dto = (UsuarioAdministradorDTO) session.getAttribute("adminLogueado");
+    //    if (dto == null) return "redirect:/admin/login";
         List<Empleado> empleados = empleadoService.buscarFiltrados(nombre, departamentos, salarioMin, salarioMax);
         List<String> todosDepartamentos = empleadoService.obtenerNombresDepartamentos();
 
@@ -82,7 +89,7 @@ public class controladorMVCAdmin {
         model.addAttribute("todosDepartamentos", todosDepartamentos);
         model.addAttribute("salarioMin", salarioMin);
         model.addAttribute("salarioMax", salarioMax);
-        model.addAttribute("adminEmail", dto.getEmail());
+      //  model.addAttribute("adminEmail", dto.getEmail());
         model.addAttribute("empleados", empleados);
 
         return "inicio-admin";
