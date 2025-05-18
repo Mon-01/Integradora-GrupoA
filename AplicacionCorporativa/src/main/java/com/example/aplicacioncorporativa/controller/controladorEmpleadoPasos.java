@@ -28,7 +28,11 @@ public class controladorEmpleadoPasos {
 
 
     @GetMapping("/paso1")
-    public String mostrarPaso1(HttpSession sesion, Model model) {
+    public String mostrarPaso1(HttpSession sesion, Model model, HttpSession session) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado==null) {
+            return "redirect:/login";
+        }
         EmpleadoDTO datosEmpleado = getEmpleadoFromSession(sesion);
         model.addAttribute("datos", datosEmpleado);
         model.addAttribute("generos", serviceManager.getGeneroService().obtenerTodos());
@@ -56,7 +60,11 @@ public class controladorEmpleadoPasos {
     }
 
     @GetMapping("/paso2")
-    public String mostrarPaso2(HttpSession sesion, Model model) {
+    public String mostrarPaso2(HttpSession sesion, Model model, HttpSession session) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado==null) {
+            return "redirect:/login";
+        }
         EmpleadoDTO datosEmpleado = getEmpleadoFromSession(sesion);
         model.addAttribute("tipoDoc", serviceManager.getTipoDocumentoService().obtenerTiposDocumento());
         model.addAttribute("vias", serviceManager.getTipoViaService().obtenerTipoVia());
@@ -85,7 +93,11 @@ public class controladorEmpleadoPasos {
     }
 
     @GetMapping("/paso3")
-    public String mostrarPaso3(HttpSession sesion, Model model) {
+    public String mostrarPaso3(HttpSession sesion, Model model, HttpSession session) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado==null) {
+            return "redirect:/login";
+        }
         EmpleadoDTO datosEmpleado = getEmpleadoFromSession(sesion);
         model.addAttribute("datos", datosEmpleado);
         model.addAttribute("departamentos", serviceManager.getDepartamentoService().obtenerTodos());
@@ -113,7 +125,11 @@ public class controladorEmpleadoPasos {
     }
 
     @GetMapping("/paso4")
-    public String mostrarPaso4(HttpSession sesion, Model model) {
+    public String mostrarPaso4(HttpSession sesion, Model model, HttpSession session) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado==null) {
+            return "redirect:/login";
+        }
         EmpleadoDTO datosEmpleado = getEmpleadoFromSession(sesion);
         model.addAttribute("datos", datosEmpleado);
         model.addAttribute("entidades", serviceManager.getEntidadBancariaService().obtenerEntidadesBancarias());
@@ -148,6 +164,10 @@ public class controladorEmpleadoPasos {
 
     @GetMapping("/resumen")
     public String resumen(Model model, HttpSession session) {
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado==null) {
+            return "redirect:/login";
+        }
         EmpleadoDTO empleado = (EmpleadoDTO) session.getAttribute("empleado");
         model.addAttribute("empleadoForm", empleado);
         model.addAttribute("generoService", serviceManager.getGeneroService());
