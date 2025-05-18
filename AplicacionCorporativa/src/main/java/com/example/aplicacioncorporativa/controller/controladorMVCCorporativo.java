@@ -1,11 +1,15 @@
 package com.example.aplicacioncorporativa.controller;
 
+import com.example.aplicacioncorporativa.component.CookieSerializer;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.Usuario;
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
 import grupo.a.modulocomun.Servicios.EmpleadoService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -94,7 +99,9 @@ public class controladorMVCCorporativo {
         return "redirect:/inicio";
     }
     @GetMapping("/inicio")
-    public String areaPersonal(@ModelAttribute("usuarioDTO") UsuarioDTO usuarioDTO, Model model) {
+    public String areaPersonal(@ModelAttribute("usuarioDTO") UsuarioDTO usuarioDTO, Model model,
+                               HttpServletResponse response,
+                               HttpServletRequest request) {
         Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
         String email = (String) session.getAttribute("emailTemporal");
         usuarioDTO.setEmail(email);
@@ -127,7 +134,42 @@ public class controladorMVCCorporativo {
         contadorGlobal.put(usuarioLogueado.getEmail(), contadorTotal);
 
         session.getServletContext().setAttribute("contadorGlobal", contadorGlobal);
+        try {
+            // 1. Obtener o inicializar lista de usuarios
+            List<String> usuariosAutenticados = new ArrayList<>();
 
+            // 2. Leer cookie existente
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("authenticatedUsers".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isEmpty()) {
+                        try {
+                            usuariosAutenticados = CookieSerializer.deserialize(cookie.getValue());
+                        } catch (Exception e) {
+                            // Si hay error al deserializar, crear lista vacía
+                            usuariosAutenticados = new ArrayList<>();
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // 3. Añadir usuario actual si no existe
+            String emailUsuario = usuarioLogueado.getEmail();
+            if (!usuariosAutenticados.contains(emailUsuario)) {
+                usuariosAutenticados.add(emailUsuario);
+
+                // 4. Crear nueva cookie serializada
+                String serialized = CookieSerializer.serialize(usuariosAutenticados);
+                Cookie authCookie = new Cookie("authenticatedUsers", serialized);
+                authCookie.setMaxAge(30 * 24 * 60 * 60); // 30 días
+                authCookie.setPath("/");
+                authCookie.setHttpOnly(false); // Permitir acceso desde JS
+                response.addCookie(authCookie);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al manejar cookie de usuarios: " + e.getMessage());
+        }
         // Enviamos datos a la vista
         model.addAttribute("usuario",usuarioLogueado);
         model.addAttribute("usuarioEmail", usuarioLogueado.getEmail());

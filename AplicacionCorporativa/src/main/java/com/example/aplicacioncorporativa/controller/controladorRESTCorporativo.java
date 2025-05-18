@@ -1,6 +1,7 @@
 package com.example.aplicacioncorporativa.controller;
 
 import ch.qos.logback.core.model.Model;
+import com.example.aplicacioncorporativa.component.CookieSerializer;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
@@ -26,10 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -223,6 +221,16 @@ public class controladorRESTCorporativo {
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/deserializar-cookie")
+    public ResponseEntity<List<String>> deserializarCookie(@RequestBody String cookieValue) {
+        try {
+            List<String> usuarios = CookieSerializer.deserialize(cookieValue);
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyList());
         }
     }
 

@@ -4,13 +4,6 @@
     <meta charset="UTF-8">
     <title>Datos de Contacto - Paso 2</title>
     <style id="estilo-dinamico">
-        /* Estilos base que siempre se aplican */
-        .error {
-            color: red;
-            font-weight: bold;
-        }
-
-        /* Estilos que se aplican solo con la clase styled */
         body.styled {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -32,7 +25,6 @@
 
         body.styled nav a {
             text-decoration: none;
-            margin: 0 5px;
         }
 
         body.styled nav button {
@@ -86,6 +78,12 @@
 
         body.styled input[type="radio"] {
             margin-right: 10px;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 5px;
         }
 
         body.styled button[type="submit"],
@@ -251,14 +249,16 @@
 
     </fieldset>
     <a href="/paso1"><button type="button">Volver</button></a>
-    <button type="button" onclick="blanquear()"><span th:text="#{boton.vaciar}"/></button>
+    <button type="button" onclick="blanquear()" ><span th:text="#{boton.vaciar}"/></button>
     <button type="submit">Grabar Información y continuar al paso 3</button>
 </form>
 <script src="/js/botonesRegistroPasos.js" defer></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Agregar clase styled al body inicialmente
         document.body.classList.add('styled');
 
+        // Botón de alternancia de estilos
         const toggleBtn = document.getElementById('toggle-styles');
         toggleBtn.addEventListener('click', function() {
             if (document.body.classList.contains('styled')) {
