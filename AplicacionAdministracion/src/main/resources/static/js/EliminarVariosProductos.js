@@ -63,8 +63,10 @@ $(document).ready(function() {
             tablaResultados.find('tr').each(function() {
                 const idProducto = $(this).find('.producto-checkbox').data('id');
                 $(this).find('.acciones-celda').html(`
-                    <button class="btn btn-danger eliminar-btn" data-id="${idProducto}">Eliminar</button>
-                    <button class="btn btn-primary editar-btn" data-id="${idProducto}">Editar</button>
+                    <button class="btn btn-danger eliminar-btn" data-id="${idProducto}">
+                    <i class="fas fa-trash"></i>Eliminar</button>
+                    <button class="btn btn-primary editar-btn" data-id="${idProducto}">
+                    <i class="fas fa-pen-to-square"></i>Editar</button>
                 `);
             });
             seleccionarProductosEliminarBtn.text('Seleccionar productos a eliminar');
