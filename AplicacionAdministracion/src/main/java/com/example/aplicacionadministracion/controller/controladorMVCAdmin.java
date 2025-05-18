@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import org.slf4j.Logger;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -105,13 +106,21 @@ public class controladorMVCAdmin {
             return null;  // Si el formato es inválido, se ignora el filtro
         }
     }
-
+/*
     // Muestra el detalle de un empleado a través de su ID.
     @GetMapping("/admin/detalle/{id}")
     public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
         model.addAttribute("empleadoId", id); // Pasa el ID del empleado a la vista.
         return "/DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
     }
+
+ */
+    @GetMapping("/admin/detalle/{id}")
+    public String mostrarDetalleEmpleado(@PathVariable Long id, RedirectAttributes attributes) {
+        attributes.addAttribute("id", id);
+        return "redirect:http://vista3.corporativa.com:80/";
+    }
+
 
     // Muestra una lista de todas las nóminas disponibles.
     @GetMapping("/listado")
@@ -146,13 +155,6 @@ public class controladorMVCAdmin {
 
 
     // Muestra un formulario para crear una nueva nómina.
-
-
-    @GetMapping("/apacher3")
-    public String apache3(){
-        return "redirect:http://vista3.corporativa.com:80/";
-
-    }
 
 
     @GetMapping("/productos")
