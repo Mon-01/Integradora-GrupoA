@@ -6,44 +6,6 @@
     <link rel="stylesheet" href="/estilos/InicioAdminEstilos.css">
 
 </head>
-<style>
-    /* Estilos para los filtros */
-    .filtros-container {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-        margin-bottom: 1.5rem;
-        align-items: flex-end;
-    }
-
-    .filtro-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .select-multiple {
-        min-width: 200px;
-    }
-
-    .rango-salario {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-buscar {
-        padding: 0.5rem 1rem;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    .btn-buscar:hover {
-        background-color: #45a049;
-    }
-</style>
 <body>
 <!--<div th:replace="~{fragments/navPersonal :: navP}"></div>-->
 
@@ -122,6 +84,7 @@
                 <th>Email</th>
                 <th>Departamento</th>
                 <th>Salario</th>
+                <th>Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -133,12 +96,40 @@
                 <td th:text="${emp.email}">Email</td>
                 <td th:text="${emp.departamento != null ? emp.departamento.nombredept : 'Sin asignar'}">Depto</td>
                 <td th:text="${emp.salarioAnual}">Salario</td>
+                <td><button class="lock-btn" th:data-id="${emp.id_empleado}"
+                            title="Bloquear usuario">
+                    🔒
+                </button></td>
             </tr>
             </tbody>
         </table>
     </div>
 
 </div>
+<!--ventana modal para bloqueos de usuario-->
+<div id="modalBloqueo" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Bloquear Usuario</h2>
+        <p id="modalNombre"></p>
+        <label for="motivoBloqueo">Motivo del bloqueo:</label>
+        <textarea id="motivoBloqueo" rows="4" style="width: 100%;"></textarea>
+
+        <label for="tiempo">Tiempo de bloqueo:</label>
+        <select id="tiempo">
+            <option value="1">1 min</option>
+            <option value="3">3 días</option>
+            <option value="7">1 semana</option>
+            <option value="30">1 mes</option>
+        </select>
+
+        <br><br>
+        <button id="aceptarBloqueo">Aceptar</button>
+        <button id="cancelarBloqueo">Cancelar</button>
+    </div>
+</div>
+
+<script src="/js/BloqueoUsuario.js"></script>
 <script src="/static/js/DesconexionAutomatica.js">
 
     //desconexión automática
