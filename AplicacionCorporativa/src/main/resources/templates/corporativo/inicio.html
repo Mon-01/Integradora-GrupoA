@@ -1,48 +1,107 @@
-<!-- templates/login.html -->
 <!DOCTYPE html>
-<html >
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Inicio de sesión - MonArNa SL</title>
     <link rel="stylesheet" href="/css/inicio.css">
+    <style>
+        .logged-users {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .logged-users h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .logged-users ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .logged-users li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
 </head>
 <body>
-
-<!-- Incluir barra de navegación -->
 <div th:replace="~{fragments/nav :: navbar}"></div>
 
 <div class="login-container">
     <div class="login-box">
         <h2>Iniciar sesión</h2>
         <form th:action="@{/email}" th:object="${usuarioDTO}" method="post">
-            <input type="text" th:field="*{email}" placeholder="Correo electrónico" >
-            <div th:text="${error} " class="error"></div>
+            <input type="text" th:field="*{email}" placeholder="Correo electrónico">
+            <div th:text="${error}" class="error"></div>
             <button type="submit">Entrar</button>
         </form>
         <a href="/reg">¿No tienes Usuario?</a>
     </div>
 
-    <!--div con la ventana de usuario bloqueado-->
-        <div id="modalBloqueado" style="display:none;" th:if="${usuario != null}">
-            <!--como usuario solo está en caso de que el usuario este bloqueado, usamos el th:if-->
-            <div class="modal-content">
-                <h2>Cuenta bloqueada</h2>
-                <p>Tu cuenta ha sido bloqueada.</p>
-                <p ><strong>Motivo:</strong><span th:text="${usuario.getMotivoBloqueo()}"></span></p>
-                <p ><strong>Hasta:</strong><span th:text="${usuario.getFechaFinBloqueo()}"></span></p>
-                <button onclick="document.getElementById('modalBloqueado').style.display='none'">Cerrar</button>
-            </div>
+    <!-- Lista de usuarios autenticados -->
+    <div class="logged-users">
+        <h3>Usuarios recientemente autenticados:</h3>
+        <ul id="authenticatedUsersList"></ul>
+    </div>
+
+    <!-- Modal de usuario bloqueado -->
+    <div id="modalBloqueado" style="display:none;" th:if="${usuario != null}">
+        <div class="modal-content">
+            <h2>Cuenta bloqueada</h2>
+            <p>Tu cuenta ha sido bloqueada.</p>
+            <p><strong>Motivo:</strong><span th:text="${usuario.getMotivoBloqueo()}"></span></p>
+            <p><strong>Hasta:</strong><span th:text="${usuario.getFechaFinBloqueo()}"></span></p>
+            <button onclick="document.getElementById('modalBloqueado').style.display='none'">Cerrar</button>
         </div>
+    </div>
 </div>
 
 <script th:inline="javascript">
     window.onload = function() {
-        //obtien true o false de la función isBloqueado del controlador
+        // Mostrar modal si está bloqueado
         const estaBloqueado = /*[[${bloqueado}]]*/ false;
         if (estaBloqueado) {
             document.getElementById("modalBloqueado").style.display = "block";
         }
+
+        // Mostrar usuarios autenticados
+        mostrarUsuariosAutenticados();
     };
+
+    function mostrarUsuariosAutenticados() {
+        const cookie = getCookie('authenticatedUsers');
+        if (!cookie) return;
+
+        try {
+            // Decodificar la cookie (Base64)
+            const decodedData = atob(decodeURIComponent(cookie));
+
+            // Parsear el JSON manualmente
+            const users = decodedData.slice(1, -1)  // Eliminar corchetes
+                .split(',')                         // Separar elementos
+                .map(email => email.trim().replace(/"/g, '')); // Limpiar comillas
+
+            const listElement = document.getElementById('authenticatedUsersList');
+            if (listElement) {
+                users.forEach(user => {
+                    if (user) {
+                        const li = document.createElement('li');
+                        li.textContent = user;
+                        listElement.appendChild(li);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error procesando cookie:', error);
+        }
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift().trim();
+    }
 </script>
 </body>
 </html>

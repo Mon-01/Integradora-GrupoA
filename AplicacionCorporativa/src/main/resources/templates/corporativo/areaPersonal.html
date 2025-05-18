@@ -102,15 +102,15 @@
         <form id="profileForm">
             <div class="form-group">
                 <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" th:value="${usuario.empleado?.nombre}">
+                <input type="text" id="nombre" name="nombre" th:value="${usuario.empleado?.nombre}" th:disabled="${usuario.empleado == null}">
             </div>
             <div class="form-group">
                 <label for="apellido">Apellido:</label>
-                <input type="text" id="apellido" name="apellido" th:value="${usuario.empleado?.apellido}">
+                <input type="text" id="apellido" name="apellido" th:value="${usuario.empleado?.apellido}" th:disabled="${usuario.empleado == null}">
             </div>
             <div class="form-group">
                 <label for="telefono">Teléfono:</label>
-                <input type="text" id="telefono" name="telefono" th:value="${usuario.empleado?.telefono}">
+                <input type="text" id="telefono" name="telefono" th:value="${usuario.empleado?.telefono}" th:disabled="${usuario.empleado == null}">
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>

@@ -1,6 +1,7 @@
 package com.example.aplicacioncorporativa.controller;
 
 import ch.qos.logback.core.model.Model;
+import com.example.aplicacioncorporativa.component.CookieSerializer;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
@@ -18,14 +19,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -47,36 +49,64 @@ public class controladorRESTCorporativo {
     @Autowired
     private NominaService nominaService;
 
-     /*   @PostMapping("/registro") // cambiamos la ruta para diferenciarlo
-        public ResponseEntity<?> registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-            if (usuarioService.buscarPorEmail(Optional.of(usuarioDTO)).isPresent()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("Ya existe una cuenta con ese email.");
-            }
 
-            Optional<Usuario> guardado = usuarioService.registrarUsuarioDesdeDTO(Optional.of(usuarioDTO));
-
-            return guardado
-                    .<ResponseEntity<?>>map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body("No se pudo guardar el usuario."));
+    @PostMapping("/registro")
+    public ResponseEntity<?> registrarUsuario(@Validated @RequestBody UsuarioDTO usuarioDTO,
+                                              BindingResult bindingResult)  {
+        if (bindingResult.hasErrors()) {
+            // Crear un mapa de errores por campo
+            Map<String, String> errores = bindingResult.getFieldErrors().stream()
+                    .collect(Collectors.toMap(
+                            FieldError::getField,
+                            FieldError::getDefaultMessage,
+                            (mensaje1, mensaje2) -> mensaje1 + ", " + mensaje2
+                    ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(errores);
         }
 
-      */
+
+
+        if (usuarioService.buscarPorEmail(Optional.of(usuarioDTO)).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Ya existe una cuenta con ese email.");
+        }
+
+        Optional<Usuario> guardado = usuarioService.registrarUsuarioDesdeDTO(Optional.of(usuarioDTO));
+
+        return guardado
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("No se pudo guardar el usuario."));
+    }
+
+
+
+
+/*
      @PostMapping("/registro")  //error 405
-     public String registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-         if (usuarioService.buscarPorEmail(Optional.of(usuarioDTO)).isPresent()) {
-             return "Ya existe una cuenta con ese email.";
-         }
+     public String registrarUsuario(@Validated @RequestBody UsuarioDTO usuarioDTO,
+                                    BindingResult result) {
+         if (result.hasErrors()){
+             return "errores en:"+result.getFieldErrors();
+         }else {
+             if (usuarioService.buscarPorEmail(Optional.of(usuarioDTO)).isPresent()) {
+                 return "Ya existe una cuenta con ese email.";
+             }
 
-         Optional<Usuario> guardado = usuarioService.registrarUsuarioDesdeDTO(Optional.of(usuarioDTO));
+             Optional<Usuario> guardado = usuarioService.registrarUsuarioDesdeDTO(Optional.of(usuarioDTO));
 
-         if (guardado.isPresent()) {
-             return "Usuario registrado exitosamente.";
-         } else {
-             return "Error al registrar el usuario.";
+             if (guardado.isPresent()) {
+                 return "Usuario registrado exitosamente.";
+             } else {
+                 return "Error al registrar el usuario.";
+             }
          }
      }
+
+ */
+
+
 
     @GetMapping("/contador-total")  //error 405
     public Integer obtenerContadorTotal() {
@@ -191,6 +221,16 @@ public class controladorRESTCorporativo {
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/deserializar-cookie")
+    public ResponseEntity<List<String>> deserializarCookie(@RequestBody String cookieValue) {
+        try {
+            List<String> usuarios = CookieSerializer.deserialize(cookieValue);
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyList());
         }
     }
 

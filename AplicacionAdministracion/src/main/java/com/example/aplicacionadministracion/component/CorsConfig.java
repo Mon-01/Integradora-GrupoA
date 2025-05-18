@@ -9,7 +9,9 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("http://vista1.nomina.com") // Permitir desde cualquier origen (ajustar en producción)
-                .allowedMethods("GET", "POST", "PUT", "DELETE");
+                .allowedOrigins("http://vista1.nomina.com","http://vista2.administrativa.com","http://vista3.corporativa.com") // Permitir desde cualquier origen (ajustar en producción)
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }

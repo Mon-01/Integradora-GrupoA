@@ -48,12 +48,14 @@ public class controladorRESTAdmin {
     @Autowired
     private EmpleadoService empleadoService;
 
-    @PostMapping("/loginAdmin") //error 400
-    public ResponseEntity<?> loginAdmin(@RequestBody UsuarioAdministradorDTO dto,
-                                        HttpSession session) {
+    @PostMapping("/loginAdmin")
+    public ResponseEntity<?> loginAdmin(@RequestBody UsuarioAdministradorDTO dto, HttpSession session) {
         if (service.validarCredenciales(dto)) {
-            session.setAttribute("adminLogueado", dto);
-            return ResponseEntity.ok("Autenticación correcta");
+         //   session.setAttribute("adminLogueado",dto);
+            // Devuelve un token simple o indicador de éxito
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "success");
+            return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(401).body("Credenciales incorrectas");
         }
