@@ -1,6 +1,7 @@
 package com.example.aplicacionadministracion.controller;
 
 
+import com.example.aplicacionadministracion.DTO.BloqueoUsuarioDTO;
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
 import com.example.aplicacioncorporativa.Servicios.UsuarioService;
@@ -211,7 +212,7 @@ public class controladorRESTAdmin {
         }
     }
 
-    @GetMapping("/api/admin/isblock/{id}")
+    @GetMapping("/isblock/{id}")
     public ResponseEntity<?> comprobarBloqueo(@PathVariable UUID id) {
         if(!usuarioAdministradorService.isBloqueado(usuarioService.findById(id))){
             return ResponseEntity.ok().build();
@@ -221,14 +222,15 @@ public class controladorRESTAdmin {
     }
 
     @PostMapping("/api/admin/bloquear")
-    public ResponseEntity<?> bloquear(@RequestBody BloqueoRequest req) {
+    public ResponseEntity<?> bloquear(@RequestBody BloqueoUsuarioDTO datosBloqueo) {
+        usuarioAdministradorService.bloquearUsuario(datosBloqueo.getId(),datosBloqueo.getMotivo(),datosBloqueo.getTiempo());
         bloqueoService.bloquearUsuario(req.getIdEmpleado(), req.getMotivo(), req.getDiasBloqueo());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/admin/desbloquear/{id}")
-    public ResponseEntity<?> desbloquear(@PathVariable Long id) {
-        bloqueoService.desbloquearUsuario(id);
+    @PostMapping("/desbloquear/{id}")
+    public ResponseEntity<?> desbloquear(@PathVariable UUID id) {
+        usuarioAdministradorService.desbloquearUsuario(id);
         return ResponseEntity.ok().build();
     }
 

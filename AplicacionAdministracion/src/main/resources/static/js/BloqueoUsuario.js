@@ -1,3 +1,15 @@
+// const candado = document.getElementById("botonCandado");
+// if() {
+//     candado.appendChild(
+//         <button className="lock-btn" th:data-id="${emp.id_empleado}"
+//                 title="Bloquear usuario">
+//             🔒
+//         </button>
+//     );
+//
+// }
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('modalBloqueo');
     const spanClose = document.querySelector('.modal .close');

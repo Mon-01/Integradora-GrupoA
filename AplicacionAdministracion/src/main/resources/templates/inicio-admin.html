@@ -96,10 +96,7 @@
                 <td th:text="${emp.email}">Email</td>
                 <td th:text="${emp.departamento != null ? emp.departamento.nombredept : 'Sin asignar'}">Depto</td>
                 <td th:text="${emp.salarioAnual}">Salario</td>
-                <td><button class="lock-btn" th:data-id="${emp.id_empleado}"
-                            title="Bloquear usuario">
-                    🔒
-                </button></td>
+                <td class="botonCandado" th:data-id="${emp.usuario.getId_usuario()}"></td>
             </tr>
             </tbody>
         </table>
@@ -116,20 +113,15 @@
         <textarea id="motivoBloqueo" rows="4" style="width: 100%;"></textarea>
 
         <label for="tiempo">Tiempo de bloqueo:</label>
-        <select id="tiempo">
-            <option value="1">1 min</option>
-            <option value="3">3 días</option>
-            <option value="7">1 semana</option>
-            <option value="30">1 mes</option>
-        </select>
+        <input type="text" id="tiempo">
 
         <br><br>
         <button id="aceptarBloqueo">Aceptar</button>
         <button id="cancelarBloqueo">Cancelar</button>
     </div>
 </div>
-
-<script src="/js/BloqueoUsuario.js"></script>
+<script src="/js/CambioCandado.js"></script>
+<!--<script src="/js/BloqueoUsuario.js"></script>-->
 <script src="/static/js/DesconexionAutomatica.js">
 
     //desconexión automática
