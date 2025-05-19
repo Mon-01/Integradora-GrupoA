@@ -3,6 +3,7 @@ package grupo.a.modulocomun.Servicios;
 import grupo.a.modulocomun.DTO.Auxiliares.CatalogoProductosDTO;
 import grupo.a.modulocomun.DTO.Auxiliares.ProductoLibroDTO;
 import grupo.a.modulocomun.DTO.Auxiliares.ProductoMuebleDTO;
+import grupo.a.modulocomun.DTO.Auxiliares.ProductoRopaDTO;
 import grupo.a.modulocomun.DTO.ProductoDTO;
 import grupo.a.modulocomun.DTO.filtros.ProductoBusquedaDTO;
 import grupo.a.modulocomun.DTO.filtros.ProductoResultadoDTO;
@@ -113,6 +114,13 @@ public class ImportacionCatalogoService {
             libro.setSegundaMano(libroDTO.isSegundaMano());
             copiarDatosComunes(libro, dto);
             return libro;
+        } else if (dto instanceof ProductoRopaDTO ropaDTO) {
+            ProductoRopa ropa = new ProductoRopa();
+            ropa.setTalla(ropaDTO.getTalla());
+            ropa.setMaterial(ropaDTO.getMaterial());
+            ropa.setEstacion(ropaDTO.getEstacion());
+            copiarDatosComunes(ropa, dto);
+            return ropa;
         } else {
             throw new IllegalArgumentException("Tipo de producto desconocido");
         }
