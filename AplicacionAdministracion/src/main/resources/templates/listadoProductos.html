@@ -86,7 +86,7 @@
                 tbody.innerHTML = "";
                 data.forEach(p => {
                     const row = `
-                        <tr>
+                        <tr th:onclick="'window.location.href=\\'/api/admin/detalle/producto/' + ${p.id_producto} + '\\''">
                           <td>${p.descripcion}</td>
                           <td>€ ${parseFloat(p.precio).toFixed(2)}</td>
                           <td>${p.categoriaPrincipal}</td>

@@ -1,7 +1,9 @@
 package grupo.a.modulocomun.Servicios;
 
+import grupo.a.modulocomun.Entidades.Producto;
 import grupo.a.modulocomun.Repositorios.DistribucionProductoRepository;
 import grupo.a.modulocomun.Repositorios.ProductoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +26,9 @@ public class ProductoService {
     public void eliminarProductos(List<Long> ids) {
         distribucionProductoRepository.deleteByProducto_Ids(ids);
         productoRepository.deleteAllByIdInBatch(ids);
+    }
+
+    public Producto buscarProducto(Long id) {
+        return productoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontro el producto con id: " + id));
     }
 }

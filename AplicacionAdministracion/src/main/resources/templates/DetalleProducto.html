@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto</title>
+    <link rel="stylesheet" href="/estilos/DetalleProductosEstilos.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Detalle del Producto</h1>
+
+    <div id="loading" class="loading">Cargando detalle del producto...</div>
+    <div id="error" class="error" style="display:none;">Error al cargar el detalle del producto.</div>
+
+    <div id="productContent" style="display:none;">
+        <div class="product-details">
+            <h2>Información General</h2>
+            <div class="detail-item"><strong>ID:</strong> <span id="productId"></span></div>
+            <div class="detail-item"><strong>Nombre:</strong> <span id="productNombre"></span></div>
+            <div class="detail-item"><strong>Precio:</strong> <span id="productPrecio"></span></div>
+            <div class="detail-item"><strong>Descripción:</strong> <span id="productDescripcion"></span></div>
+            <div class="detail-item"><strong>Valoración:</strong> <span id="productValoracion"></span></div>
+            <div class="detail-item"><strong>Marca:</strong> <span id="productMarca"></span></div>
+            <div class="detail-item"><strong>Es Perecedero:</strong> <span id="productEsPerecedero"></span></div>
+            <div class="detail-item"><strong>Fecha de Alta:</strong> <span id="productFechaAlta"></span></div>
+            <div class="detail-item"><strong>Categorías:</strong> <span id="productCategorias" class="categories"></span></div>
+        </div>
+
+        <div id="libroDetails" class="subtype-details">
+            <h3>Detalles del Libro</h3>
+            <div class="detail-item"><strong>Título:</strong> <span id="libroTitulo"></span></div>
+            <div class="detail-item"><strong>Autor:</strong> <span id="libroAutor"></span></div>
+            <div class="detail-item"><strong>Editorial:</strong> <span id="libroEditorial"></span></div>
+            <div class="detail-item"><strong>Tapa:</strong> <span id="libroTapa"></span></div>
+            <div class="detail-item"><strong>Número de Páginas:</strong> <span id="libroNumeroPaginas"></span></div>
+            <div class="detail-item"><strong>Segunda Mano:</strong> <span id="libroSegundaMano"></span></div>
+        </div>
+
+        <div id="ropaDetails" class="subtype-details">
+            <h3>Detalles de la Ropa</h3>
+            <div class="detail-item"><strong>Talla:</strong> <span id="ropaTalla"></span></div>
+            <div class="detail-item"><strong>Material:</strong> <span id="ropaMaterial"></span></div>
+            <div class="detail-item"><strong>Estación:</strong> <span id="ropaEstacion"></span></div>
+        </div>
+
+        <div id="muebleDetails" class="subtype-details">
+            <h3>Detalles del Mueble</h3>
+            <div class="detail-item"><strong>Ancho:</strong> <span id="muebleAncho"></span></div>
+            <div class="detail-item"><strong>Profundo:</strong> <span id="muebleProfundo"></span></div>
+            <div class="detail-item"><strong>Alto:</strong> <span id="muebleAlto"></span></div>
+            <div class="detail-item"><strong>Colores:</strong> <span id="muebleColores"></span></div>
+        </div>
+    </div>
+
+    <a href="/productos" class="back-button">Volver al Listado</a> </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
+        const productContentDiv = document.getElementById('productContent');
+
+        // Función para obtener el ID del producto de la URL
+        function getProductIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            // Asume que el ID se pasa como ?id=XYZ
+            // Si lo pasas en la ruta (/detalle/XYZ), necesitarás otra lógica
+            return params.get('id');
+        }
+
+        const productId = getProductIdFromUrl();
+
+        if (!productId) {
+            loadingDiv.style.display = 'none';
+            errorDiv.textContent = 'No se proporcionó un ID de producto.';
+            errorDiv.style.display = 'block';
+            return; // Salir si no hay ID
+        }
+
+        // URL de la API para obtener el detalle del producto
+        const apiUrl = `/api/productos/${productId}`; // Ajusta esta URL según tu controlador
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    // Si la respuesta no es OK (ej. 404, 500)
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(product => {
+                loadingDiv.style.display = 'none'; // Ocultar carga
+                productContentDiv.style.display = 'block'; // Mostrar contenido
+
+                // Rellenar detalles comunes
+                document.getElementById('productId').textContent = product.id_producto;
+                document.getElementById('productNombre').textContent = product.nombre;
+                document.getElementById('productPrecio').textContent = `€ ${parseFloat(product.precio).toFixed(2)}`;
+                document.getElementById('productDescripcion').textContent = product.descripcion;
+                document.getElementById('productValoracion').textContent = product.valoracion;
+                document.getElementById('productMarca').textContent = product.marca;
+                document.getElementById('productEsPerecedero').textContent = product.esPerecedero ? 'Sí' : 'No';
+
+                // Formatear y mostrar fecha de alta
+                if (product.fechaAlta) {
+                    const date = new Date(product.fechaAlta);
+                    document.getElementById('productFechaAlta').textContent = date.toLocaleDateString(); // Formato local
+                } else {
+                    document.getElementById('productFechaAlta').textContent = 'N/A';
+                }
+
+
+                // Mostrar categorías
+                const categoriasSpan = document.getElementById('productCategorias');
+                categoriasSpan.innerHTML = ''; // Limpiar contenido previo
+                if (product.categorias && product.categorias.length > 0) {
+                    product.categorias.forEach(cat => {
+                        const catSpan = document.createElement('span');
+                        catSpan.textContent = cat.nombre; // Asumiendo que Categoria tiene una propiedad 'nombre'
+                        categoriasSpan.appendChild(catSpan);
+                    });
+                } else {
+                    categoriasSpan.textContent = 'Sin categorías';
+                    categoriasSpan.style.backgroundColor = 'transparent'; // Remover fondo si no hay categorías
+                    categoriasSpan.style.color = '#555'; // Color de texto normal
+                    categoriasSpan.style.padding = '0';
+                }
+
+
+                // Rellenar y mostrar detalles específicos del subtipo
+                // Asumimos que el objeto 'product' recibido de la API
+                // contiene las propiedades específicas del subtipo
+                // y que puedes determinar el tipo por la presencia de ciertas propiedades
+                // o por un campo 'tipo_producto' si tu API lo devuelve.
+                // Basándonos en tus clases, podemos inferir el tipo por las propiedades.
+
+                if (product.titulo) { // Es un Libro
+                    document.getElementById('libroDetails').style.display = 'block';
+                    document.getElementById('libroTitulo').textContent = product.titulo;
+                    document.getElementById('libroAutor').textContent = product.autor;
+                    document.getElementById('libroEditorial').textContent = product.editorial;
+                    document.getElementById('libroTapa').textContent = product.tapa;
+                    document.getElementById('libroNumeroPaginas').textContent = product.numeroPaginas;
+                    document.getElementById('libroSegundaMano').textContent = product.segundaMano ? 'Sí' : 'No';
+                } else if (product.talla) { // Es Ropa
+                    document.getElementById('ropaDetails').style.display = 'block';
+                    document.getElementById('ropaTalla').textContent = product.talla;
+                    document.getElementById('ropaMaterial').textContent = product.material;
+                    document.getElementById('ropaEstacion').textContent = product.estacion;
+                } else if (product.ancho) { // Es Mueble
+                    document.getElementById('muebleDetails').style.display = 'block';
+                    document.getElementById('muebleAncho').textContent = product.ancho + ' cm';
+                    document.getElementById('muebleProfundo').textContent = product.profundo + ' cm';
+                    document.getElementById('muebleAlto').textContent = product.alto + ' cm';
+
+                    const coloresSpan = document.getElementById('muebleColores');
+                    coloresSpan.innerHTML = ''; // Limpiar contenido previo
+                    if (product.colores && product.colores.length > 0) {
+                        const colorList = document.createElement('ul');
+                        colorList.classList.add('color-list');
+                        product.colores.forEach(color => {
+                            const colorItem = document.createElement('li');
+                            colorItem.textContent = color;
+                            colorList.appendChild(colorItem);
+                        });
+                        coloresSpan.appendChild(colorList);
+                    } else {
+                        coloresSpan.textContent = 'Sin colores especificados';
+                    }
+                }
+                // Si no coincide con ningún subtipo conocido, las secciones específicas permanecerán ocultas
+            })
+            .catch(error => {
+                loadingDiv.style.display = 'none'; // Ocultar carga
+                errorDiv.textContent = `Error al cargar el detalle del producto: ${error.message}`;
+                errorDiv.style.display = 'block'; // Mostrar error
+                console.error('Error fetching product details:', error);
+            });
+    });
+</script>
+
+</body>
+</html>
