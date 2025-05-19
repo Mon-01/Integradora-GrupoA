@@ -88,7 +88,9 @@ spanClose.onclick = cancelarBtn.onclick = () => {
 
 //al darle aceptar en el modal hacemos la llamada al contralador para bloquear al usuario
 aceptarBtn.onclick = () => {
-    const id = document.getElementById("modalId").value;
+    const id = document.getElementById("modalId").textContent;
+    let idUser = id.split(":");
+    console.log(idUser[1]);
     const motivo = document.getElementById('motivoBloqueo').value;
     const tiempo = document.getElementById('tiempo').value;
     // Convertir a formato ISO 8601 que Java puede parsear automáticamente
@@ -123,21 +125,3 @@ aceptarBtn.onclick = () => {
             }
         });
 };
-
-//
-// // Seleccionar todas las celdas de candado y aplicar la lógica
-// document.addEventListener('DOMContentLoaded', function() {
-//     const celdasCandado = document.querySelectorAll('.botonCandando');
-//     celdasCandado.forEach(celda => {
-//         // Obtener el ID del empleado de la fila correspondiente
-//         const fila = celda.parentNode;
-//         const linkDetalle = fila.getAttribute('th:onclick');
-//         if (linkDetalle) {
-//             const match = linkDetalle.match(/'\/admin\/detalle\/([^']+)'/);
-//             if (match && match[1]) {
-//                 const idUser = match[1];
-//                 actualizarIconoCandado(idUser, celda);
-//             }
-//         }
-//     });
-// });
