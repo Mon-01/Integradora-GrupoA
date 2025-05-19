@@ -62,8 +62,6 @@ function actualizarIconoCandado(idUser, celdaCandado) {
                                     nombre = row.children[0].textContent;
                                     alert(`Se ha desbloqueado al usuario: ${nombre}`);
                                     window.location.reload();
-                                    // actualizarIconoCandado(userIdToUnlock, celdaCandado); // Volver a actualizar el icono
-                                    // O realizar alguna otra acción tras el desbloqueo
                                 } else {
                                     console.error('Error al desbloquear el usuario');
                                 }
@@ -89,8 +87,8 @@ spanClose.onclick = cancelarBtn.onclick = () => {
 //al darle aceptar en el modal hacemos la llamada al contralador para bloquear al usuario
 aceptarBtn.onclick = () => {
     const id = document.getElementById("modalId").textContent;
-    let idUser = id.split(":");
-    console.log(idUser[1]);
+    let idUser = id.split(":")[1];
+    console.log(idUser);
     const motivo = document.getElementById('motivoBloqueo').value;
     const tiempo = document.getElementById('tiempo').value;
     // Convertir a formato ISO 8601 que Java puede parsear automáticamente
@@ -106,7 +104,7 @@ aceptarBtn.onclick = () => {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-            id: id,
+            id: idUser,
             motivo: motivo,
             tiempo: fechaISO
         })
@@ -114,12 +112,13 @@ aceptarBtn.onclick = () => {
         .then(response => {
             if (response.ok) {
                 alert("Usuario bloqueado correctamente");
-                const btn = document.querySelector(`.lock-btn[data-id="${empleadoActual}"]`);
-                btn.textContent = '🔓';
-                btn.title = "Desbloquear usuario";
-                btn.classList.remove('lock-btn');
-                btn.classList.add('unlock-btn');
+                // const btn = document.querySelector(`.lock-btn[data-id="${emp.usuario.getId_usuario()}"]`);
+                // btn.textContent = '🔓';
+                // btn.title = "Desbloquear usuario";
+                // btn.classList.remove('lock-btn');
+                // btn.classList.add('unlock-btn');
                 modal.style.display = 'none';
+                window.location.reload();
             } else {
                 alert("Error al bloquear usuario");
             }
