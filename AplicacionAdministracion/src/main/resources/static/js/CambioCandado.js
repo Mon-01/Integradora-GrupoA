@@ -4,11 +4,10 @@ const cancelarBtn = document.getElementById('cancelarBloqueo');
 const aceptarBtn = document.getElementById('aceptarBloqueo');
 
 
-//cogemos la fila entera de cada empleado
-const row = this.closest('tr');
+
 //cogemos el texto de cada celda para mostrarlo en el modal
-const nombre = row.children[0].textContent;
-const apellidos = row.children[1].textContent;
+let nombre;
+let apellidos;
 
 document.addEventListener('DOMContentLoaded', function() {
     const celdasCandado = document.querySelectorAll('.botonCandado');
@@ -32,7 +31,11 @@ function actualizarIconoCandado(idUser, celdaCandado) {
                     lockButton.addEventListener('click', function(event) {
                         //evita el onblur que salta al detale del empleado
                         event.stopPropagation();
-
+                        //cogemos la fila entera de cada empleado
+                        const row = this.closest('tr');
+                        nombre = row.children[0].textContent;
+                        apellidos = row.children[1].textContent;
+                        document.getElementById('modalId').textContent = `ID del usuario: ${idUser}`;
                         document.getElementById('modalNombre').textContent = `Nombre: ${nombre} ${apellidos}`;
                         document.getElementById('motivoBloqueo').value = '';
                         document.getElementById('tiempo').value = '';
@@ -45,12 +48,18 @@ function actualizarIconoCandado(idUser, celdaCandado) {
                 // añadimos listenner para desbloquear al usuario
                 const unlockButton = celdaCandado.querySelector('.unlock-btn');
                 if (unlockButton) {
-                    unlockButton.addEventListener('click', function () {
+                    unlockButton.addEventListener('click', function (event) {
+                        //evita el onblur que salta al detale del empleado
+                        event.stopPropagation();
                         const userIdToUnlock = this.getAttribute('data-id');
                         console.log('Desbloquear usuario con ID:', userIdToUnlock);
-                        fetch(`/api/admin/desbloquear/${idUser}`)
+                        fetch(`/api/admin/desbloquear/${idUser}`,{
+                            method: 'POST'
+                        })
                             .then(response => {
                                 if (response.ok) {
+                                    const row = this.closest('tr');
+                                    nombre = row.children[0].textContent;
                                     alert(`Se ha desbloqueado al usuario: ${nombre}`);
                                     window.location.reload();
                                     // actualizarIconoCandado(userIdToUnlock, celdaCandado); // Volver a actualizar el icono
@@ -79,6 +88,7 @@ spanClose.onclick = cancelarBtn.onclick = () => {
 
 //al darle aceptar en el modal hacemos la llamada al contralador para bloquear al usuario
 aceptarBtn.onclick = () => {
+    const id = document.getElementById("modalId").value;
     const motivo = document.getElementById('motivoBloqueo').value;
     const tiempo = document.getElementById('tiempo').value;
     // Convertir a formato ISO 8601 que Java puede parsear automáticamente
@@ -94,13 +104,13 @@ aceptarBtn.onclick = () => {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-            id: idUser,
+            id: id,
             motivo: motivo,
             tiempo: fechaISO
         })
     })
-        .then(res => {
-            if (res.ok) {
+        .then(response => {
+            if (response.ok) {
                 alert("Usuario bloqueado correctamente");
                 const btn = document.querySelector(`.lock-btn[data-id="${empleadoActual}"]`);
                 btn.textContent = '🔓';

@@ -224,7 +224,6 @@ public class controladorRESTAdmin {
     @PostMapping("/api/admin/bloquear")
     public ResponseEntity<?> bloquear(@RequestBody BloqueoUsuarioDTO datosBloqueo) {
         usuarioAdministradorService.bloquearUsuario(datosBloqueo.getId(),datosBloqueo.getMotivo(),datosBloqueo.getTiempo());
-        bloqueoService.bloquearUsuario(req.getIdEmpleado(), req.getMotivo(), req.getDiasBloqueo());
         return ResponseEntity.ok().build();
     }
 
