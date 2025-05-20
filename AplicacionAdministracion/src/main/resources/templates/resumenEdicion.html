@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen Edición</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        legend {
+            font-weight: bold;
+            padding: 0 10px;
+        }
+
+        p, ul {
+            margin: 5px 0;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #mensaje {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+<h1>Resumen de Edición</h1>
+
+<div id="resumen-container">
+    <fieldset>
+        <legend>Datos Personales</legend>
+        <p><strong>Nombre:</strong> <span th:text="${empleadoForm.getNombre()}"></span></p>
+        <p><strong>Apellidos:</strong> <span th:text="${empleadoForm.getApellido()}"></span></p>
+        <p><strong>Género:</strong> <span th:text="${generoService.obtenerNombrePorId(empleadoForm.getGenero())}"></span></p>
+        <p><strong>Fecha de Nacimiento:</strong> <span th:text="${empleadoForm.getFechaNacimiento()}"></span></p>
+        <p><strong>Edad:</strong> <span th:text="${empleadoForm.getEdad()}"></span></p>
+        <p><strong>País de Nacimiento:</strong> <span th:text="${paisService.obtenerNombrePorId(empleadoForm.getPaisNacimiento())}"></span></p>
+        <p><strong>Comentarios:</strong> <span th:text="${empleadoForm.getComentarios()}"></span></p>
+        <p><strong>Imagen de perfil:</strong></p>
+        <img th:if="${empleadoForm.imagen}"
+             th:src="'data:image/png;base64,' + ${empleadoForm.imagen}"
+             alt="Imagen del empleado"
+             style="max-width: 200px;"/>
+    </fieldset>
+
+    <fieldset>
+        <legend>Datos de contacto</legend>
+        <p><strong>Tipo de Documento:</strong> <span th:text="${tipoDocService.obtenerNombrePorId(empleadoForm.getTipoDocumento())}"></span></p>
+        <p><strong>Documento:</strong> <span th:text="${empleadoForm.getDocumento()}"></span></p>
+        <p><strong>Prefijo Teléfono:</strong> <span th:text="${empleadoForm.getPrefijoTel()}"></span></p>
+        <p><strong>Teléfono:</strong> <span th:text="${empleadoForm.getTelefono()}"></span></p>
+        <p><strong>Otros Teléfonos:</strong> <span th:text="${empleadoForm.getOtroTelefono()}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${empleadoForm.getEmail()}"></span></p>
+
+        <fieldset>
+            <legend>Dirección</legend>
+            <p><strong>Tipo Vía:</strong> <span th:text="${tipoViaService.obtenerNombrePorId(empleadoForm.getDireccion().tipoVia)}"></span></p>
+            <p><strong>Nombre Vía:</strong> <span th:text="${empleadoForm.getDireccion().nombreVia}"></span></p>
+            <p><strong>Número:</strong> <span th:text="${empleadoForm.getDireccion().numero}"></span></p>
+            <p><strong>Portal:</strong> <span th:text="${empleadoForm.getDireccion().portal}"></span></p>
+            <p><strong>Planta:</strong> <span th:text="${empleadoForm.getDireccion().planta}"></span></p>
+            <p><strong>Puerta:</strong> <span th:text="${empleadoForm.getDireccion().puerta}"></span></p>
+            <p><strong>Localidad:</strong> <span th:text="${empleadoForm.getDireccion().localidad}"></span></p>
+            <p><strong>Región:</strong> <span th:text="${empleadoForm.getDireccion().region}"></span></p>
+            <p><strong>Código Postal:</strong> <span th:text="${empleadoForm.getDireccion().cod_postal}"></span></p>
+        </fieldset>
+    </fieldset>
+
+    <fieldset>
+        <legend>Datos Profesionales</legend>
+        <p><strong>Departamento:</strong> <span th:text="${departamentoService.obtenerNombrePorId(empleadoForm.getIdDepartamento())}"></span></p>
+        <p><strong>Especialidades:</strong></p>
+        <ul>
+            <li th:each="especialidad : ${empleadoForm.getEspecializaciones()}"
+                th:text="${especialidadesService.obtenerNombrePorId(especialidad)}"></li>
+        </ul>
+    </fieldset>
+
+    <fieldset>
+        <legend>Datos Económicos</legend>
+        <p><strong>Entidad Bancaria:</strong> <span th:text="${entidadBancariaService.obtenerNombrePorId(empleadoForm.datosBancarios.entidadBancaria)}"></span></p>
+        <p><strong>Número de Cuenta:</strong> <span th:text="${empleadoForm.getDatosBancarios().numCuenta}"></span></p>
+        <p><strong>Salario:</strong> <span th:text="${empleadoForm.getSalarioAnual()}"></span></p>
+        <p><strong>Comisión:</strong> <span th:text="${empleadoForm.getComisionAnual()}"></span></p>
+
+        <fieldset>
+            <legend>Tarjeta de Crédito</legend>
+            <p><strong>Tipo Tarjeta:</strong> <span th:text="${tipoTarjetaService.obtenerNombrePorId(empleadoForm.getDatosBancarios().tarjeta.tipo)}"></span></p>
+            <p><strong>Número:</strong> <span th:text="${empleadoForm.datosBancarios.tarjeta.numero}"></span></p>
+            <p><strong>CVC:</strong> <span th:text="${empleadoForm.datosBancarios.tarjeta.cvc}"></span></p>
+        </fieldset>
+    </fieldset>
+
+    <input type="hidden" id="idEmpleado" th:value="${idEmpleado}">
+    <button type="button" onclick="guardarCambios()">Guardar Cambios</button>
+    <div id="mensaje"></div>
+</div>
+
+<script>
+    function guardarCambios() {
+        const boton = document.querySelector('button');
+        boton.disabled = true;
+        boton.textContent = 'Guardando...';
+
+        const mensaje = document.getElementById('mensaje');
+        mensaje.textContent = '';
+        mensaje.className = '';
+
+        fetch('/admin/editar/guardar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    mensaje.textContent = data.message;
+                    mensaje.className = 'success';
+                    setTimeout(() => {
+                        window.location.href = '/admin/inicio';
+                    }, 1500);
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                mensaje.textContent = error.message;
+                mensaje.className = 'error';
+                boton.disabled = false;
+                boton.textContent = 'Guardar Cambios';
+            });
+    }
+</script>
+</body>
+</html>

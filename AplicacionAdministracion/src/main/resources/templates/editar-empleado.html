@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Empleado</title>
+    <style>
+        .error {
+            color: red;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        .error-border {
+            border: 1px solid red !important;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+        select.form-control {
+            height: calc(2.25rem + 2px);
+        }
+        .btn-guardar {
+            background-color: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+        .btn-cancelar {
+            background-color: #6c757d;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+        .form-actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        .select-multiple {
+            height: auto;
+            min-height: 100px;
+        }
+        .imagen-actual img {
+            max-width: 200px;
+            margin-top: 1rem;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Editar Empleado</h1>
+    <form id="form-editar-empleado">
+        <input type="hidden" id="id-empleado" th:value="${empleado.id_empleado}">
+
+        <!-- Sección 1: Datos Personales -->
+        <div class="form-section">
+            <h2>Datos Personales</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombre">Nombre*</label>
+                    <input type="text" id="nombre" th:value="${empleado.nombre}" class="form-control">
+                    <small id="nombre-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="apellido">Apellido*</label>
+                    <input type="text" id="apellido" th:value="${empleado.apellido}" class="form-control">
+                    <small id="apellido-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="genero">Género*</label>
+                    <select id="genero" class="form-control">
+                        <option th:each="genero : ${generos}"
+                                th:value="${genero.id}"
+                                th:text="${genero.nombre}"
+                                th:selected="${empleado.genero == genero.id}"></option>
+                    </select>
+                    <small id="genero-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="edad">Edad</label>
+                    <input type="text" id="edad" th:value="${empleado.edad}" min="18" max="99" class="form-control">
+                    <small id="edad-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fecha-nacimiento">Fecha de Nacimiento*</label>
+                <input type="text" id="fecha-nacimiento" th:value="${empleado.fechaNacimiento}" class="form-control">
+                <small id="fechaNacimiento-error" class="error"></small>
+            </div>
+        </div>
+
+        <!-- Sección 2: Contacto -->
+        <div class="form-section">
+            <h2>Datos de Contacto</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="prefijo-tel">Prefijo Teléfono*</label>
+                    <input type="text" id="prefijo-tel" th:value="${empleado.prefijoTel}" min="1" class="form-control">
+                    <small id="prefijoTel-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono*</label>
+                    <input type="text" id="telefono" th:value="${empleado.telefono}"
+                           pattern="[0-9]{9}" title="9 dígitos numéricos" class="form-control">
+                    <small id="telefono-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="otro-telefono">Otro Teléfono</label>
+                    <input type="text" id="otro-telefono" th:value="${empleado.otroTelefono}"
+                           pattern="[0-9]{9}" title="9 dígitos numéricos" class="form-control">
+                    <small id="otroTelefono-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email*</label>
+                    <input type="text" id="email" th:value="${empleado.email}" class="form-control">
+                    <small id="email-error" class="error"></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 3: Dirección -->
+        <div class="form-section">
+            <h2>Dirección</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tipo-via">Tipo de Vía*</label>
+                    <select id="tipo-via" th:value="${empleado.direccion.tipoVia}" class="form-control">
+                        <option value="1">Calle</option>
+                        <option value="2">Avenida</option>
+                        <option value="3">Plaza</option>
+                    </select>
+                    <small id="direccion.tipoVia-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="calle">Nombre de Vía*</label>
+                    <input type="text" id="calle" th:value="${empleado.direccion.nombreVia}" class="form-control">
+                    <small id="direccion.nombreVia-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="numero">Número*</label>
+                    <input type="text" id="numero" th:value="${empleado.direccion.numero}" class="form-control">
+                    <small id="direccion.numero-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="portal">Portal</label>
+                    <input type="text" id="portal" th:value="${empleado.direccion.portal}" class="form-control">
+                    <small id="direccion.portal-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="planta">Planta</label>
+                    <input type="text" id="planta" th:value="${empleado.direccion.planta}" class="form-control">
+                    <small id="direccion.planta-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="puerta">Puerta</label>
+                    <input type="text" id="puerta" th:value="${empleado.direccion.puerta}" class="form-control">
+                    <small id="direccion.puerta-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="localidad">Localidad*</label>
+                    <input type="text" id="localidad" th:value="${empleado.direccion.localidad}" class="form-control">
+                    <small id="direccion.localidad-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="codigo-postal">Código Postal*</label>
+                    <input type="text" id="codigo-postal" th:value="${empleado.direccion.cod_postal}" class="form-control">
+                    <small id="direccion.cod_postal-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="region">Región</label>
+                <input type="text" id="region" th:value="${empleado.direccion.region}" class="form-control">
+                <small id="direccion.region-error" class="error"></small>
+            </div>
+        </div>
+
+        <!-- Sección 4: Documentación -->
+        <div class="form-section">
+            <h2>Documentación</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pais-nacimiento">País de Nacimiento*</label>
+                    <select id="pais-nacimiento" class="form-control">
+                        <option th:each="pais : ${paises}"
+                                th:value="${pais.id}"
+                                th:text="${pais.nombre}"
+                                th:selected="${empleado.paisNacimiento == pais.id}"></option>
+                    </select>
+                    <small id="paisNacimiento-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="tipo-documento">Tipo Documento*</label>
+                    <select id="tipo-documento" class="form-control">
+                        <option th:each="tipo : ${tiposDocumento}"
+                                th:value="${tipo.id}"
+                                th:text="${tipo.nombre}"
+                                th:selected="${empleado.tipoDocumento == tipo.id}"></option>
+                    </select>
+                    <small id="tipoDocumento-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="documento">Número de Documento*</label>
+                <input type="text" id="documento" th:value="${empleado.documento}" class="form-control">
+                <small id="documento-error" class="error"></small>
+            </div>
+        </div>
+
+        <!-- Sección 5: Datos Profesionales -->
+        <div class="form-section">
+            <h2>Datos Profesionales</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="departamento">Departamento*</label>
+                    <select id="departamento" class="form-control">
+                        <option th:each="depto : ${departamentos}"
+                                th:value="${depto.id_dept}"
+                                th:text="${depto.nombredept}"
+                                th:selected="${empleado.idDepartamento == depto.id_dept}"></option>
+                    </select>
+                    <small id="idDepartamento-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="salario-anual">Salario Anual*</label>
+                    <input type="text" id="salario-anual" th:value="${empleado.salarioAnual}" class="form-control">
+                    <small id="salarioAnual-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="comision-anual">Comisión Anual</label>
+                    <input type="text" id="comision-anual" th:value="${empleado.comisionAnual}" class="form-control">
+                    <small id="comisionAnual-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="comentarios">Comentarios</label>
+                    <textarea id="comentarios" th:text="${empleado.comentarios}" class="form-control"></textarea>
+                    <small id="comentarios-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="especializaciones">Especializaciones* (mínimo 2)</label>
+                <select id="especializaciones" multiple="multiple" class="select-multiple form-control">
+                    <option th:each="especialidad : ${especialidades}"
+                            th:value="${especialidad.id}"
+                            th:text="${especialidad.nombre}"
+                            th:selected="${#lists.contains(empleado.especializaciones, especialidad.id)}"></option>
+                </select>
+                <small id="especializaciones-error" class="error"></small>
+            </div>
+        </div>
+
+        <!-- Sección 6: Datos Bancarios -->
+        <div class="form-section">
+            <h2>Datos Bancarios</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="entidad-bancaria">Entidad Bancaria*</label>
+                    <select id="entidad-bancaria" th:value="${empleado.datosBancarios.entidadBancaria}" class="form-control">
+                        <option value="1">Banco Santander</option>
+                        <option value="2">BBVA</option>
+                        <option value="3">CaixaBank</option>
+                    </select>
+                    <small id="datosBancarios.entidadBancaria-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="cuenta-bancaria">Número de Cuenta*</label>
+                    <input type="text" id="cuenta-bancaria" th:value="${empleado.datosBancarios.numCuenta}" class="form-control">
+                    <small id="datosBancarios.numCuenta-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tipo-tarjeta">Tipo de Tarjeta*</label>
+                    <select id="tipo-tarjeta" th:value="${empleado.datosBancarios.tarjeta.tipo}" class="form-control">
+                        <option value="1">Visa</option>
+                        <option value="2">MasterCard</option>
+                        <option value="3">American Express</option>
+                    </select>
+                    <small id="datosBancarios.tarjeta.tipo-error" class="error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="numero-tarjeta">Número de Tarjeta*</label>
+                    <input type="text" id="numero-tarjeta" th:value="${empleado.datosBancarios.tarjeta.numero}" class="form-control">
+                    <small id="datosBancarios.tarjeta.numero-error" class="error"></small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cvc-tarjeta">CVC*</label>
+                <input type="text" id="cvc-tarjeta" th:value="${empleado.datosBancarios.tarjeta.cvc}" class="form-control">
+                <small id="datosBancarios.tarjeta.cvc-error" class="error"></small>
+            </div>
+        </div>
+
+        <!-- Sección 7: Imagen -->
+        <div class="form-section">
+            <h2>Imagen de Perfil</h2>
+            <div class="form-group">
+                <label for="imagen">Subir Imagen</label>
+                <input type="file" id="imagen" accept="image/*" class="form-control">
+                <small id="imagen-error" class="error"></small>
+                <div th:if="${empleado.imagen != null}" class="imagen-actual">
+                    <p>Imagen actual:</p>
+                    <img th:src="'data:image/jpeg;base64,' + ${empleado.imagen}" alt="Imagen actual del empleado">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn-guardar" onclick="actualizarEmpleado()">Guardar Cambios</button>
+            <button type="button" class="btn-cancelar" onclick="window.location.href='/admin/inicio'">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function actualizarEmpleado() {
+        // Limpiar errores anteriores
+        document.querySelectorAll('.error').forEach(e => e.textContent = '');
+        document.querySelectorAll('.form-control').forEach(e => e.classList.remove('error-border'));
+
+        // Obtener datos del formulario
+        const empleadoDTO = {
+            id_empleado: document.getElementById('id-empleado').value,
+            nombre: document.getElementById('nombre').value,
+            apellido: document.getElementById('apellido').value,
+            genero: document.getElementById('genero').value,
+            edad: parseInt(document.getElementById('edad').value),
+            fechaNacimiento: document.getElementById('fecha-nacimiento').value,
+            prefijoTel: parseInt(document.getElementById('prefijo-tel').value),
+            telefono: document.getElementById('telefono').value,
+            otroTelefono: document.getElementById('otro-telefono').value,
+            email: document.getElementById('email').value,
+            direccion: {
+                tipoVia: document.getElementById('tipo-via').value,
+                nombreVia: document.getElementById('calle').value,
+                numero: document.getElementById('numero').value,
+                portal: document.getElementById('portal').value,
+                planta: document.getElementById('planta').value,
+                puerta: document.getElementById('puerta').value,
+                localidad: document.getElementById('localidad').value,
+                cod_postal: document.getElementById('codigo-postal').value,
+                region: document.getElementById('region').value
+            },
+            paisNacimiento: document.getElementById('pais-nacimiento').value,
+            tipoDocumento: document.getElementById('tipo-documento').value,
+            documento: document.getElementById('documento').value,
+            idDepartamento: document.getElementById('departamento').value,
+            salarioAnual: document.getElementById('salario-anual').value,
+            comisionAnual: document.getElementById('comision-anual').value,
+            comentarios: document.getElementById('comentarios').value,
+            especializaciones: Array.from(document.getElementById('especializaciones').selectedOptions)
+                .map(option => option.value),
+            datosBancarios: {
+                entidadBancaria: document.getElementById('entidad-bancaria').value,
+                numCuenta: document.getElementById('cuenta-bancaria').value,
+                tarjeta: {
+                    tipo: document.getElementById('tipo-tarjeta').value,
+                    numero: document.getElementById('numero-tarjeta').value,
+                    cvc: document.getElementById('cvc-tarjeta').value
+                }
+            }
+        };
+
+        // Procesar imagen si se ha seleccionado
+        const imagenInput = document.getElementById('imagen');
+        const imagenFile = imagenInput.files[0];
+
+        // Si hay una imagen seleccionada, convertirla a base64
+        if (imagenFile) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64String = event.target.result.split(',')[1];
+                empleadoDTO.imagen = base64String;
+                enviarDatos(empleadoDTO);
+            };
+            reader.readAsDataURL(imagenFile);
+        } else {
+            enviarDatos(empleadoDTO);
+        }
+    }
+
+    function enviarDatos(empleadoDTO) {
+        // Enviar datos al servidor
+        fetch(`/api/admin/empleados/${empleadoDTO.id_empleado}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(empleadoDTO)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(() => {
+                alert('Empleado actualizado con éxito');
+                window.location.href = '/admin/inicio';
+            })
+            .catch(error => {
+                if (error.errors) {
+                    // Mostrar errores de validación
+                    error.errors.forEach(err => {
+                        // Convertir el nombre del campo a como está en el HTML
+                        // Ejemplo: "direccion.tipoVia" -> "direccion-tipoVia-error"
+                        const fieldId = err.field.replace(/\./g, '-') + '-error';
+                        const inputId = err.field.includes('.') ?
+                            err.field.replace('.', '-') :
+                            err.field;
+
+                        const field = document.getElementById(fieldId);
+                        const input = document.getElementById(inputId);
+
+                        if (field) {
+                            field.textContent = err.defaultMessage;
+                        }
+                        if (input) {
+                            input.classList.add('error-border');
+                        }
+                    });
+                } else {
+                    alert('Error: ' + (error.message || 'Error desconocido'));
+                }
+            });
+    }
+</script>
+</body>
+</html>

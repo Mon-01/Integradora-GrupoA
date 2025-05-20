@@ -9,8 +9,11 @@ import grupo.a.modulocomun.Entidades.Departamento;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.Maestros.*;
 import grupo.a.modulocomun.Entidades.Usuario;
+import grupo.a.modulocomun.Repositorios.DepartamentoRepository;
 import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
+import grupo.a.modulocomun.Repositorios.Maestros.*;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
+import grupo.a.modulocomun.Servicios.Maestros.TipoTarjetaService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +44,13 @@ public class EmpleadoService {
     private final DepartamentoService departamentoService;
 
     @Autowired
-    private RepositoryManager repositoryManager;
+    private final RepositoryManager repositoryManager;
 
-    public EmpleadoService(EmpleadoRepository empleadoRepository, UsuarioRepository usuarioRepository, DepartamentoService departamentoService) {
+    public EmpleadoService(EmpleadoRepository empleadoRepository, UsuarioRepository usuarioRepository, DepartamentoService departamentoService, RepositoryManager repositoryManager) {
         this.empleadoRepository = empleadoRepository;
         this.usuarioRepository = usuarioRepository;
         this.departamentoService = departamentoService;
+        this.repositoryManager = repositoryManager;
     }
 
 
@@ -496,6 +500,94 @@ public class EmpleadoService {
 
         // Si no se cumple ningún caso (no debería llegar aquí)
         return empleadoRepository.findAll();
+    }
+
+
+    public EmpleadoDTO obtenerEmpleadoDTOPorId(Long id) {
+        Empleado empleado = empleadoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado"));
+        return convertirEmpleadoADTO(empleado);
+    }
+
+    public List<Genero> obtenerTodosGeneros() {
+        return repositoryManager.getGeneroRepository().findAll();
+    }
+
+    public List<Pais> obtenerTodosPaises() {
+        return repositoryManager.getPaisRepository().findAll();
+    }
+
+    public List<TipoDocumento> obtenerTodosTiposDocumento() {
+        return repositoryManager.getTipoDocumentoRepository().findAll();
+    }
+
+    public List<Departamento> obtenerTodosDepartamentos() {
+        return repositoryManager.getDepartamentoRepository().findAll();
+    }
+
+    public List<Especialidades> obtenerTodasEspecialidades() {
+        return repositoryManager.getEspecialidadesRepository().findAll();
+    }
+    @Transactional
+    public void actualizarEmpleadoCompleto(Long id, EmpleadoDTO empleadoDTO) {
+        // 1. Obtener el empleado existente
+        Empleado empleado = empleadoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + id));
+
+        // 2. Validar datos básicos
+        if (empleadoDTO == null) {
+            throw new IllegalArgumentException("Datos del empleado no pueden ser nulos");
+        }
+
+        // 3. Actualizar campos básicos
+        empleado.setNombre(empleadoDTO.getNombre());
+        empleado.setApellido(empleadoDTO.getApellido());
+        empleado.setEmail(empleadoDTO.getEmail());
+        empleado.setTelefono(empleadoDTO.getTelefono());
+        empleado.setOtroTelefono(empleadoDTO.getOtroTelefono());
+        empleado.setComentarios(empleadoDTO.getComentarios());
+
+        // 4. Actualizar campos numéricos con validación
+        try {
+            empleado.setSalarioAnual(new BigDecimal(empleadoDTO.getSalarioAnual()));
+            empleado.setComisionAnual(empleadoDTO.getComisionAnual() != null && !empleadoDTO.getComisionAnual().isEmpty() ?
+                    new BigDecimal(empleadoDTO.getComisionAnual()) : BigDecimal.ZERO);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Formato de salario o comisión inválido");
+        }
+
+        // 5. Actualizar relaciones
+        if (empleadoDTO.getGenero() != null) {
+            Genero genero = repositoryManager.getGeneroRepository()
+                    .findById(empleadoDTO.getGenero())
+                    .orElseThrow(() -> new EntityNotFoundException("Género no encontrado"));
+            empleado.setGenero(genero);
+        }
+
+        // 6. Actualizar departamento
+        if (empleadoDTO.getIdDepartamento() != null) {
+            Departamento departamento = repositoryManager.getDepartamentoRepository()
+                    .findById(empleadoDTO.getIdDepartamento())
+                    .orElseThrow(() -> new EntityNotFoundException("Departamento no encontrado"));
+            empleado.setDepartamento(departamento);
+        }
+
+        // 7. Actualizar especializaciones
+        if (empleadoDTO.getEspecializaciones() != null && !empleadoDTO.getEspecializaciones().isEmpty()) {
+            List<Especialidades> especialidades = empleadoDTO.getEspecializaciones().stream()
+                    .map(especialidadId -> repositoryManager.getEspecialidadesRepository().findById(especialidadId)
+                            .orElseThrow(() -> new EntityNotFoundException("Especialidad no encontrada")))
+                    .collect(Collectors.toList());
+            empleado.setEspecializaciones(especialidades);
+        }
+
+        // 8. Actualizar imagen si se proporcionó
+        if (empleadoDTO.getImagen() != null && !empleadoDTO.getImagen().isEmpty()) {
+            empleado.setImagenBase64(empleadoDTO.getImagen());
+        }
+
+        // 9. Guardar los cambios
+        empleadoRepository.save(empleado);
     }
 
 }

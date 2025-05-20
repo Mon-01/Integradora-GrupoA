@@ -3,6 +3,7 @@ package com.example.aplicacionadministracion.controller;
 // Importación de clases necesarias para el controlador.
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
+import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
@@ -198,16 +199,6 @@ public class controladorMVCAdmin {
         return "redirect:/admin/login";
     }
 
-    @GetMapping("/editar/{id}")
-    public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
-
-        Nomina nomina = nominaService.obtenerNomina(id);
-        NominaDTO dto = nominaService.convertirADTO(nomina);
-        model.addAttribute("nomina", dto);
-
-        return "/nominas/editarNomina";
-    }
-
     @PostMapping("/nomina/guardar")
     public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
         Nomina nominaAnterior = nominaService.obtenerNomina(nominaDTO.getId());
@@ -251,6 +242,23 @@ public class controladorMVCAdmin {
         repositoryManager.getNominaRepository().save(nominaAnterior);
         return "redirect:/listado";
     }
+
+    @GetMapping("/editar-empleado/{id}")
+    public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
+        EmpleadoDTO empleadoDTO = empleadoService.obtenerEmpleadoDTOPorId(id);
+
+        // Agregar datos necesarios para los selects
+        model.addAttribute("empleado", empleadoDTO);
+        model.addAttribute("generos", empleadoService.obtenerTodosGeneros());
+        model.addAttribute("paises", empleadoService.obtenerTodosPaises());
+        model.addAttribute("tiposDocumento", empleadoService.obtenerTodosTiposDocumento());
+        model.addAttribute("departamentos", empleadoService.obtenerTodosDepartamentos());
+        model.addAttribute("especialidades", empleadoService.obtenerTodasEspecialidades());
+
+        return "editar-empleado";
+    }
+
+
 
 }
 

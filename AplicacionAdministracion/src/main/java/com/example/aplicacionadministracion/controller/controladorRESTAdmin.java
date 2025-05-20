@@ -14,6 +14,7 @@ import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -207,4 +208,41 @@ public class controladorRESTAdmin {
                     .body("Error al eliminar el producto: " + e.getMessage());
         }
     }
-}
+
+
+
+    @PutMapping("/empleados/{id}")
+    public ResponseEntity<?> actualizarEmpleado(
+            @PathVariable Long id,
+            @Validated @RequestBody EmpleadoDTO empleadoDTO,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            // Crear lista de errores para devolver al frontend
+            List<Map<String, String>> errores = bindingResult.getFieldErrors().stream()
+                    .map(error -> {
+                        Map<String, String> errorMap = new HashMap<>();
+                        errorMap.put("field", error.getField());
+                        errorMap.put("defaultMessage", error.getDefaultMessage());
+                        return errorMap;
+                    })
+                    .collect(Collectors.toList());
+            System.out.println(bindingResult.getAllErrors());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Error de validación");
+            response.put("errors", errores);
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            empleadoService.actualizarEmpleadoCompleto(id, empleadoDTO);
+            return ResponseEntity.ok(empleadoDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error al actualizar el empleado: " + e.getMessage()));
+        }
+
+    }}
+
+

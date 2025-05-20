@@ -126,13 +126,19 @@
             </thead>
             <tbody>
             <tr th:each="emp : ${empleados}"
-                th:onclick="'window.location.href=\'/admin/detalle/' + ${emp.id_empleado} + '\''"
+                th:onclick="'if (!event.target.closest(\'button\')) { window.location.href=\'/admin/detalle/' + ${emp.id_empleado} + '\' }'"
                 style="cursor:pointer;">
                 <td th:text="${emp.nombre}">Nombre</td>
                 <td th:text="${emp.apellido}">Apellidos</td>
                 <td th:text="${emp.email}">Email</td>
                 <td th:text="${emp.departamento != null ? emp.departamento.nombredept : 'Sin asignar'}">Depto</td>
                 <td th:text="${emp.salarioAnual}">Salario</td>
+                <td>
+                    <button class="btn-editar"
+                            th:onclick="'window.location.href=\'/editar-empleado/' + ${emp.id_empleado} + '\''">
+                        Editar
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -140,6 +146,10 @@
 
 </div>
 <script src="/static/js/DesconexionAutomatica.js">
+
+    function editarEmpleado(idEmpleado) {
+        window.location.href = '/admin/editar/paso1/' + idEmpleado;
+    }
 
     //desconexión automática
     let timeout;
