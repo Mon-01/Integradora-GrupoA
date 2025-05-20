@@ -233,28 +233,22 @@ public class controladorRESTAdmin {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/detalle/producto/{id}")
-    public ResponseEntity<?> obtenerDetalleProducto(@PathVariable Long id) {
-        return productoService.buscarProducto(id)
-                .map(producto -> {
-                    ProductoDTO productoDTO = 
-                })
-    }
 
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerDetalleEmpleado(@PathVariable Long id) {
-        return empleadoService.obtenerEmpleadoPorId(id)
-                .map(empleado -> {
-                    // Convertir empleado a DTO
-                    EmpleadoDTO empleadoDTO = convertirEmpleadoADTO(empleado);
 
-                    // Obtener nóminas del empleado
-                    List<NominaDTO> nominasDTO = nominaService.obtenerNominasPorEmpleado(id);
-                    empleadoDTO.setNominas(nominasDTO);
-
-                    return ResponseEntity.ok(empleadoDTO);
-                })
-                .orElse(ResponseEntity.notFound().build());
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> obtenerDetalleEmpleado(@PathVariable Long id) {
+//        return empleadoService.obtenerEmpleadoPorId(id)
+//                .map(empleado -> {
+//                    // Convertir empleado a DTO
+//                    EmpleadoDTO empleadoDTO = convertirEmpleadoADTO(empleado);
+//
+//                    // Obtener nóminas del empleado
+//                    List<NominaDTO> nominasDTO = nominaService.obtenerNominasPorEmpleado(id);
+//                    empleadoDTO.setNominas(nominasDTO);
+//
+//                    return ResponseEntity.ok(empleadoDTO);
+//                })
+//                .orElse(ResponseEntity.notFound().build());
+//    }
 }

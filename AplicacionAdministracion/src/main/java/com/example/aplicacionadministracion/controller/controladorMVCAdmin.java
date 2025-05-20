@@ -4,15 +4,14 @@ package com.example.aplicacionadministracion.controller;
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
 import grupo.a.modulocomun.DTO.NominaDTO;
+import grupo.a.modulocomun.DTO.ProductoDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 
+import grupo.a.modulocomun.Entidades.Producto;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
-import grupo.a.modulocomun.Servicios.EmpleadoService;
-import grupo.a.modulocomun.Servicios.NominaService;
-import grupo.a.modulocomun.Servicios.RepositoryManager;
-import grupo.a.modulocomun.Servicios.ServiceManager;
+import grupo.a.modulocomun.Servicios.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +19,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +52,8 @@ public class controladorMVCAdmin {
     private RepositoryManager repositoryManager;
     @Autowired
     private ServiceManager serviceManager;
+    @Autowired
+    private ProductoService productoService;
 
     // Metodo GET que muestra el formulario de login de administrador.
     @GetMapping("/admin/login")
@@ -241,6 +243,13 @@ public class controladorMVCAdmin {
 
         repositoryManager.getNominaRepository().save(nominaAnterior);
         return "redirect:/listado";
+    }
+
+    @GetMapping("/detalle/producto/{id}")
+    public String obtenerDetalleProducto(@PathVariable Long id, Model model) {
+         ProductoDTO dto = productoService.convertirADTO(productoService.buscarProducto(id));
+        model.addAttribute("producto", dto);
+         return "DetalleProducto";
     }
 
 }
