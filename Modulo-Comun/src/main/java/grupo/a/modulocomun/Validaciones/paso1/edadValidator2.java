@@ -2,6 +2,7 @@ package grupo.a.modulocomun.Validaciones.paso1;
 
 import grupo.a.modulocomun.DTO.Auxiliares.PersonaDTO;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
+import grupo.a.modulocomun.DTO.filtros.PersonaEditarDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -13,10 +14,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class edadValidator implements ConstraintValidator<edadValidation, PersonaDTO> {
+public class edadValidator2 implements ConstraintValidator<edadValidation2, PersonaEditarDTO> {
 
     @Override
-    public boolean isValid(PersonaDTO value, ConstraintValidatorContext context) {
+    public boolean isValid(PersonaEditarDTO value, ConstraintValidatorContext context) {
 
         if (value.getEdad() == 0) {
             context.disableDefaultConstraintViolation();
@@ -61,6 +62,4 @@ public class edadValidator implements ConstraintValidator<edadValidation, Person
         }
 
         return true;
-    }
-
-}
+    }}

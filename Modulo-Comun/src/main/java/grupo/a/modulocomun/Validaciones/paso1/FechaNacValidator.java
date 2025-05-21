@@ -44,6 +44,14 @@ public class FechaNacValidator  implements ConstraintValidator<FechaNacValidatio
                 .filter(Objects::nonNull)   //por si todos fallan
                 .findFirst();
 
+        // Verificar si se encontró una fecha válida
+        if (fechaValida.isEmpty()) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("{El Objeto fecha está vacío}")
+                    .addConstraintViolation();
+            return false;
+        }
+
         //comprobamos que la fecha sea superior a 18 años
         int edad = Period.between(fechaValida.get(), LocalDate.now()).getYears();
         if (edad < 18) {

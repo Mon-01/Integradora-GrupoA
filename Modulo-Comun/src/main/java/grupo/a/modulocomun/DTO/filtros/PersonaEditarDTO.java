@@ -6,6 +6,7 @@ import grupo.a.modulocomun.Validaciones.paso1.*;
 import grupo.a.modulocomun.Validaciones.paso2.Paso2;
 import grupo.a.modulocomun.Validaciones.paso2.TipoDocumentoValidation;
 import grupo.a.modulocomun.Validaciones.paso2.ValidarDocumento;
+import grupo.a.modulocomun.Validaciones.paso2.ValidarDocumento2;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.*;
@@ -18,8 +19,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@edadValidation
-//@ValidarDocumento
+@edadValidation2
+@ValidarDocumento2
 public class PersonaEditarDTO {
 
     @NotBlank(message = "{validation.notBlank}")
@@ -27,11 +28,11 @@ public class PersonaEditarDTO {
     @NotBlank(message = "{validation.notBlank}")
     private String apellido;
 
-  //  @GeneroValidation
+    @GeneroValidation
     private Long genero = 2L;
 
     private int edad;
- //   @FechaNacValidation
+   @FechaNacValidation
     private String fechaNacimiento;
 
     @Min(value = 1, message = "Prefijo no válido")
@@ -46,11 +47,11 @@ public class PersonaEditarDTO {
     @Valid
     private DireccionDTO direccion= new DireccionDTO();
 
-  //  @PaisNacimientoValidation
+    @PaisNacimientoValidation
     private Long paisNacimiento = 3L;
 
     @NotNull(message = "Seleccione un tipo de documento")
- //   @TipoDocumentoValidation
+    @TipoDocumentoValidation
     private Long tipoDocumento = 1L;
 
     @NotBlank(message = "Debe introducir un número de documento")

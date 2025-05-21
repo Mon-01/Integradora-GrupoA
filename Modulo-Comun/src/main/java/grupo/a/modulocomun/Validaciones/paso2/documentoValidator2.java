@@ -1,17 +1,15 @@
 package grupo.a.modulocomun.Validaciones.paso2;
 
 import grupo.a.modulocomun.DTO.Auxiliares.PersonaDTO;
+import grupo.a.modulocomun.DTO.filtros.PersonaEditarDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class documentoValidator implements ConstraintValidator<ValidarDocumento, PersonaDTO> {
+public class documentoValidator2  implements ConstraintValidator<ValidarDocumento2, PersonaEditarDTO> {
+
 
     @Override
-    public void initialize(ValidarDocumento constraintAnnotation) {
-    }
-
-    @Override
-    public boolean isValid(PersonaDTO persona, ConstraintValidatorContext context) {
+    public boolean isValid(PersonaEditarDTO persona, ConstraintValidatorContext context) {
 
 
         if (persona.getTipoDocumento() == null || persona.getDocumento() == null) {

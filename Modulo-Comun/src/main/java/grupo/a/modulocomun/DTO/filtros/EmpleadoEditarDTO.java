@@ -29,28 +29,28 @@ public class EmpleadoEditarDTO extends PersonaEditarDTO {
     private Long id_empleado;
     private String comentarios;
 
- //   @salarioValidation
+    @salarioValidation
     private String salarioAnual;
 
- //   @comisionValidation
+    @comisionValidation
     private String comisionAnual;
 
     @Valid
     private DatosBancariosDTO datosBancarios = new DatosBancariosDTO();
 
     @NotNull(message = "Este campo es obligatorio")
- //   @DepartamentoValidation
+   @DepartamentoValidation
     private Long idDepartamento = 1L;
 
     private DepartamentoDTO departamento;
 
     @Size(min = 2, message = "{valores.minimos}")
-//    @EspecializacionesValidation
+    @EspecializacionesValidation
     private List<Long> especializaciones = new ArrayList<>();
     private UsuarioDTO usuario;
     private List<NominaDTO> nominas;
 
- //   @FotoValidation
+    @FotoValidation
     private String imagen;
 
 }
