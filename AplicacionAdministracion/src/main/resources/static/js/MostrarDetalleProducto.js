@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // rellenar detalles comunes del DTO
             productIdSpan.textContent = product.id_producto || 'N/A';
-            productNombreSpan.textContent = product.nombre || 'N/A'; 
+            productNombreSpan.textContent = product.nombre || 'N/A';
             productPrecioSpan.textContent = product.precio !== null ? ` ${parseFloat(product.precio).toFixed(2)} €` : 'N/A';
             productDescripcionSpan.textContent = product.descripcion || 'N/A';
             productValoracionSpan.textContent = product.valoracion !== null ? product.valoracion : 'N/A';
