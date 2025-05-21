@@ -50,7 +50,7 @@ public class EmpleadoEditarDTO extends PersonaEditarDTO {
     private UsuarioDTO usuario;
     private List<NominaDTO> nominas;
 
-    @FotoValidation
+    //@FotoValidation
     private String imagen;
 
 }
