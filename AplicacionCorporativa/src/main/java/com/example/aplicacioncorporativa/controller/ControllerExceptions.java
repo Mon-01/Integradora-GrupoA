@@ -58,7 +58,7 @@ public class ControllerExceptions {
         }
 
  */
-        @ExceptionHandler(Exception.class)
+        @ExceptionHandler(NoResourceFoundException.class)
         public ResponseEntity<Map<String, Object>> handleGeneralExceptions(NoResourceFoundException ex) {
             Map<String, Object> response = new HashMap<>();
             response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());

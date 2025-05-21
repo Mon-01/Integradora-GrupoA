@@ -1,5 +1,10 @@
-package grupo.a.modulocomun.DTO;
+package grupo.a.modulocomun.DTO.filtros;
+
 import grupo.a.modulocomun.DTO.Auxiliares.PersonaDTO;
+import grupo.a.modulocomun.DTO.DatosBancariosDTO;
+import grupo.a.modulocomun.DTO.DepartamentoDTO;
+import grupo.a.modulocomun.DTO.NominaDTO;
+import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Validaciones.paso1.FotoValidation;
 import grupo.a.modulocomun.Validaciones.paso1.Paso1;
 import grupo.a.modulocomun.Validaciones.paso3.DepartamentoValidation;
@@ -20,32 +25,32 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmpleadoDTO extends PersonaDTO {
+public class EmpleadoEditarDTO extends PersonaEditarDTO {
     private Long id_empleado;
     private String comentarios;
 
-    @salarioValidation(groups = Paso4.class)
+ //   @salarioValidation
     private String salarioAnual;
 
-    @comisionValidation(groups = Paso4.class)
+ //   @comisionValidation
     private String comisionAnual;
 
     @Valid
     private DatosBancariosDTO datosBancarios = new DatosBancariosDTO();
 
-    @NotNull(message = "Este campo es obligatorio", groups = Paso3.class)
-    @DepartamentoValidation(groups = Paso3.class)
+    @NotNull(message = "Este campo es obligatorio")
+ //   @DepartamentoValidation
     private Long idDepartamento = 1L;
 
     private DepartamentoDTO departamento;
 
     @Size(min = 2, message = "{valores.minimos}")
-    @EspecializacionesValidation(groups = Paso3.class)
+//    @EspecializacionesValidation
     private List<Long> especializaciones = new ArrayList<>();
     private UsuarioDTO usuario;
     private List<NominaDTO> nominas;
 
-    @FotoValidation(groups = Paso1.class)
+ //   @FotoValidation
     private String imagen;
 
 }

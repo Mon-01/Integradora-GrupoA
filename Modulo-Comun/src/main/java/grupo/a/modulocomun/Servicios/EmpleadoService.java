@@ -2,6 +2,7 @@ package grupo.a.modulocomun.Servicios;
 
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
+import grupo.a.modulocomun.DTO.filtros.EmpleadoEditarDTO;
 import grupo.a.modulocomun.Entidades.Auxiliares.Direccion;
 import grupo.a.modulocomun.Entidades.Auxiliares.TarjetaCredito;
 import grupo.a.modulocomun.Entidades.DatosBancarios;
@@ -402,6 +403,36 @@ public class EmpleadoService {
 
         return dto;
     }
+    public EmpleadoEditarDTO convertirEmpleadoEditableADTO(Empleado empleado) {
+        EmpleadoEditarDTO dto = new EmpleadoEditarDTO();
+        dto.setId_empleado(empleado.getId_empleado());
+        dto.setNombre(empleado.getNombre());
+        dto.setApellido(empleado.getApellido());
+        dto.setEmail(empleado.getEmail());
+        dto.setTelefono(empleado.getPrefijoTel() + " " + empleado.getTelefono());
+        dto.setFechaNacimiento(empleado.getFecha_nacimiento());
+        dto.setSalarioAnual(empleado.getSalarioAnual().toString());
+        dto.setComisionAnual(empleado.getComisionAnual().toString());
+        dto.setComentarios(empleado.getComentarios());
+
+        // Datos del departamento
+        if(empleado.getDepartamento() != null) {
+            dto.setIdDepartamento(empleado.getDepartamento().getId_dept());
+            dto.setDepartamento(departamentoService.convertirDTO(empleado.getDepartamento()));
+        }
+
+        // Datos del usuario si existe
+        if(empleado.getUsuario() != null) {
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.setId_usuario(empleado.getUsuario().getId_usuario());
+            usuarioDTO.setEmail(empleado.getUsuario().getEmail());
+            usuarioDTO.setBloqueado(empleado.getUsuario().isBloqueado());
+            usuarioDTO.setMotivoBloqueo(empleado.getUsuario().getMotivoBloqueo());
+            dto.setUsuario(usuarioDTO);
+        }
+
+        return dto;
+    }
 
     public Optional<Empleado> obtenerEmpleadoPorCorreo(String correo) {
         return empleadoRepository.findByEmail(correo);
@@ -509,6 +540,12 @@ public class EmpleadoService {
         return convertirEmpleadoADTO(empleado);
     }
 
+    public EmpleadoEditarDTO obtenerEmpleadoEditableDTOPorId(Long id) {
+        Empleado empleado = empleadoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado"));
+        return convertirEmpleadoEditableADTO(empleado);
+    }
+
     public List<Genero> obtenerTodosGeneros() {
         return repositoryManager.getGeneroRepository().findAll();
     }
@@ -529,7 +566,7 @@ public class EmpleadoService {
         return repositoryManager.getEspecialidadesRepository().findAll();
     }
     @Transactional
-    public void actualizarEmpleadoCompleto(Long id, EmpleadoDTO empleadoDTO) {
+    public void actualizarEmpleadoCompleto(Long id, EmpleadoEditarDTO empleadoDTO) {
         // 1. Obtener el empleado existente
         Empleado empleado = empleadoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado con ID: " + id));

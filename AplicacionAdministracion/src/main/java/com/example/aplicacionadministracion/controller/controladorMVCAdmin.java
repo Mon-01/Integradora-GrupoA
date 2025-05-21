@@ -5,6 +5,7 @@ import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
+import grupo.a.modulocomun.DTO.filtros.EmpleadoEditarDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
@@ -245,7 +246,7 @@ public class controladorMVCAdmin {
 
     @GetMapping("/editar-empleado/{id}")
     public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
-        EmpleadoDTO empleadoDTO = empleadoService.obtenerEmpleadoDTOPorId(id);
+        EmpleadoEditarDTO empleadoDTO = empleadoService.obtenerEmpleadoEditableDTOPorId(id);
 
         // Agregar datos necesarios para los selects
         model.addAttribute("empleado", empleadoDTO);

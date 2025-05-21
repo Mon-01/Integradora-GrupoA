@@ -14,6 +14,15 @@ import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
 import grupo.a.modulocomun.Servicios.*;
+
+
+import grupo.a.modulocomun.Validaciones.*;
+
+import grupo.a.modulocomun.Validaciones.*;
+import grupo.a.modulocomun.Validaciones.paso1.Paso1;
+import grupo.a.modulocomun.Validaciones.paso2.Paso2;
+import grupo.a.modulocomun.Validaciones.paso3.Paso3;
+import grupo.a.modulocomun.Validaciones.paso4.Paso4;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,9 +223,9 @@ public class controladorRESTAdmin {
     @PutMapping("/empleados/{id}")
     public ResponseEntity<?> actualizarEmpleado(
             @PathVariable Long id,
-            @Validated @RequestBody EmpleadoDTO empleadoDTO,
+            @Validated @RequestBody EmpleadoEditarDTO empleadoDTO,
             BindingResult bindingResult) {
-
+        System.out.println("hola");
         if (bindingResult.hasErrors()) {
             // Crear lista de errores para devolver al frontend
             List<Map<String, String>> errores = bindingResult.getFieldErrors().stream()

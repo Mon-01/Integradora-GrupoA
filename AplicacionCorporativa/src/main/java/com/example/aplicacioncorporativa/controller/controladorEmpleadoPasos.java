@@ -1,14 +1,12 @@
 package com.example.aplicacioncorporativa.controller;
 
-import grupo.a.modulocomun.Validaciones.Resumen;
 import grupo.a.modulocomun.Validaciones.paso1.Paso1;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
 import grupo.a.modulocomun.Servicios.ServiceManager;
 import grupo.a.modulocomun.Validaciones.paso2.Paso2;
-import grupo.a.modulocomun.Validaciones.paso3.paso3;
+import grupo.a.modulocomun.Validaciones.paso3.Paso3;
 import grupo.a.modulocomun.Validaciones.paso4.Paso4;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 @Controller
@@ -107,7 +104,7 @@ public class controladorEmpleadoPasos {
 
     @PostMapping("/paso3")
     public String procesarPaso3(HttpSession sesion, Model model,
-                                @Validated(paso3.class) @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
+                                @Validated(Paso3.class) @ModelAttribute("datos") EmpleadoDTO datosEmpleado,
                                 BindingResult bindingResult) {
 
 //        serviceManager.getEmpleadoService().validarMaestrosPaso3(datosEmpleado, bindingResult);
