@@ -60,7 +60,7 @@
     <!-- Script solo se define empleadoId si existe usuario.empleado -->
     <script th:inline="javascript">
         /*<![CDATA[*/
-        var empleadoId = [[${usuario.empleado.id_empleado}]];
+        let empleadoId = [[${usuario.empleado.id_empleado}]];
         $(document).ready(function() {
             $('#descargarNominaBtn').click(function() {
                 $('#pdfLoading').show();

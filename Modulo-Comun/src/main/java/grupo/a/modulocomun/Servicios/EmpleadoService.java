@@ -113,7 +113,7 @@ public class EmpleadoService {
         empleado1.setEspecializaciones(List.of(
                 repositoryManager.getEspecialidadesRepository().findById(2L).orElseThrow(EntityNotFoundException::new)
         ));
-
+        empleado1.setActivo(true);
         empleado1.setFecha_alta(LocalDate.now());
 
         return empleado1;
@@ -151,6 +151,7 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(1L).orElseThrow(EntityNotFoundException::new),
                 repositoryManager.getEspecialidadesRepository().findById(4L).orElseThrow(EntityNotFoundException::new)
         ));
+        empleado2.setActivo(true);
 
         empleado2.setFecha_alta(LocalDate.now());
 
@@ -188,6 +189,7 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(3L).orElseThrow(EntityNotFoundException::new),
                 repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
         ));
+        empleado3.setActivo(true);
 
         empleado3.setFecha_alta(LocalDate.now());
 
@@ -225,7 +227,7 @@ public class EmpleadoService {
                 repositoryManager.getEspecialidadesRepository().findById(2L).orElseThrow(EntityNotFoundException::new),
                 repositoryManager.getEspecialidadesRepository().findById(5L).orElseThrow(EntityNotFoundException::new)
         ));
-
+        empleado4.setActivo(false);
         empleado4.setFecha_alta(LocalDate.now());
 
         return empleado4;
@@ -257,6 +259,7 @@ public class EmpleadoService {
         asignarEspecialidades(empleado, empleadoDTO);
         asignarDepartamento(empleado, empleadoDTO);
         asignarTipoDocumento(empleado, empleadoDTO);
+        empleado.setActivo(true);
         empleado.setFecha_alta(LocalDate.now());
 
         // Relacionar con el usuario
@@ -384,6 +387,8 @@ public class EmpleadoService {
         dto.setSalarioAnual(empleado.getSalarioAnual().toString());
         dto.setComisionAnual(empleado.getComisionAnual().toString());
         dto.setComentarios(empleado.getComentarios());
+        dto.setActivo(empleado.isActivo());
+        dto.setFechaBaja(empleado.getFechaBaja());
 
         // Datos del departamento
         if(empleado.getDepartamento() != null) {
@@ -625,6 +630,44 @@ public class EmpleadoService {
 
         // 9. Guardar los cambios
         empleadoRepository.save(empleado);
+    }
+
+    @Transactional
+    public void darDeBaja(Long idEmpleado) {
+        Empleado empleado = empleadoRepository.findById(idEmpleado)
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado"));
+
+        empleado.setActivo(false);
+        empleado.setFechaBaja(LocalDate.now());
+        empleadoRepository.save(empleado);
+
+        // Opcional: También puedes desactivar el usuario asociado
+        if(empleado.getUsuario() != null) {
+            empleado.getUsuario().setBloqueado(true);
+            empleado.getUsuario().setMotivoBloqueo("Empleado dado de baja");
+            usuarioRepository.save(empleado.getUsuario());
+        }
+    }
+
+    @Transactional
+    public void recuperarEmpleado(Long idEmpleado) {
+        Empleado empleado = empleadoRepository.findById(idEmpleado)
+                .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado"));
+
+        empleado.setActivo(true);
+        empleado.setFechaBaja(null);
+        empleadoRepository.save(empleado);
+
+        // Opcional: Reactivar el usuario asociado
+        if(empleado.getUsuario() != null) {
+            empleado.getUsuario().setBloqueado(false);
+            empleado.getUsuario().setMotivoBloqueo(null);
+            usuarioRepository.save(empleado.getUsuario());
+        }
+    }
+
+    public List<Empleado> obtenerEmpleadosInactivos() {
+        return empleadoRepository.findByActivoFalse();
     }
 
 }

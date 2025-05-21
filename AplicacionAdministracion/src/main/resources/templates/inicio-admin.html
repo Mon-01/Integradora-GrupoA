@@ -7,6 +7,7 @@
 
 </head>
 <style>
+
     /* Estilos para los filtros */
     .filtros-container {
         display: flex;
@@ -110,6 +111,7 @@
     <div class="btn-listados">
         <a href="/listado" class="btn btn-primary">Ver Listado de Nóminas</a>
         <a href="/productos" class="btn btn-primary">Subida de Productos</a>
+        <a href="/empleados/inactivos" class="btn btn-primary">Empleados no Activos</a>
         <br><br>
     </div>
 
@@ -139,18 +141,20 @@
                         Editar
                     </button>
                 </td>
+                <td>
+                    <button class="btn btn-danger"
+                            th:onclick="'darDeBaja(' + ${emp.id_empleado} + ')'"
+                            th:disabled="${!emp.activo}">
+                        Dar de baja
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
 
 </div>
-<script src="/static/js/DesconexionAutomatica.js">
-
-    function editarEmpleado(idEmpleado) {
-        window.location.href = '/admin/editar/paso1/' + idEmpleado;
-    }
-
+<script>
     //desconexión automática
     let timeout;
     //definimos el tiempo de inactividad
@@ -179,6 +183,26 @@
                 alert("Su sesión ha expirado, se le redirigirá al login");
                 window.location.href = '/login';
             });
+    }
+
+    function darDeBaja(id) {
+        if (confirm('¿Estás seguro de que quieres dar de baja a este empleado?')) {
+            fetch('/api/admin/' + id + '/baja', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Empleado dado de baja con éxito');
+                        window.location.reload();
+                    } else {
+                        response.text().then(text => alert('Error: ' + text));
+                    }
+                })
+                .catch(error => alert('Error: ' + error));
+        }
     }
 </script>
 </body>

@@ -29,8 +29,8 @@ fetch(`/api/admin/nomina/${empleadoId}`)
                         ${nominas.map(nomina => `
                             <tr>
                                 <td>${nomina.id}</td>
-                                <td>${new Date(nomina.fecha).toLocaleDateString()}</td>
-                                <td>${nomina.total?.toFixed(2) || '0.00'} €</td>
+                                <td>${formatDate(nomina.fecha)}</td>
+                                <td>${nomina.total ? parseFloat(nomina.total).toFixed(2) : '0.00'} €</td>
                                 <td>
                                     <button class="btn-toggle" onclick="toggleLineas('${nomina.id}')">
                                         Ver líneas
@@ -45,14 +45,21 @@ fetch(`/api/admin/nomina/${empleadoId}`)
                                             <thead>
                                                 <tr>
                                                     <th>Concepto</th>
+                                                    <th>Tipo</th>
+                                                    <th>Valor</th>
                                                     <th>Importe</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 ${nomina.lineas.map(linea => `
-                                                    <tr>
+                                                    <tr class="${linea.esDevengo ? 'devengo' : 'deduccion'}">
                                                         <td>${linea.concepto}</td>
-                                                        <td>${linea.cantidad?.toFixed(2) || '0.00'} €</td>
+                                                        <td>${linea.esDevengo ? 'Devengo' : 'Deducción'}</td>
+                                                        <td>
+                                                            ${linea.porcentaje ? linea.porcentaje + '%' : ''}
+                                                            ${linea.importeFijo ? linea.importeFijo + '€' : ''}
+                                                        </td>
+                                                        <td>${linea.cantidad ? parseFloat(linea.cantidad).toFixed(2) : '0.00'} €</td>
                                                     </tr>
                                                 `).join('')}
                                             </tbody>
@@ -66,10 +73,17 @@ fetch(`/api/admin/nomina/${empleadoId}`)
             `;
     })
     .catch(error => {
-        container.innerHTML = `<div style="color:red;">Error: ${error.message}</div>`;
+        document.getElementById('contenido-nomina').innerHTML =
+            `<div style="color:red;">Error: ${error.message}</div>`;
     });
 
 function toggleLineas(nominaId) {
     const lineasRow = document.getElementById(`lineas-${nominaId}`);
     lineasRow.style.display = lineasRow.style.display === 'none' ? 'table-row' : 'none';
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Sin fecha';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES');
 }

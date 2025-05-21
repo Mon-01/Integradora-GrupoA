@@ -30,3 +30,23 @@ function logout() {
             window.location.href = '/login';
         });
 }
+
+function darDeBaja(id) {
+    if (confirm('¿Estás seguro de que quieres dar de baja a este empleado?')) {
+        fetch('/api/admin/empleados/' + id + '/baja', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Empleado dado de baja con éxito');
+                    window.location.reload();
+                } else {
+                    response.text().then(text => alert('Error: ' + text));
+                }
+            })
+            .catch(error => alert('Error: ' + error));
+    }
+}

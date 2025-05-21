@@ -62,4 +62,10 @@ public class Empleado extends Persona {
 
     @Column(columnDefinition = "LONGTEXT")
     private String imagenBase64;
+
+    @Column(name = "activo", columnDefinition = "boolean default true")
+    private boolean activo = true;
+
+    @Column(name = "fecha_baja")
+    private LocalDate fechaBaja;
 }

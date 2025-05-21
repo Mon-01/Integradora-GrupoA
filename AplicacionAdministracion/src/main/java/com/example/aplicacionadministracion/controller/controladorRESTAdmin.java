@@ -252,6 +252,41 @@ public class controladorRESTAdmin {
                     .body(Map.of("message", "Error al actualizar el empleado: " + e.getMessage()));
         }
 
-    }}
+    }
+
+    @PostMapping("/{id}/baja")
+    public ResponseEntity<?> darDeBaja(@PathVariable Long id) {
+        try {
+            empleadoService.darDeBaja(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al dar de baja: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/inactivos")
+    public ResponseEntity<List<EmpleadoDTO>> listarInactivos() {
+        List<EmpleadoDTO> inactivos = empleadoService.obtenerEmpleadosInactivos().stream()
+                .map(e -> {
+                    EmpleadoDTO dto = convertirEmpleadoADTO(e);
+                    dto.setActivo(false);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(inactivos);
+    }
+
+    @PostMapping("/{id}/recuperar")
+    public ResponseEntity<?> recuperarEmpleado(@PathVariable Long id) {
+        try {
+            empleadoService.recuperarEmpleado(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al recuperar empleado: " + e.getMessage());
+        }
+    }
+}
 
 

@@ -88,5 +88,6 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
 
     // Búsqueda solo por salario
     List<Empleado> findBySalarioAnualBetween(BigDecimal salarioMin, BigDecimal salarioMax);
+    List<Empleado> findByActivoFalse();
 
 }

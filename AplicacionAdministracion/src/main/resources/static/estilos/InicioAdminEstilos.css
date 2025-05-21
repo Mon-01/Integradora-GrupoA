@@ -83,3 +83,4 @@ th, td {
     display: flex;
     gap: 20px;
 }
+.btn-danger { background: red; border-radius: 4px; }

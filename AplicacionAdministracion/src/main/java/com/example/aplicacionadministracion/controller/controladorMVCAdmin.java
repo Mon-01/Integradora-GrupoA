@@ -259,6 +259,20 @@ public class controladorMVCAdmin {
         return "editar-empleado";
     }
 
+    @GetMapping("/empleados/inactivos")
+    public String mostrarInactivos(Model model) {
+        List<EmpleadoDTO> empleados = empleadoService.obtenerEmpleadosInactivos().stream()
+                .map(e -> {
+                    EmpleadoDTO dto = empleadoService.convertirEmpleadoADTO(e);
+                    dto.setActivo(false);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        model.addAttribute("empleados", empleados);
+        return "empleados-inactivos";
+    }
+
 
 
 }

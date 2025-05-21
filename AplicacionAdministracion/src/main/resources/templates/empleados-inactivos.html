@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Empleados Inactivos</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        .table-container {
+            margin: 20px;
+        }
+        .action-btn {
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+<br>
+<a href="/admin/inicio" class="btn btn-primary">Volver al listado de empleados</a>
+
+<div class="container table-container">
+    <h2>Empleados dados de baja</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Fecha de baja</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="emp : ${empleados}">
+            <td th:text="${emp.nombre}"></td>
+            <td th:text="${emp.apellido}"></td>
+            <td th:text="${emp.email}"></td>
+            <td th:text="${emp.fechaBaja}"></td>
+            <td>
+                <button class="btn btn-success btn-sm action-btn"
+                        th:onclick="'recuperarEmpleado(' + ${emp.id_empleado} + ')'">
+                    Recuperar
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function recuperarEmpleado(id) {
+        if(confirm('¿Está seguro de querer recuperar este empleado?')) {
+            fetch('/api/admin/' + id + '/recuperar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if(response.ok) {
+                        alert('Empleado recuperado con éxito');
+                        window.location.reload();
+                    } else {
+                        response.text().then(text => alert('Error: ' + text));
+                    }
+                })
+                .catch(error => alert('Error: ' + error));
+        }
+    }
+</script>
+</body>
+</html>
