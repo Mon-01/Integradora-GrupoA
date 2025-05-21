@@ -29,7 +29,7 @@ function actualizarIconoCandado(idUser, celdaCandado) {
                 const lockButton = celdaCandado.querySelector('.lock-btn');
                 if (lockButton) {
                     lockButton.addEventListener('click', function(event) {
-                        //evita el onblur que salta al detale del empleado
+                        //evita el onclick que salta al detale del empleado
                         event.stopPropagation();
                         //cogemos la fila entera de cada empleado
                         const row = this.closest('tr');
