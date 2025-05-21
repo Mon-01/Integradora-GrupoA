@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const productFechaFabricacionSpan = document.getElementById('productFechaFabricacion'); // Actualizado ID
     const productCategoriasSpan = document.getElementById('productCategorias');
 
-    // Secciones de detalles específicos
+    // secciones de detalles específicos
     const libroDetailsDiv = document.getElementById('libroDetails');
     const ropaDetailsDiv = document.getElementById('ropaDetails');
     const muebleDetailsDiv = document.getElementById('muebleDetails');
@@ -43,25 +43,26 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingDiv.style.display = 'none';
             productContentDiv.style.display = 'block';
 
-            // Rellenar detalles comunes del DTO
+            // rellenar detalles comunes del DTO
             productIdSpan.textContent = product.id_producto || 'N/A';
-            productNombreSpan.textContent = product.nombre || 'N/A'; // Asume que 'nombre' está en el DTO
-            productPrecioSpan.textContent = product.precio !== null ? `€ ${parseFloat(product.precio).toFixed(2)}` : 'N/A';
+            productNombreSpan.textContent = product.nombre || 'N/A'; 
+            productPrecioSpan.textContent = product.precio !== null ? ` ${parseFloat(product.precio).toFixed(2)} €` : 'N/A';
             productDescripcionSpan.textContent = product.descripcion || 'N/A';
-            productValoracionSpan.textContent = product.valoracion !== null ? product.valoracion : 'N/A'; // Asume que 'valoracion' está en el DTO
+            productValoracionSpan.textContent = product.valoracion !== null ? product.valoracion : 'N/A';
             productMarcaSpan.textContent = product.marca || 'N/A';
             productEsPerecederoSpan.textContent = product.esPerecedero ? 'Sí' : 'No';
 
-            // Formatear y mostrar fecha de fabricación (viene como LocalDate -> string "YYYY-MM-DD")
+            // mostrar fecha de fabricación (viene como LocalDate -> string "YYYY-MM-DD")
             if (product.fechaFabricacion) {
                 try {
-                    const parts = product.fechaFabricacion.split('-'); // "YYYY-MM-DD"
+                    const parts = product.fechaFabricacion.split('-');
                     if (parts.length === 3) {
-                        // Mes es 0-indexado en el constructor de Date
+                        // viene cómo localDate, la pasamos a date
                         const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-                        productFechaFabricacionSpan.textContent = dateObj.toLocaleDateString(); // Formato local (ej: DD/MM/YYYY)
+                        productFechaFabricacionSpan.textContent = dateObj.toLocaleDateString();
                     } else {
-                        productFechaFabricacionSpan.textContent = product.fechaFabricacion; // Mostrar como viene si no es el formato esperado
+                        // Mostrar como viene si no es el formato esperado
+                        productFechaFabricacionSpan.textContent = product.fechaFabricacion;
                     }
                 } catch (e) {
                     console.warn("Error al parsear fechaFabricacion:", product.fechaFabricacion, e);
