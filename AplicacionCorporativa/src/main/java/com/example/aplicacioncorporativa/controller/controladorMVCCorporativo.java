@@ -85,32 +85,46 @@ public class controladorMVCCorporativo {
 
         if (usuario.isEmpty()) {
             model.addAttribute("error", "Usuario no encontrado");
-            // Creamos un nuevo DTO para mantener el formulario
             UsuarioDTO nuevoDto = new UsuarioDTO();
             nuevoDto.setId_usuario(usuarioDTO.getId_usuario());
             model.addAttribute("dto", nuevoDto);
             return "corporativo/contrasenia";
         }
 
-        if (!usuarioService.comprobarPassword(usuario.get(), usuarioDTO.getClave())) {
-            model.addAttribute("error", "Contraseña incorrecta");
-            intentosClave++;
+        // Verificar si el usuario está bloqueado
+        if(usuarioService.isBloqueado(usuario.get())) {
+            return "redirect:/login";
+        }
 
-            // Creamos un nuevo DTO para mantener el formulario
+        if (!usuarioService.comprobarPassword(usuario.get(), usuarioDTO.getClave())) {
+            // Obtener intentos actuales de la sesión
+            Integer intentos = (Integer) session.getAttribute("intentosClave");
+            if (intentos == null) {
+                intentos = 1;
+            } else {
+                intentos++;
+            }
+            session.setAttribute("intentosClave", intentos);
+
+            model.addAttribute("error", "Contraseña incorrecta. Intentos: " + intentos + "/3");
+
             UsuarioDTO nuevoDto = new UsuarioDTO();
             nuevoDto.setId_usuario(usuario.get().getId_usuario());
             model.addAttribute("dto", nuevoDto);
 
-            if(intentosClave >= 3){
+            if(intentos >= 3){
                 usuarioService.bloquearUsuario(usuario.get().getId_usuario(),
                         "Contraseña incorrecta 3 veces",
                         LocalDateTime.now().plusMinutes(15));
                 usuarioService.actualizarUsuario(usuario.get());
+                session.removeAttribute("intentosClave"); // Limpiar contador
                 return "redirect:/login";
             }
             return "corporativo/contrasenia";
         }
 
+        // Si la contraseña es correcta, limpiar contador
+        session.removeAttribute("intentosClave");
         session.setAttribute("usuarioLogueado", usuario.get());
         return "redirect:/inicio";
     }
