@@ -77,22 +77,38 @@ public class controladorMVCCorporativo {
     }
 
     @PostMapping("/password")
-    public String procesarPassword(@ModelAttribute("usuarioDTO") UsuarioDTO usuarioDTO, Model model) {
+    public String procesarPassword(@ModelAttribute("usuarioDTO") UsuarioDTO usuarioDTO, Model model, HttpSession session) {
         String email = (String) session.getAttribute("emailTemporal");
         usuarioDTO.setEmail(email);
 
         Optional<Usuario> usuario = usuarioService.buscarPorEmail(Optional.of(usuarioDTO));
-        if (usuario.isEmpty() || !usuarioService.comprobarPassword(usuario.get(), usuarioDTO.getClave())) {
-            model.addAttribute("error", "Contraseña incorrecta.");
+
+        if (usuario.isEmpty()) {
+            model.addAttribute("error", "Usuario no encontrado");
+            // Creamos un nuevo DTO para mantener el formulario
+            UsuarioDTO nuevoDto = new UsuarioDTO();
+            nuevoDto.setId_usuario(usuarioDTO.getId_usuario());
+            model.addAttribute("dto", nuevoDto);
+            return "corporativo/contrasenia";
+        }
+
+        if (!usuarioService.comprobarPassword(usuario.get(), usuarioDTO.getClave())) {
+            model.addAttribute("error", "Contraseña incorrecta");
             intentosClave++;
-            model.addAttribute("usuarioDTO", new UsuarioDTO());
+
+            // Creamos un nuevo DTO para mantener el formulario
+            UsuarioDTO nuevoDto = new UsuarioDTO();
+            nuevoDto.setId_usuario(usuario.get().getId_usuario());
+            model.addAttribute("dto", nuevoDto);
+
             if(intentosClave >= 3){
-                usuarioService.bloquearUsuario(usuario.get().getId_usuario(), "Contraseña incorrecta 3 veces", LocalDateTime.now().plusMinutes(15));
+                usuarioService.bloquearUsuario(usuario.get().getId_usuario(),
+                        "Contraseña incorrecta 3 veces",
+                        LocalDateTime.now().plusMinutes(15));
                 usuarioService.actualizarUsuario(usuario.get());
-                model.addAttribute("bloqueado", true);
                 return "redirect:/login";
             }
-            return "corporativo/contrasenia.html";
+            return "corporativo/contrasenia";
         }
 
         session.setAttribute("usuarioLogueado", usuario.get());
