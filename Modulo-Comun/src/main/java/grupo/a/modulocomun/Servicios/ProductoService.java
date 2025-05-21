@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductoService {
@@ -38,8 +39,8 @@ public class ProductoService {
         productoRepository.deleteAllByIdInBatch(ids);
     }
 
-    public Producto buscarProducto(Long id) {
-        return productoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No se encontro el producto con id: " + id));
+    public Optional<Producto> buscarProducto(Long id) {
+        return productoRepository.findById(id);
     }
 
     public ProductoDTO convertirADTO(Producto producto) {
@@ -70,20 +71,15 @@ public class ProductoService {
         dto.setMarca(producto.getMarca());
         dto.setEsPerecedero(producto.getEsPerecedero());
         dto.setPrecio(producto.getPrecio());
+        dto.setNombre(producto.getNombre());
+        dto.setValoracion(producto.getValoracion());
 
-
-
-        //ERROR AQUÍ
-        dto.setFechaFabricacion(producto.getFechaAlta().toString().to);
         if (producto.getFechaAlta() != null) {
-            dto.setFechaFabricacion(producto.getFechaAlta().toInstant() // Convierte Date a Instant
-                    .atZone(ZoneId.systemDefault()) // Convierte Instant a ZonedDateTime en la zona horaria del sistema
-                    .toLocalDate()); // Extrae el LocalDate de ZonedDateTime
+            // java.sql.Date tiene un método directo toLocalDate()
+            dto.setFechaFabricacion(((java.sql.Date) producto.getFechaAlta()).toLocalDate());
         } else {
             dto.setFechaFabricacion(null); // O maneja como prefieras si la fecha es nula
         }
-
-
 
         // Conversión de List<Categoria> a List<String>
         if (producto.getCategorias() != null) {

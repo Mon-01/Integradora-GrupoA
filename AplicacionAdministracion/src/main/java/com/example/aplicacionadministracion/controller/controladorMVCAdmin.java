@@ -247,8 +247,7 @@ public class controladorMVCAdmin {
 
     @GetMapping("/detalle/producto/{id}")
     public String obtenerDetalleProducto(@PathVariable Long id, Model model) {
-         ProductoDTO dto = productoService.convertirADTO(productoService.buscarProducto(id));
-        model.addAttribute("producto", dto);
+        model.addAttribute("idProducto", id);
          return "DetalleProducto";
     }
 

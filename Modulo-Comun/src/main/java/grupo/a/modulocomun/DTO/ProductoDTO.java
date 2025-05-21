@@ -19,6 +19,8 @@ import java.util.List;
 })
 public abstract class ProductoDTO {
     private Long id_producto;
+    private String nombre;
+    private int valoracion;
     private String tipoProducto;
     private String descripcion;
     private String marca;

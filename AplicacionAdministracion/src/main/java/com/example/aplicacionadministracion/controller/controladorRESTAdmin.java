@@ -234,7 +234,15 @@ public class controladorRESTAdmin {
     }
 
 
-
+    @GetMapping("/producto/{id}")
+    public ResponseEntity<?> obtenerProducto(@PathVariable Long id) {
+        return productoService.buscarProducto(id)
+                .map(producto -> {
+                    ProductoDTO dto = productoService.convertirADTO(producto);
+                    return ResponseEntity.ok(dto);
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 
 //    @GetMapping("/{id}")
 //    public ResponseEntity<?> obtenerDetalleEmpleado(@PathVariable Long id) {
