@@ -357,4 +357,6 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
         return salarioBase.multiply(new BigDecimal(porcentaje.doubleValue()))
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
+
+
 }
