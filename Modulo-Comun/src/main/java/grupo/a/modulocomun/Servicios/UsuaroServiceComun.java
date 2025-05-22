@@ -27,7 +27,7 @@ public class UsuaroServiceComun {
         user.setBloqueado(true);
         user.setEmail(empleado.getEmail());
         user.setMotivoBloqueo("sopla gaitas");
-        user.setClave("bloqueado123");
+        user.setClave("clave15");
         user.setFechaFinBloqueo(LocalDateTime.now().plusMinutes(10));
         user.setRespuestaSecreta("Madrid");
         usuarioRepository.save(user);
@@ -40,7 +40,7 @@ public class UsuaroServiceComun {
                 .orElseThrow(() -> new EntityNotFoundException("No se ha encontrado al empleado con id: " + empleado.getId_empleado())));
         user.setBloqueado(false);
         user.setEmail(empleado.getEmail());
-        user.setClave("NoBloqueado123");
+        user.setClave("clave15");
         user.setRespuestaSecreta("Barcelona");
         usuarioRepository.save(user);
         return user;
