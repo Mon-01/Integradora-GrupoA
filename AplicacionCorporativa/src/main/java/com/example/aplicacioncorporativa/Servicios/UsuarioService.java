@@ -98,6 +98,7 @@ public class UsuarioService {
                 .map(dto -> {
                     Usuario usuario = new Usuario();
                     usuario.setEmail(dto.getEmail());
+                    // Encripto la contraseña
                     String claveEncriptada = passwordEncoder.encode(dto.getClave());
                     usuario.setClave(claveEncriptada);
                     usuario.setConfirmarClave(dto.getConfirmarClave());
@@ -107,6 +108,9 @@ public class UsuarioService {
                 .map(usuarioRepository::save); // guarda y devuelve el Optional
     }
     public boolean comprobarPassword(Usuario usuario, String claveSinEncriptar) {
+        //Coge el Usuario ya guardado en la BBDD que queremos usar extrae su clave,
+        // y el String que llega es la contraseña del DTO a comparar, .matches
+        // lo que hace es encriptarla en base al mismo patrón y compararlas porque si no no se encripta de la misma manera
         return passwordEncoder.matches(claveSinEncriptar, usuario.getClave());
     }
 
