@@ -5,6 +5,8 @@ plugins {
     id 'org.hibernate.orm' version '6.6.11.Final'
     id 'org.graalvm.buildtools.native' version '0.10.6'
     id "io.freefair.lombok" version "8.4"
+    id "war"
+
 }
 
 group = 'com.example'
