@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -217,6 +218,44 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
             PdfWriter.getInstance(document, out);
 
             document.open();
+            String imageResourcePath = "static/img/OP.jpg";
+
+            URL imageUrl = null;
+            try {
+                // 2. Cargar la imagen usando el ClassLoader
+                //    getClass().getClassLoader() obtiene el classloader que cargó tu clase actual.
+                imageUrl = getClass().getClassLoader().getResource(imageResourcePath);
+
+                if (imageUrl == null) {
+                    System.err.println("Error: No se pudo encontrar la imagen en el classpath: " + imageResourcePath);
+                    // Aquí podrías añadir un texto al PDF indicando que el logo falta,
+                    // o incluso lanzar una excepción si el logo es absolutamente necesario.
+                    document.add(new Paragraph("[Logo no encontrado: " + imageResourcePath + "]", new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
+                } else {
+                    Image logo = Image.getInstance(imageUrl);
+
+                    // Opcional: Escalar la imagen
+                    logo.scaleToFit(100f, 50f); // Ajusta ancho y alto (en puntos)
+
+                    // Opcional: Alineación
+                    // logo.setAlignment(Element.ALIGN_CENTER);
+
+                    document.add(logo); // Añadir la imagen al documento
+                }
+
+            } catch (BadElementException e) {
+                // Esto puede ocurrir si el archivo de imagen está corrupto o no es un formato soportado
+                System.err.println("Error: El archivo de imagen está corrupto o no es soportado: " + imageResourcePath + " - " + e.getMessage());
+                document.add(new Paragraph("[Error formato imagen: " + imageResourcePath + "]", new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
+            } catch (java.io.IOException e) {
+                // Esto puede ocurrir por problemas de lectura del archivo
+                System.err.println("Error de I/O al leer la imagen: " + imageResourcePath + " - " + e.getMessage());
+                document.add(new Paragraph("[Error I/O imagen: " + imageResourcePath + "]", new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
+            } catch (Exception e) { // Captura general por si acaso
+                System.err.println("Error inesperado al procesar la imagen: " + imageResourcePath + " - " + e.getMessage());
+                document.add(new Paragraph("[Error inesperado imagen: " + imageResourcePath + "]", new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
+            }
+
 
             // Encabezado
             Paragraph header = new Paragraph("NÓMINA", new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD));
