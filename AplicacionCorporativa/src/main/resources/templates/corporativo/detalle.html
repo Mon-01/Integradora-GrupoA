@@ -1,16 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Detalle empleado</title>
+    <title>Detalle del Empleado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .info-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 3px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            border: 1px solid red;
+            border-radius: 5px;
+            background-color: #ffeeee;
+        }
+        .btn-primary {
+            background-color: #2196F3;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
 <h1>Detalle del empleado</h1>
-<p>ID: <span th:text="${empleado.id_empleado}"></span></p>
-<p>Nombre: <span th:text="${empleado.nombre}"></span></p>
-<p>Apellido: <span th:text="${empleado.apellido}"></span></p>hu
-<p>Email: <span th:text="${empleado.email}"></span></p>
-<p>Genero: <span th:text="${empleado.genero}"></span></p>
+<a th:href="@{'/inicio'}" class="btn btn-primary">
+    Volver al área personal
+</a>
+<div class="info-section">
+    <h2>Información Básica</h2>
+    <p><strong>Nombre:</strong> <span th:text="${empleado.nombre}"></span> <span th:text="${empleado.apellido}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${empleado.email}"></span></p>
+    <p><strong>Teléfono:</strong> <span th:text="${empleado.telefono}"></span></p>
+    <p><strong>Género:</strong> <span th:text="${empleado.genero}"></span></p>
+    <p><strong>Fecha Nacimiento:</strong> <span th:text="${empleado.fecha_nacimiento}"></span></p>
+</div>
 
+<div class="info-section">
+    <h2>Información Laboral</h2>
+    <p><strong>Salario Anual:</strong> <span th:text="${empleado.salarioAnual}"></span> €</p>
+    <p><strong>Comisión Anual:</strong> <span th:text="${empleado.comisionAnual}"></span> €</p>
+    <p><strong>Comentarios:</strong>
+        <span th:text="${empleado.comentarios != null ? empleado.comentarios : 'Ninguno'}"></span>
+    </p>
+</div>
+
+<!-- Información de Usuario (si existe) -->
+<div class="info-section" th:if="${empleado.usuario != null}">
+    <h2>Información de Usuario</h2>
+    <p><strong>Email:</strong> <span th:text="${empleado.usuario.email}"></span></p>
+    <p><strong>Estado:</strong>
+        <span th:text="${empleado.usuario.bloqueado ? 'Bloqueado' : 'Activo'}"></span>
+    </p>
+    <p th:if="${empleado.usuario.motivoBloqueo != null}">
+        <strong>Motivo de bloqueo:</strong> <span th:text="${empleado.usuario.motivoBloqueo}"></span>
+    </p>
+</div>
+
+<!-- Botón para ver nóminas (si existen) -->
+<div th:if="${empleado.nominas != null and !empleado.nominas.empty}">
+    <a th:href="@{'/nomina/' + ${empleado.id_empleado}}" class="btn btn-primary">
+        Ver nóminas
+    </a>
+</div>
 </body>
 </html>

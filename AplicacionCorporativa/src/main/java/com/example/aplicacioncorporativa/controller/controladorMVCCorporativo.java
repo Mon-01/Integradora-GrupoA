@@ -164,5 +164,11 @@ public class controladorMVCCorporativo {
         return "corporativo/cambiarContra";
     }
 
+    @GetMapping("/nomina/{empleadoId}")
+    public String mostrarDetalleNomina(@PathVariable Long empleadoId, Model model) {
+        model.addAttribute("empleadoId", empleadoId); // Pasa el ID del empleado a la vista.
+        return "/corporativo/detalleNominaEmpleado"; // Retorna la vista "detalle-nomina.html".
+    }
+
 }
 
