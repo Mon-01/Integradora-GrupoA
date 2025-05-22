@@ -3,6 +3,7 @@ package com.example.aplicacioncorporativa.Servicios;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.UsuarioDTO;
 import grupo.a.modulocomun.Entidades.Usuario;
+import grupo.a.modulocomun.Repositorios.EmpleadoRepository;
 import grupo.a.modulocomun.Repositorios.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,11 +19,13 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmpleadoRepository empleadoRepository;
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, EmpleadoRepository empleadoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.empleadoRepository = empleadoRepository;
     }
 
     public void bloquearUsuario(UUID id, String motivo, LocalDateTime hasta) {
@@ -107,5 +110,8 @@ public class UsuarioService {
         return passwordEncoder.matches(claveSinEncriptar, usuario.getClave());
     }
 
+    public Usuario findById(UUID id) {
+        return usuarioRepository.findById(id).orElseThrow();
+    }
 
 }

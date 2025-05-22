@@ -9,7 +9,6 @@ $(document).ready(function() {
         const id = $(this).data('id');
         const row = $(this).closest('tr');
 
-        console.log("ID a eliminar:", id); // <--- AÑADE ESTA LÍNEA
 
         if(confirm('¿Está seguro de que desea eliminar este producto? Esta acción no se puede deshacer.')) {
             $.ajax({

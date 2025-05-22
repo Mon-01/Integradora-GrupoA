@@ -10,6 +10,13 @@
         .btn { padding: 5px 10px; text-decoration: none; color: white; }
         .btn-primary { background-color: #2196F3; border-radius: 4px; display: inline-block; }
         .btn-danger { background: red; border-radius: 4px; }
+        /* Estilo para que las filas parezcan clicables */
+        tr[data-id] {
+            cursor: pointer;
+        }
+        tr[data-id]:hover {
+            background-color: #e0e0e0;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -62,6 +69,7 @@
 
 <script src="/js/FiltrarProductos.js">
 </script>
+<script src="/js/MostrarListaProductos.js"></script>
 <script src="/js/EliminarVariosProductos.js"></script>
 </body>
 </html>

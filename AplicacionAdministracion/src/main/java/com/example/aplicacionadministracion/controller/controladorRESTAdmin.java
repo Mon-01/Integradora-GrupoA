@@ -1,8 +1,11 @@
 package com.example.aplicacionadministracion.controller;
 
 
+import com.example.aplicacionadministracion.DTO.BloqueoUsuarioDTO;
 import com.example.aplicacionadministracion.DTO.UsuarioAdministradorDTO;
 import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorService;
+import com.example.aplicacioncorporativa.Servicios.UsuarioService;
+import grupo.a.modulocomun.DTO.*;
 import grupo.a.modulocomun.DTO.Auxiliares.CatalogoProductosDTO;
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.LineaNominaDTO;
@@ -13,6 +16,7 @@ import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
+import grupo.a.modulocomun.Repositorios.ProductoRepository;
 import grupo.a.modulocomun.Servicios.*;
 
 
@@ -49,6 +53,12 @@ public class controladorRESTAdmin {
     @Autowired private NominaRepository nominaRepository;
     @Autowired private DepartamentoService departamentoService;
     @Autowired private ProductoService productoService;
+    @Autowired
+    private ServiceManager serviceManager;
+    @Autowired private UsuarioAdministradorService usuarioAdministradorService;
+    @Autowired private UsuarioService usuarioService;
+    @Autowired
+    private ProductoRepository productoRepository;
 
     @Autowired
     public controladorRESTAdmin(UsuarioAdministradorService service) {
@@ -287,6 +297,52 @@ public class controladorRESTAdmin {
                     .body("Error al recuperar empleado: " + e.getMessage());
         }
     }
+
+    @GetMapping("/isblock/{id}")
+    public ResponseEntity<?> comprobarBloqueo(@PathVariable UUID id) {
+        if(!usuarioAdministradorService.isBloqueado(usuarioService.findById(id))){
+            return ResponseEntity.ok().build();
+        }else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+    @PostMapping("/bloquear")
+    public ResponseEntity<?> bloquear(@RequestBody BloqueoUsuarioDTO datosBloqueo) {
+        usuarioAdministradorService.bloquearUsuario(datosBloqueo.getId(),datosBloqueo.getMotivo(),datosBloqueo.getTiempo());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/desbloquear/{id}")
+    public ResponseEntity<?> desbloquear(@PathVariable UUID id) {
+        usuarioAdministradorService.desbloquearUsuario(id);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @GetMapping("/producto/{id}")
+    public ResponseEntity<?> obtenerProducto(@PathVariable Long id) {
+        return productoService.buscarProducto(id)
+                .map(producto -> {
+                    ProductoDTO dto = productoService.convertirADTO(producto);
+                    return ResponseEntity.ok(dto);
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> obtenerDetalleEmpleado(@PathVariable Long id) {
+//        return empleadoService.obtenerEmpleadoPorId(id)
+//                .map(empleado -> {
+//                    // Convertir empleado a DTO
+//                    EmpleadoDTO empleadoDTO = convertirEmpleadoADTO(empleado);
+//
+//                    // Obtener nóminas del empleado
+//                    List<NominaDTO> nominasDTO = nominaService.obtenerNominasPorEmpleado(id);
+//                    empleadoDTO.setNominas(nominasDTO);
+//
+//                    return ResponseEntity.ok(empleadoDTO);
+//                })
+//                .orElse(ResponseEntity.notFound().build());
+//    }
 }
-
-

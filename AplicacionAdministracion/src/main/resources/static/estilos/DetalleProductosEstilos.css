@@ -1,0 +1,109 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8; /* Fondo ligero */
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.product-details, .subtype-details {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.product-details h2, .subtype-details h3 {
+    margin-top: 0;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    margin-bottom: 10px;
+}
+
+.detail-item strong {
+    display: inline-block;
+    width: 150px; /* Ancho fijo para las etiquetas */
+    color: #333;
+}
+
+.categories span {
+    display: inline-block;
+    background-color: #2196F3; /* Color similar a btn-primary */
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.loading {
+    text-align: center;
+    font-size: 1.2em;
+    color: #777;
+}
+
+.error {
+    text-align: center;
+    font-size: 1.2em;
+    color: #dc3545; /* Color similar a btn-danger */
+}
+
+/* Estilos para detalles específicos de subtipos */
+#libroDetails, #ropaDetails, #muebleDetails {
+    display: none; /* Inicialmente ocultos */
+}
+
+/* Botón de volver */
+.back-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #6c757d; /* Color gris */
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #5a6268;
+}
+
+/* Estilos para la lista de colores del mueble */
+.color-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 5px;
+}
+
+.color-list li {
+    display: inline-block;
+    background-color: #e9ecef; /* Fondo claro */
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}

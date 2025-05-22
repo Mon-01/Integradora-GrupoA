@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class  Producto {
     private Boolean esPerecedero;
 
     @Temporal(TemporalType.DATE)
+    //antes estaba en date
     private Date fechaAlta;
 
     @ManyToMany

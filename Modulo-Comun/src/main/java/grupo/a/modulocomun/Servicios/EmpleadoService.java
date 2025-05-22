@@ -40,7 +40,8 @@ public class EmpleadoService {
 
     @Autowired
     private final UsuarioRepository usuarioRepository;
-
+    @Autowired
+    private UsuaroServiceComun usuarioService;
     @Autowired
     private final DepartamentoService departamentoService;
 
@@ -64,21 +65,27 @@ public class EmpleadoService {
         Empleado emp1 = insertarEmpleado1();
         emp1.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Administración")
                 .orElseThrow(() -> new EntityNotFoundException("Departamento Administración no encontrado")));
+        empleadoRepository.save(emp1);
+        emp1.setUsuario(usuarioService.insertarBlock(emp1));
 
         Empleado emp2 = insertarEmpleado2();
         emp2.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Tecnología")
                 .orElseThrow(() -> new EntityNotFoundException("Departamento Tecnología no encontrado")));
+        empleadoRepository.save(emp2);
+        emp2.setUsuario(usuarioService.insertarUnBlock(emp2));
 
         Empleado emp3 = insertarEmpleado3();
         emp3.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Tecnología")
                 .orElseThrow(() -> new EntityNotFoundException("Departamento Tecnología no encontrado")));
+        empleadoRepository.save(emp3);
+        emp3.setUsuario(usuarioService.insertarBlock(emp3));
 
         Empleado emp4 = insertarEmpleado4();
         emp4.setDepartamento(repositoryManager.getDepartamentoRepository().findDepartamentoByNombre("Recursos Humanos")
                 .orElseThrow(() -> new EntityNotFoundException("Departamento Recursos Humanos no encontrado")));
+        empleadoRepository.save(emp4);
+        emp4.setUsuario(usuarioService.insertarUnBlock(emp4));
 
-        // Guardar todos los empleados
-        empleadoRepository.saveAll(List.of(emp1, emp2, emp3, emp4));
     }
 
     //insertar datos empleados

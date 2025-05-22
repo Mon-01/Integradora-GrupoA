@@ -6,15 +6,14 @@ import com.example.aplicacionadministracion.Servicios.UsuarioAdministradorServic
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.DTO.filtros.EmpleadoEditarDTO;
+import grupo.a.modulocomun.DTO.ProductoDTO;
 import grupo.a.modulocomun.Entidades.Empleado;
 import grupo.a.modulocomun.Entidades.LineaNomina;
 import grupo.a.modulocomun.Entidades.Nomina;
 
+import grupo.a.modulocomun.Entidades.Producto;
 import grupo.a.modulocomun.Repositorios.NominaRepository;
-import grupo.a.modulocomun.Servicios.EmpleadoService;
-import grupo.a.modulocomun.Servicios.NominaService;
-import grupo.a.modulocomun.Servicios.RepositoryManager;
-import grupo.a.modulocomun.Servicios.ServiceManager;
+import grupo.a.modulocomun.Servicios.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +21,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -55,14 +55,12 @@ public class controladorMVCAdmin {
     private RepositoryManager repositoryManager;
     @Autowired
     private ServiceManager serviceManager;
-/*
-    // Metodo GET que muestra el formulario de login de administrador.
-    @GetMapping("/admin/login")
-    public String mostrarLoginAdmin() {
-        return "login-admin"; // Retorna la vista "login-admin.html" ubicada en /templates/.
-    }
+    @Autowired
+    private ProductoService productoService;
 
- */
+
+
+
     @GetMapping("/admin/login")
     public String mostrarLoginAdmin() {
         return "redirect:http://vista2.administrativa.com:80/"; // Retorna la vista "login-admin.html" ubicada en /templates/.
@@ -108,15 +106,10 @@ public class controladorMVCAdmin {
             return null;  // Si el formato es inválido, se ignora el filtro
         }
     }
-/*
-    // Muestra el detalle de un empleado a través de su ID.
-    @GetMapping("/admin/detalle/{id}")
-    public String mostrarDetalleEmpleado(@PathVariable Long id, Model model) {
-        model.addAttribute("empleadoId", id); // Pasa el ID del empleado a la vista.
-        return "/DetalleEmpleado"; // Renderiza la vista "DetalleEmpleado.html".
-    }
 
- */
+
+
+
     @GetMapping("/admin/detalle/{id}")
     public String mostrarDetalleEmpleado(@PathVariable Long id, RedirectAttributes attributes) {
         attributes.addAttribute("id", id);
@@ -200,6 +193,16 @@ public class controladorMVCAdmin {
         return "redirect:/admin/login";
     }
 
+    @GetMapping("/editar/{id}")
+    public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
+
+        Nomina nomina = nominaService.obtenerNomina(id);
+        NominaDTO dto = nominaService.convertirADTO(nomina);
+        model.addAttribute("nomina", dto);
+
+        return "/nominas/editarNomina";
+    }
+
     @PostMapping("/nomina/guardar")
     public String guardarNomina(@ModelAttribute NominaDTO nominaDTO) {
         Nomina nominaAnterior = nominaService.obtenerNomina(nominaDTO.getId());
@@ -245,7 +248,7 @@ public class controladorMVCAdmin {
     }
 
     @GetMapping("/editar-empleado/{id}")
-    public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
+    public String mostrarFormularioEdicionEmpleado(@PathVariable Long id, Model model) {
         EmpleadoEditarDTO empleadoDTO = empleadoService.obtenerEmpleadoEditableDTOPorId(id);
 
         // Agregar datos necesarios para los selects
@@ -274,6 +277,12 @@ public class controladorMVCAdmin {
     }
 
 
+
+    @GetMapping("/detalle/producto/{id}")
+    public String obtenerDetalleProducto(@PathVariable Long id, Model model) {
+        model.addAttribute("idProducto", id);
+         return "DetalleProducto";
+    }
 
 }
 
