@@ -44,7 +44,7 @@
 
         <form th:action="@{/password}" method="post">
             <input type="hidden" name="email" th:value="${session.emailTemporal}"/>
-            <input type="password" name="clave" placeholder="Contraseña" required>
+            <input type="password" name="clave" placeholder="Contraseña" >
             <button type="submit">Entrar</button>
             <a th:href="@{/cambiar-clave/{id}(id=${dto.id_usuario})}">¿No recuerdas la contraseña?</a>
         </form>
