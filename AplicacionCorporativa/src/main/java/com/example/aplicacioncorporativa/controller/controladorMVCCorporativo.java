@@ -165,10 +165,10 @@ public class controladorMVCCorporativo {
 
         session.getServletContext().setAttribute("contadorGlobal", contadorGlobal);
         try {
-            // 1. Obtener o inicializar lista de usuarios
+            //  Obtener o inicializar lista de usuarios
             List<String> usuariosAutenticados = new ArrayList<>();
 
-            // 2. Leer cookie existente
+            //  Leer cookie existente
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
@@ -184,12 +184,12 @@ public class controladorMVCCorporativo {
                 }
             }
 
-            // 3. Añadir usuario actual si no existe
+            //  Añadir usuario actual si no existe
             String emailUsuario = usuarioLogueado.getEmail();
             if (!usuariosAutenticados.contains(emailUsuario)) {
                 usuariosAutenticados.add(emailUsuario);
 
-                // 4. Crear nueva cookie serializada
+                //  Crear nueva cookie serializada
                 String serialized = CookieSerializer.serialize(usuariosAutenticados);
                 Cookie authCookie = new Cookie("authenticatedUsers", serialized);
                 authCookie.setMaxAge(30 * 24 * 60 * 60); // 30 días
@@ -200,6 +200,7 @@ public class controladorMVCCorporativo {
         } catch (Exception e) {
             System.err.println("Error al manejar cookie de usuarios: " + e.getMessage());
         }
+
         // Enviamos datos a la vista
         model.addAttribute("usuario",usuarioLogueado);
         model.addAttribute("usuarioEmail", usuarioLogueado.getEmail());

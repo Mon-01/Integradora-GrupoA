@@ -1,45 +1,91 @@
 package grupo.a.modulocomun.Servicios;
 
+// Importaciones para generación de PDF
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
+// Importaciones de DTOs
 import grupo.a.modulocomun.DTO.EmpleadoDTO;
 import grupo.a.modulocomun.DTO.LineaNominaDTO;
 import grupo.a.modulocomun.DTO.NominaDTO;
 import grupo.a.modulocomun.DTO.filtros.filtrosNominasDTO;
+
+// Importaciones de entidades
 import grupo.a.modulocomun.Entidades.*;
+
+// Importaciones de repositorios
 import grupo.a.modulocomun.Repositorios.*;
+
+// Importaciones para manejo de excepciones
 import jakarta.persistence.EntityNotFoundException;
+
+// Importaciones para mapeo de objetos
 import org.modelmapper.ModelMapper;
+
+// Importaciones de Spring
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-
+// Importaciones para manejo de streams
 import java.io.ByteArrayOutputStream;
+
+// Importaciones para manejo de números
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
+// Importaciones para manejo de recursos
 import java.net.URL;
+
+// Importaciones para manejo de fechas
 import java.time.LocalDate;
+
+// Importaciones para comparación
 import java.util.Comparator;
+
+// Importaciones para colecciones
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Service
-//o todos o ninguno
-@Transactional
+/**
+ * Servicio para la gestión de nóminas
+ * Maneja la creación, consulta y generación de reportes de nóminas
+ */
+@Service // Indica que esta clase es un componente de servicio gestionado por Spring
+@Transactional // Todas las operaciones son transaccionales
 public class NominaService {
 
+    // Repositorio para operaciones CRUD de nóminas
     private final NominaRepository nominaRepository;
+
+    // Repositorio para operaciones con empleados
     private final EmpleadoRepository empleadoRepository;
+
+    // Servicio para operaciones con empleados
     private final EmpleadoService empleadoService;
+
+    // Gestor centralizado de repositorios
     private final RepositoryManager repositoryManager;
+
+    // Mapeador de objetos
     private final ModelMapper modelMapper;
 
+    /**
+     * Constructor principal para inyección de dependencias
+     * @param nominaRepository Repositorio de nóminas
+     * @param empleadoRepository Repositorio de empleados
+     * @param empleadoService Servicio de empleados
+     * @param repositoryManager Gestor de repositorios
+     * @param modelMapper Mapeador de objetos
+     */
     @Autowired
-    public NominaService(NominaRepository nominaRepository, EmpleadoRepository empleadoRepository, EmpleadoService empleadoService, RepositoryManager repositoryManager, ModelMapper modelMapper) {
+    public NominaService(NominaRepository nominaRepository,
+                         EmpleadoRepository empleadoRepository,
+                         EmpleadoService empleadoService,
+                         RepositoryManager repositoryManager,
+                         ModelMapper modelMapper) {
         this.nominaRepository = nominaRepository;
         this.empleadoRepository = empleadoRepository;
         this.empleadoService = empleadoService;
@@ -47,30 +93,41 @@ public class NominaService {
         this.modelMapper = modelMapper;
     }
 
+    /**
+     * Elimina una nómina por su ID
+     * @param id ID de la nómina a eliminar
+     */
     public void eliminarNomina(Long id) {
-        // Esto eliminará en cascada las líneas de nómina debido a la configuración CascadeType.ALL
+        // La eliminación en cascada está configurada en la entidad Nomina
         nominaRepository.deleteById(id);
     }
 
+    /**
+     * Crea una nueva nómina en el sistema
+     * @param nominaDTO DTO con los datos de la nómina
+     * @return DTO de la nómina creada
+     */
     public NominaDTO crearNomina(NominaDTO nominaDTO) {
-        // Validar empleado
+        // Valida que el empleado exista
         Empleado empleado = empleadoRepository.findById(nominaDTO.getEmpleado().getId_empleado())
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
-        // Crear la nómina
+        // Crea la nueva nómina
         Nomina nomina = new Nomina();
         nomina.setFecha(nominaDTO.getFecha() != null ? nominaDTO.getFecha() : LocalDate.now());
         nomina.setEmpleado(empleado);
 
-        // Validar y agregar líneas
+        // Valida que haya líneas en la nómina
         if (nominaDTO.getLineas() == null || nominaDTO.getLineas().isEmpty()) {
             throw new RuntimeException("La nómina debe contener al menos una línea");
         }
 
-        // Obtener salario base anual del empleado
+        // Obtiene el salario base para cálculos
         BigDecimal salarioAnual = empleado.getSalarioAnual();
 
+        // Procesa cada línea de la nómina
         for (LineaNominaDTO lineaDTO : nominaDTO.getLineas()) {
+            // Validaciones básicas
             if (lineaDTO.getConcepto() == null || lineaDTO.getConcepto().trim().isEmpty()) {
                 throw new RuntimeException("El concepto de la línea no puede estar vacío");
             }
@@ -79,13 +136,14 @@ public class NominaService {
                 throw new RuntimeException("Debe especificar si la línea es devengo o deducción");
             }
 
+            // Crea y configura la línea
             LineaNomina linea = new LineaNomina();
             linea.setDescripcion(lineaDTO.getConcepto());
             linea.setEsDevengo(lineaDTO.getEsDevengo());
 
             BigDecimal importe;
 
-            // Calcular importe según porcentaje o importe fijo
+            // Calcula el importe según porcentaje o importe fijo
             if (lineaDTO.getPorcentaje() != null && !lineaDTO.getPorcentaje().isEmpty()) {
                 BigDecimal porcentaje = new BigDecimal(lineaDTO.getPorcentaje());
                 linea.setPorcentaje(porcentaje);
@@ -98,7 +156,7 @@ public class NominaService {
                 throw new RuntimeException("Debe especificar porcentaje o importe fijo");
             }
 
-            // Si es deducción, el importe será negativo
+            // Si es deducción, hace el importe negativo
             if (!lineaDTO.getEsDevengo()) {
                 importe = importe.negate();
             }
@@ -108,33 +166,52 @@ public class NominaService {
             nomina.getLineas().add(linea);
         }
 
-        // Guardar la nómina
+        // Guarda la nómina y devuelve el DTO
         Nomina nominaGuardada = nominaRepository.save(nomina);
         return convertirADTO(nominaGuardada);
     }
 
+    /**
+     * Obtiene una nómina por su ID
+     * @param id ID de la nómina
+     * @return Entidad Nomina encontrada
+     */
     public Nomina obtenerNomina(Long id) {
-        Nomina nomina = nominaRepository.findById(id)
+        return nominaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Nómina no encontrada con id: " + id));
-        return nomina;
     }
 
+    /**
+     * Obtiene todas las nóminas de un empleado
+     * @param empleadoId ID del empleado
+     * @return Lista de DTOs de nóminas
+     */
     public List<NominaDTO> obtenerNominasPorEmpleado(Long empleadoId) {
         return nominaRepository.findNominasConLineasByEmpleadoId(empleadoId).stream()
                 .map(this::convertirADTO)
                 .collect(Collectors.toList());
     }
 
-    public filtrosNominasDTO returnConsultaFiltradoNominas (Nomina nomina) {
+    /**
+     * Convierte una nómina a DTO para filtrado
+     * @param nomina Entidad a convertir
+     * @return DTO para filtrado
+     */
+    public filtrosNominasDTO returnConsultaFiltradoNominas(Nomina nomina) {
         filtrosNominasDTO filtrado = new filtrosNominasDTO();
+
+        // Datos básicos del empleado
         filtrado.setNombre(nomina.getEmpleado().getNombre());
         filtrado.setId(nomina.getEmpleado().getId_empleado());
         filtrado.setFecha(nomina.getFecha());
+
+        // Cálculo del total de la nómina
         BigDecimal total = nomina.getLineas().stream()
                 .map(LineaNomina::getImporte)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         filtrado.setSalario(total);
 
+        // Departamento del empleado
         if(nomina.getEmpleado() != null && nomina.getEmpleado().getDepartamento() != null){
             filtrado.setDepartamento(nomina.getEmpleado().getDepartamento().getNombredept());
         }else {
@@ -143,14 +220,20 @@ public class NominaService {
         return filtrado;
     }
 
-
+    /**
+     * Convierte una entidad Nomina a su representación DTO
+     * @param nomina Entidad a convertir
+     * @return DTO con los datos de la nómina
+     */
     public NominaDTO convertirADTO(Nomina nomina) {
         NominaDTO dto = new NominaDTO();
+
+        // Datos básicos
         dto.setId(nomina.getId());
         dto.setFecha(nomina.getFecha());
         dto.setEmpleado(empleadoService.convertirEmpleadoADTO(nomina.getEmpleado()));
 
-        // Convertir líneas
+        // Conversión de líneas
         List<LineaNominaDTO> lineas = nomina.getLineas().stream()
                 .map(linea -> {
                     LineaNominaDTO lineaDTO = new LineaNominaDTO();
@@ -158,107 +241,111 @@ public class NominaService {
                     lineaDTO.setConcepto(linea.getDescripcion());
                     lineaDTO.setEsDevengo(linea.getEsDevengo());
 
+                    // Porcentaje si existe
                     if (linea.getPorcentaje() != null) {
                         lineaDTO.setPorcentaje(linea.getPorcentaje().toString());
                     }
+
+                    // Importe fijo si existe
                     if (linea.getImporteFijo() != null) {
                         lineaDTO.setImporteFijo(linea.getImporteFijo().toString());
                     }
 
+                    // Cantidad calculada
                     lineaDTO.setCantidad(linea.getImporte() != null ? linea.getImporte().toString() : "0.00");
                     return lineaDTO;
                 })
                 .collect(Collectors.toList());
         dto.setLineas(lineas);
 
-        // Calcular total (suma de todos los importes, ya vienen con signo)
+        // Cálculo del total
         BigDecimal total = nomina.getLineas().stream()
                 .map(LineaNomina::getImporte)
-//                .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         dto.setTotal(total);
 
         return dto;
     }
+
+    /**
+     * Obtiene todas las nóminas del sistema
+     * @return Lista de DTOs de nóminas
+     */
     public List<NominaDTO> obtenerTodasNominas() {
         return nominaRepository.findAll().stream()
                 .map(nomina -> {
                     NominaDTO dto = convertirADTO(nomina);
-                    // Asegurar que el total esté calculado
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
-public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDate fecha) {
-    return nominaRepository.filtroNomina(nombre, departamento, fecha);
-}
+    /**
+     * Filtra nóminas por múltiples criterios
+     * @param nombre Nombre o parte del nombre del empleado
+     * @param departamento Nombre del departamento
+     * @param fecha Fecha de la nómina
+     * @return Lista de nóminas que cumplen los criterios
+     */
+    public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDate fecha) {
+        return nominaRepository.filtroNomina(nombre, departamento, fecha);
+    }
 
-
-
+    /**
+     * Genera un PDF con la última nómina de un empleado
+     * @param empleadoId ID del empleado
+     * @return Array de bytes con el PDF generado
+     */
     public byte[] generarUltimaNominaPdf(Long empleadoId) {
+        // Obtiene el empleado
         Empleado empleado = empleadoRepository.findById(empleadoId)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
+        // Obtiene sus nóminas
         List<Nomina> nominas = empleado.getNominas();
 
         if (nominas == null || nominas.isEmpty()) {
             throw new RuntimeException("El empleado no tiene nóminas");
         }
 
-        // Ordenar por fecha descendente
+        // Ordena por fecha descendente
         nominas.sort(Comparator.comparing(Nomina::getFecha).reversed());
 
-        return crearPdfNomina(empleado, nominas.get(0)); // Tomar la más reciente
+        // Genera PDF con la más reciente
+        return crearPdfNomina(empleado, nominas.get(0));
     }
 
+    /**
+     * Crea el PDF de una nómina
+     * @param empleado Empleado dueño de la nómina
+     * @param nomina Nómina a imprimir
+     * @return Array de bytes con el PDF generado
+     */
     private byte[] crearPdfNomina(Empleado empleado, Nomina nomina) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            // Configuración del documento PDF
             Document document = new Document();
             PdfWriter.getInstance(document, out);
 
             document.open();
+
+            // Intento de carga de logo
             String imageResourcePath = "static/img/OP.jpg";
+            URL imageUrl = getClass().getClassLoader().getResource(imageResourcePath);
 
-            URL imageUrl = null;
-            try {
-                // 2. Cargar la imagen usando el ClassLoader
-                //    getClass().getClassLoader() obtiene el classloader que cargó tu clase actual.
-                imageUrl = getClass().getClassLoader().getResource(imageResourcePath);
-
-                if (imageUrl == null) {
-                    System.err.println("Error: No se pudo encontrar la imagen en el classpath: " + imageResourcePath);
-                    // Aquí podrías añadir un texto al PDF indicando que el logo falta,
-                    // o incluso lanzar una excepción si el logo es absolutamente necesario.
-                    document.add(new Paragraph("[Logo no encontrado: " + imageResourcePath + "]", new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
-                } else {
-                    Image logo = Image.getInstance(imageUrl);
-
-                    // Opcional: Escalar la imagen
-                    logo.scaleToFit(100f, 50f); // Ajusta ancho y alto (en puntos)
-
-                    // Opcional: Alineación
-                    // logo.setAlignment(Element.ALIGN_CENTER);
-
-                    document.add(logo); // Añadir la imagen al documento
-                }
-
-            } catch (BadElementException e) {
-                // Esto puede ocurrir si el archivo de imagen está corrupto o no es un formato soportado
-                System.err.println("Error: El archivo de imagen está corrupto o no es soportado: " + imageResourcePath + " - " + e.getMessage());
-                document.add(new Paragraph("[Error formato imagen: " + imageResourcePath + "]", new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
-            } catch (java.io.IOException e) {
-                // Esto puede ocurrir por problemas de lectura del archivo
-                System.err.println("Error de I/O al leer la imagen: " + imageResourcePath + " - " + e.getMessage());
-                document.add(new Paragraph("[Error I/O imagen: " + imageResourcePath + "]", new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
-            } catch (Exception e) { // Captura general por si acaso
-                System.err.println("Error inesperado al procesar la imagen: " + imageResourcePath + " - " + e.getMessage());
-                document.add(new Paragraph("[Error inesperado imagen: " + imageResourcePath + "]", new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
+            if (imageUrl != null) {
+                Image logo = Image.getInstance(imageUrl);
+                logo.scaleToFit(100f, 50f); // Escala la imagen
+                document.add(logo); // Añade al documento
+            } else {
+                // Mensaje de error si no encuentra el logo
+                document.add(new Paragraph("[Logo no encontrado: " + imageResourcePath + "]",
+                        new Font(Font.FontFamily.HELVETICA, 8, Font.ITALIC, BaseColor.RED)));
             }
 
-
-            // Encabezado
-            Paragraph header = new Paragraph("NÓMINA", new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD));
+            // Encabezado del documento
+            Paragraph header = new Paragraph("NÓMINA",
+                    new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD));
             header.setAlignment(Element.ALIGN_CENTER);
             document.add(header);
 
@@ -270,27 +357,30 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
             document.add(new Paragraph(" "));
 
             // Tabla de líneas de nómina
-            PdfPTable table = new PdfPTable(3);
-            table.setWidthPercentage(100);
+            PdfPTable table = new PdfPTable(3); // 3 columnas
+            table.setWidthPercentage(100); // Ancho completo
 
             // Encabezados de tabla
-            table.addCell(new Phrase("Concepto", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
-            table.addCell(new Phrase("Tipo", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
-            table.addCell(new Phrase("Importe", new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+            table.addCell(new Phrase("Concepto",
+                    new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+            table.addCell(new Phrase("Tipo",
+                    new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+            table.addCell(new Phrase("Importe",
+                    new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
 
-            // Líneas de nómina
+            // Rellenado de la tabla con líneas
             BigDecimal total = BigDecimal.ZERO;
             for (LineaNomina linea : nomina.getLineas()) {
                 table.addCell(linea.getDescripcion());
                 table.addCell(linea.getEsDevengo() ? "Devengo" : "Deducción");
                 table.addCell(linea.getImporte().toString() + " €");
-                total = total.add(linea.getImporte());
+                total = total.add(linea.getImporte()); // Acumula el total
             }
 
             document.add(table);
             document.add(new Paragraph(" "));
 
-            // Total
+            // Total de la nómina
             Paragraph totalParagraph = new Paragraph("Total: " + total.toString() + " €",
                     new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
             totalParagraph.setAlignment(Element.ALIGN_RIGHT);
@@ -303,60 +393,74 @@ public List<Nomina> filtrarPorNomina(String nombre, String departamento, LocalDa
         }
     }
 
+    /**
+     * Carga nóminas de prueba en el sistema
+     */
     public void cargarNominas() {
-            List<Empleado> empleados = empleadoRepository.findAll();
-            List<Nomina> nominas = empleados.stream().map(empleado -> {
-                BigDecimal salarioBase = empleado.getSalarioAnual();
+        // Obtiene todos los empleados
+        List<Empleado> empleados = empleadoRepository.findAll();
 
-                Nomina nomina = new Nomina();
-                nomina.setFecha(LocalDate.now());
-                nomina.setEmpleado(empleado);
+        // Crea una nómina para cada empleado
+        List<Nomina> nominas = empleados.stream().map(empleado -> {
+            BigDecimal salarioBase = empleado.getSalarioAnual();
 
-                // Crear líneas de nómina (ajusta los importes y las descripciones según sea necesario)
-                LineaNomina salarioBaseLinea = new LineaNomina();
-                salarioBaseLinea.setDescripcion("Salario Base");
-                salarioBaseLinea.setPorcentaje(new BigDecimal("22"));
-                salarioBaseLinea.setEsDevengo(true);
+            // Crea la nómina
+            Nomina nomina = new Nomina();
+            nomina.setFecha(LocalDate.now());
+            nomina.setEmpleado(empleado);
 
-                BigDecimal importeSalario = salarioBase.multiply(new BigDecimal("22"))
-                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-                salarioBaseLinea.setImporte(importeSalario);
-                salarioBaseLinea.setNomina(nomina);
-                nomina.agregarLinea(salarioBaseLinea);
+            // Línea 1: Salario base
+            LineaNomina salarioBaseLinea = new LineaNomina();
+            salarioBaseLinea.setDescripcion("Salario Base");
+            salarioBaseLinea.setPorcentaje(new BigDecimal("22"));
+            salarioBaseLinea.setEsDevengo(true);
 
-                LineaNomina bonificacion = new LineaNomina();
-                bonificacion.setDescripcion("bonificacion por horas extra");
-                bonificacion.setPorcentaje(new BigDecimal("12"));
-                bonificacion.setEsDevengo(true);
+            BigDecimal importeSalario = salarioBase.multiply(new BigDecimal("22"))
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            salarioBaseLinea.setImporte(importeSalario);
+            salarioBaseLinea.setNomina(nomina);
+            nomina.agregarLinea(salarioBaseLinea);
 
-                BigDecimal importeBonificacion = salarioBase.multiply(new BigDecimal("12.00"))
-                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-                bonificacion.setImporte(importeBonificacion);
-                bonificacion.setNomina(nomina);
-                nomina.agregarLinea(bonificacion);
+            // Línea 2: Bonificación
+            LineaNomina bonificacion = new LineaNomina();
+            bonificacion.setDescripcion("bonificacion por horas extra");
+            bonificacion.setPorcentaje(new BigDecimal("12"));
+            bonificacion.setEsDevengo(true);
 
-                LineaNomina devoluciones = new LineaNomina();
-                devoluciones.setDescripcion("Devolución");
-                devoluciones.setPorcentaje(new BigDecimal("8"));
-                devoluciones.setEsDevengo(false);
+            BigDecimal importeBonificacion = salarioBase.multiply(new BigDecimal("12.00"))
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            bonificacion.setImporte(importeBonificacion);
+            bonificacion.setNomina(nomina);
+            nomina.agregarLinea(bonificacion);
 
-                BigDecimal importeDevolucion = salarioBase.multiply(new BigDecimal("8"))
-                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-                devoluciones.setImporte(importeDevolucion);
-                devoluciones.setNomina(nomina);
-                nomina.agregarLinea(devoluciones);
+            // Línea 3: Deducción
+            LineaNomina devoluciones = new LineaNomina();
+            devoluciones.setDescripcion("Devolución");
+            devoluciones.setPorcentaje(new BigDecimal("8"));
+            devoluciones.setEsDevengo(false);
 
-                return nomina;
-            }).collect(Collectors.toList());
+            BigDecimal importeDevolucion = salarioBase.multiply(new BigDecimal("8"))
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            devoluciones.setImporte(importeDevolucion);
+            devoluciones.setNomina(nomina);
+            nomina.agregarLinea(devoluciones);
 
-            nominaRepository.saveAll(nominas);
+            return nomina;
+        }).collect(Collectors.toList());
+
+        // Guarda todas las nóminas
+        nominaRepository.saveAll(nominas);
         System.out.println("nominas guardadas, supuestamente");
     }
 
+    /**
+     * Calcula el importe basado en un porcentaje del salario base
+     * @param salarioBase Salario base del empleado
+     * @param porcentaje Porcentaje a aplicar
+     * @return Importe calculado
+     */
     public BigDecimal calcularImportePorcentaje(BigDecimal salarioBase, BigDecimal porcentaje) {
         return salarioBase.multiply(new BigDecimal(porcentaje.doubleValue()))
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
-
-
 }

@@ -73,7 +73,6 @@ public class controladorMVCAdmin {
     // Muestra la pantalla de inicio del panel administrador, con filtros para buscar empleados.
     @GetMapping("/admin/inicio")
     public String mostrarInicioAdmin(
-            @RequestParam(required = false) String token,
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) List<String> departamentos,
             @RequestParam(required = false) BigDecimal salarioMin,
@@ -94,17 +93,6 @@ public class controladorMVCAdmin {
         model.addAttribute("empleados", empleados);
 
         return "inicio-admin";
-    }
-    // Método auxiliar para conversión segura
-    private BigDecimal convertirStringABigDecimal(String valor) {
-        if (valor == null || valor.trim().isEmpty()) {
-            return null;
-        }
-        try {
-            return new BigDecimal(valor.replace(",", "."));  // Soporta tanto "." como "," como separador decimal
-        } catch (NumberFormatException e) {
-            return null;  // Si el formato es inválido, se ignora el filtro
-        }
     }
 
 
@@ -142,15 +130,6 @@ public class controladorMVCAdmin {
     }
 
      */
-    @GetMapping("/apacher2")
-    public String apache2() {
-        return "redirect:http://vista2.administrativa.com:80/";
-    }
-
-
-
-    // Muestra un formulario para crear una nueva nómina.
-
 
     @GetMapping("/productos")
     public String product(){
